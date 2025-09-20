@@ -279,14 +279,14 @@ a:hover {
 }
 
 .won-tip-card {
-  background: var(--white);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 25px var(--shadow);
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+   background: var(--white);
+   border-radius: 16px;
+   padding: 2rem;
+   box-shadow: 0 8px 25px var(--shadow);
+   border: 2px solid transparent;
+   transition: all 0.3s ease;
+   position: relative;
+   overflow: hidden;
 }
 
 .won-tip-card::before {
@@ -422,11 +422,11 @@ a:hover {
 }
 
 .stat-item {
-  background: var(--white);
-  padding: 2rem 1rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px var(--shadow);
-  border: 2px solid var(--primary-blue);
+   background: var(--white);
+   padding: 2rem 1rem;
+   border-radius: 12px;
+   box-shadow: 0 4px 15px var(--shadow);
+   border: 2px solid var(--primary-blue);
 }
 
 .stat-number {
@@ -470,14 +470,14 @@ a:hover {
 
 /* Prediction Cards */
 .prediction-card {
-  background: var(--gradient-card);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px var(--shadow);
-  transition: all 0.4s ease;
-  position: relative;
-  overflow: hidden;
+   background: var(--gradient-card);
+   border: 1px solid var(--border-color);
+   border-radius: 16px;
+   padding: 1.25rem;
+   box-shadow: 0 4px 20px var(--shadow);
+   transition: all 0.4s ease;
+   position: relative;
+   overflow: hidden;
 }
 
 .prediction-card::before {
@@ -1069,12 +1069,12 @@ footer::before {
 }
 
 .setting-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  padding: 2rem;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+   background: rgba(255, 255, 255, 0.05);
+   border-radius: 15px;
+   padding: 2rem;
+   text-align: center;
+   border: 1px solid rgba(255, 255, 255, 0.1);
+   transition: all 0.3s ease;
 }
 
 .setting-card:hover {
@@ -1861,14 +1861,14 @@ footer::before {
 }
 
 .pricing-card {
-  background: var(--white);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 25px var(--shadow);
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+   background: var(--white);
+   border-radius: 16px;
+   padding: 2rem;
+   box-shadow: 0 8px 25px var(--shadow);
+   border: 2px solid transparent;
+   transition: all 0.3s ease;
+   position: relative;
+   overflow: hidden;
 }
 
 .pricing-card:hover {
@@ -3010,7 +3010,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 }
 
 .card-content {
-  padding: 2rem;
+   padding: 2rem;
 }
 
 /* Subscription Card */
@@ -3156,13 +3156,13 @@ body:has(.user-avatar) .nav-menu li a:hover {
 }
 
 .management-card {
-  background: var(--white);
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  text-align: center;
-  box-shadow: 0 8px 25px var(--shadow);
-  border: 1px solid rgba(0, 123, 255, 0.1);
-  transition: all 0.3s ease;
+   background: var(--white);
+   border-radius: 16px;
+   padding: 2.5rem 2rem;
+   text-align: center;
+   box-shadow: 0 8px 25px var(--shadow);
+   border: 1px solid rgba(0, 123, 255, 0.1);
+   transition: all 0.3s ease;
 }
 
 .management-card:hover {
@@ -3242,16 +3242,16 @@ body:has(.user-avatar) .nav-menu li a:hover {
 }
 
 .action-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: var(--white);
-  border-radius: 12px;
-  text-decoration: none;
-  box-shadow: 0 4px 15px var(--shadow);
-  border: 1px solid rgba(0, 123, 255, 0.1);
-  transition: all 0.3s ease;
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+   padding: 1.5rem;
+   background: var(--white);
+   border-radius: 12px;
+   text-decoration: none;
+   box-shadow: 0 4px 15px var(--shadow);
+   border: 1px solid rgba(0, 123, 255, 0.1);
+   transition: all 0.3s ease;
 }
 
 .action-card:hover {
@@ -3399,13 +3399,13 @@ body:has(.user-avatar) .nav-menu li a:hover {
 }
 
 .betting-code-card {
-  background: var(--white);
-  border-radius: 16px;
-  box-shadow: 0 8px 25px var(--shadow);
-  border: 2px solid transparent;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  position: relative;
+   background: var(--white);
+   border-radius: 16px;
+   box-shadow: 0 8px 25px var(--shadow);
+   border: 2px solid transparent;
+   overflow: hidden;
+   transition: all 0.3s ease;
+   position: relative;
 }
 
 .betting-code-card:hover {
@@ -3444,7 +3444,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 }
 
 .code-content {
-  padding: 2rem;
+   padding: 2rem;
 }
 
 .code-content h3 {
