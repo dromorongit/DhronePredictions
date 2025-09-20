@@ -1,0 +1,19 @@
+{
+  "name": "dhrone-telegram-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for Dhrone Predictions VVIP access control",
+  "main": "telegram-bot.js",
+  "scripts": {
+    "start": "node telegram-bot.js",
+    "dev": "nodemon telegram-bot.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.66.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": ["telegram", "bot", "vvip", "access-control"],
+  "author": "Dhrone Predictions",
+  "license": "ISC"
+}
