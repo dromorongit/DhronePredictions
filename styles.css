@@ -30,12 +30,15 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  color: var(--text-color);
-  background: linear-gradient(180deg, var(--white) 0%, var(--light-gray) 100%);
-  min-height: 100vh;
-  position: relative;
+   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   line-height: 1.6;
+   color: var(--text-color);
+   background: linear-gradient(180deg, var(--white) 0%, var(--light-gray) 100%);
+   min-height: 100vh;
+   position: relative;
+   width: 1200px;
+   margin: 0 auto;
+   overflow-x: hidden;
 }
 
 body::before {
