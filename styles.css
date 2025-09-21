@@ -142,7 +142,7 @@ a:hover {
 /* Mobile Navigation Adjustments */
 @media (max-width: 768px) {
    .nav-container {
-      margin: 0 auto;
+      margin: 0 auto 0 1rem;
       padding: 1rem 1rem;
    }
 
