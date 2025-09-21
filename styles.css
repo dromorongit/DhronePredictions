@@ -75,13 +75,13 @@ a:hover {
 }
 
 .nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem 2rem;
-  gap: 0.5rem;
+   max-width: 1200px;
+   margin: 0 auto 0 1rem;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   padding: 1rem 2rem;
+   gap: 0.5rem;
 }
 
 .logo {
