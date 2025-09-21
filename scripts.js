@@ -715,7 +715,10 @@ function clearMessages() {
 
 // Previously Won Tips functionality
 function initWonTips() {
-  updateWonTipsStats();
+  // Update statistics on any page that has won tip cards
+  if (document.querySelectorAll('.won-tip-card').length > 0) {
+    updateWonTipsStats();
+  }
 }
 
 function updateWonTipsStats() {
