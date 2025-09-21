@@ -732,10 +732,10 @@ function updateWonTipsStats() {
   const winRate = totalCount > 0 ? ((wonCount / totalCount) * 100).toFixed(1) : 0;
 
   // Update statistics display
-  const winRateElement = document.querySelector('.stat-number:nth-child(1)');
-  const totalElement = document.querySelector('.stat-number:nth-child(2)');
-  const wonElement = document.querySelector('.stat-number:nth-child(3)');
-  const lostElement = document.querySelector('.stat-number:nth-child(4)');
+  const winRateElement = document.querySelector('.tips-stats .stat-item:nth-child(1) .stat-number');
+  const totalElement = document.querySelector('.tips-stats .stat-item:nth-child(2) .stat-number');
+  const wonElement = document.querySelector('.tips-stats .stat-item:nth-child(3) .stat-number');
+  const lostElement = document.querySelector('.tips-stats .stat-item:nth-child(4) .stat-number');
 
   if (winRateElement) winRateElement.textContent = winRate + '%';
   if (totalElement) totalElement.textContent = totalCount;
