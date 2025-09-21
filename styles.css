@@ -76,7 +76,7 @@ a:hover {
 
 .nav-container {
    max-width: 1200px;
-   margin: 0 auto 0 1rem;
+   margin: 0 auto 0 2rem;
    display: flex;
    flex-direction: column;
    align-items: center;
