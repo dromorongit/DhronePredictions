@@ -22,8 +22,12 @@ const GROUP_LINKS = {
 
 // Valid access codes (in production, store in database)
 const validCodes = new Set([
-  // Add your generated access codes here
-  // Example: '1234567', '7654321', etc.
+  '7654321',
+  '2421453',
+  '2610932',
+  '0331428',
+  '2633376',
+  '5532437'
 ]);
 
 console.log('🤖 Telegram Bot is running...');
@@ -44,7 +48,7 @@ bot.onText(/\/start/, (msg) => {
     parse_mode: 'Markdown',
     reply_markup: {
       inline_keyboard: [
-        [{ text: '🔗 Visit Website', url: 'https://yourwebsite.com' }]
+        [{ text: '🔗 Visit Website', url: 'https://www.dhronepredicts.com' }]
       ]
     }
   });
@@ -74,8 +78,8 @@ bot.onText(/\/help/, (msg) => {
     parse_mode: 'Markdown',
     reply_markup: {
       inline_keyboard: [
-        [{ text: '🔗 Visit Website', url: 'https://yourwebsite.com' }],
-        [{ text: '📞 Contact Support', url: 'https://yourwebsite.com/contact' }]
+        [{ text: '🔗 Visit Website', url: 'https://www.dhronepredicts.com' }],
+        [{ text: '📞 Contact Support', url: 'https://www.dhronepredicts.com/contact' }]
       ]
     }
   });
@@ -130,7 +134,7 @@ bot.onText(/\/status/, (msg) => {
       parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [
-          [{ text: '🛒 Get VVIP Access', url: 'https://yourwebsite.com/vvip' }],
+          [{ text: '🛒 Get VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }],
           [{ text: '❓ Need Help?', callback_data: 'help' }]
         ]
       }
@@ -211,7 +215,7 @@ bot.on('new_chat_members', async (msg) => {
       // User joined without valid access code
       await bot.sendMessage(chatId,
         `🚫 @${username}, you need a valid access code to join this group.\n\n` +
-        `💡 Get your code from our website: https://yourwebsite.com\n` +
+        `💡 Get your code from our website: https://www.dhronepredicts.com\n` +
         `🤖 Then message me (@${bot.username}) with your code.`, {
         parse_mode: 'Markdown'
       });
@@ -272,7 +276,7 @@ async function handleAccessCode(chatId, userId, username, code) {
       reply_markup: {
         inline_keyboard: [
           [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: groupLink }],
-          [{ text: '🔄 Generate New Code', url: 'https://yourwebsite.com' }]
+          [{ text: '🔄 Generate New Code', url: 'https://www.dhronepredicts.com' }]
         ]
       }
     });
