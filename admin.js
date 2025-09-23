@@ -51,7 +51,16 @@ class PredictionManager {
             match.result.status !== 'completed'
         );
 
+        console.log('Pending matches found:', pendingMatches.length);
+        console.log('All matches:', this.data.predictions.length);
+
         select.innerHTML = '<option value="">Choose a match...</option>';
+
+        if (pendingMatches.length === 0) {
+            select.innerHTML += '<option value="" disabled>No pending matches available</option>';
+            console.log('No pending matches to display');
+            return;
+        }
 
         pendingMatches.forEach(match => {
             const option = document.createElement('option');
@@ -59,6 +68,8 @@ class PredictionManager {
             option.textContent = `${match.fixture} - ${match.competition}`;
             select.appendChild(option);
         });
+
+        console.log('Dropdown populated with', pendingMatches.length, 'matches');
     }
 
     handleFixtureChange(matchId) {

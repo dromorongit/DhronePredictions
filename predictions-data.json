@@ -9,20 +9,14 @@
       "homeTeam": "Dreams FC",
       "awayTeam": "Accra Hearts of Oak",
       "predictions": {
-        "double-chance": "X2",
-        "over-2-5": null,
-        "btts-gg": null
+        "double-chance": "X2"
       },
       "result": {
-        "homeScore": 0,
-        "awayScore": 1,
-        "finalScore": "0-1",
-        "status": "completed",
-        "validation": {
-          "double-chance": "won",
-          "over-2-5": "lost",
-          "btts-gg": "lost"
-        }
+        "homeScore": null,
+        "awayScore": null,
+        "finalScore": null,
+        "status": "pending",
+        "validation": {}
       }
     },
     {
@@ -34,20 +28,14 @@
       "homeTeam": "Millwall",
       "awayTeam": "Watford",
       "predictions": {
-        "double-chance": "1X",
-        "over-2-5": null,
-        "btts-gg": null
+        "double-chance": "X2"
       },
       "result": {
-        "homeScore": 1,
-        "awayScore": 0,
-        "finalScore": "1-0",
-        "status": "completed",
-        "validation": {
-          "double-chance": "won",
-          "over-2-5": "lost",
-          "btts-gg": "lost"
-        }
+        "homeScore": null,
+        "awayScore": null,
+        "finalScore": null,
+        "status": "pending",
+        "validation": {}
       }
     },
     {
@@ -59,20 +47,14 @@
       "homeTeam": "Botev Vratsa",
       "awayTeam": "CSKA Sofia",
       "predictions": {
-        "double-chance": "X1",
-        "over-2-5": null,
-        "btts-gg": null
+        "double-chance": "1X"
       },
       "result": {
-        "homeScore": 1,
-        "awayScore": 1,
-        "finalScore": "1-1",
-        "status": "completed",
-        "validation": {
-          "double-chance": "won",
-          "over-2-5": "lost",
-          "btts-gg": "won"
-        }
+        "homeScore": null,
+        "awayScore": null,
+        "finalScore": null,
+        "status": "pending",
+        "validation": {}
       }
     },
     {
@@ -84,20 +66,14 @@
       "homeTeam": "Vukovar '91",
       "awayTeam": "Rijeka",
       "predictions": {
-        "double-chance": "X2",
-        "over-2-5": null,
-        "btts-gg": null
+        "double-chance": "X2"
       },
       "result": {
-        "homeScore": 3,
-        "awayScore": 2,
-        "finalScore": "3-2",
-        "status": "completed",
-        "validation": {
-          "double-chance": "lost",
-          "over-2-5": "won",
-          "btts-gg": "won"
-        }
+        "homeScore": null,
+        "awayScore": null,
+        "finalScore": null,
+        "status": "pending",
+        "validation": {}
       }
     },
     {
@@ -109,20 +85,14 @@
       "homeTeam": "Pharco",
       "awayTeam": "Al Masry",
       "predictions": {
-        "double-chance": "X2",
-        "over-2-5": null,
-        "btts-gg": null
+        "double-chance": "X2"
       },
       "result": {
-        "homeScore": 0,
-        "awayScore": 0,
-        "finalScore": "0-0",
-        "status": "completed",
-        "validation": {
-          "double-chance": "won",
-          "over-2-5": "lost",
-          "btts-gg": "lost"
-        }
+        "homeScore": null,
+        "awayScore": null,
+        "finalScore": null,
+        "status": "pending",
+        "validation": {}
       }
     },
     {
@@ -134,20 +104,14 @@
       "homeTeam": "Drogheda",
       "awayTeam": "Shelbourne",
       "predictions": {
-        "double-chance": "X2",
-        "over-2-5": null,
-        "btts-gg": null
+        "double-chance": "X2"
       },
       "result": {
-        "homeScore": 2,
-        "awayScore": 1,
-        "finalScore": "2-1",
-        "status": "completed",
-        "validation": {
-          "double-chance": "lost",
-          "over-2-5": "lost",
-          "btts-gg": "won"
-        }
+        "homeScore": null,
+        "awayScore": null,
+        "finalScore": null,
+        "status": "pending",
+        "validation": {}
       }
     },
     {
@@ -159,20 +123,14 @@
       "homeTeam": "Norrkoping",
       "awayTeam": "AIK",
       "predictions": {
-        "double-chance": "12",
-        "over-2-5": null,
-        "btts-gg": null
+        "double-chance": "12"
       },
       "result": {
-        "homeScore": 3,
-        "awayScore": 1,
-        "finalScore": "3-1",
-        "status": "completed",
-        "validation": {
-          "double-chance": "won",
-          "over-2-5": "won",
-          "btts-gg": "won"
-        }
+        "homeScore": null,
+        "awayScore": null,
+        "finalScore": null,
+        "status": "pending",
+        "validation": {}
       }
     },
     {
@@ -184,20 +142,14 @@
       "homeTeam": "Los Angeles FC",
       "awayTeam": "Real Salt Lake",
       "predictions": {
-        "double-chance": "1X",
-        "over-2-5": null,
-        "btts-gg": null
+        "double-chance": "1X"
       },
       "result": {
-        "homeScore": 4,
-        "awayScore": 1,
-        "finalScore": "4-1",
-        "status": "completed",
-        "validation": {
-          "double-chance": "won",
-          "over-2-5": "won",
-          "btts-gg": "won"
-        }
+        "homeScore": null,
+        "awayScore": null,
+        "finalScore": null,
+        "status": "pending",
+        "validation": {}
       }
     },
     {
@@ -209,42 +161,35 @@
       "homeTeam": "Valur Reykjavik",
       "awayTeam": "Breidablik Kopavogur",
       "predictions": {
-        "super-single": "Over 10.5 Corners",
-        "over-corners": "Over 10.5"
+        "super-single": "Over 10.5 Corners"
       },
       "result": {
         "homeScore": null,
         "awayScore": null,
         "finalScore": null,
-        "homeCorners": 12,
-        "awayCorners": 11,
-        "totalCorners": 23,
-        "status": "completed",
-        "validation": {
-          "super-single": "won",
-          "over-corners": "won"
-        }
+        "status": "pending",
+        "validation": {}
       }
     }
   ],
   "statistics": {
     "double-chance": {
-      "total": 8,
-      "won": 6,
-      "lost": 2,
-      "winRate": 75
+      "total": 0,
+      "won": 0,
+      "lost": 0,
+      "winRate": 0
     },
     "super-single": {
-      "total": 1,
-      "won": 1,
+      "total": 0,
+      "won": 0,
       "lost": 0,
-      "winRate": 100
+      "winRate": 0
     },
     "free-2-odds": {
-      "total": 6,
-      "won": 3,
-      "lost": 3,
-      "winRate": 50
+      "total": 0,
+      "won": 0,
+      "lost": 0,
+      "winRate": 0
     }
   }
 }
