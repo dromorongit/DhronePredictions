@@ -33,24 +33,43 @@ This system provides a complete automated solution for managing soccer predictio
 
 ## 🚀 How to Use
 
-### 1. Access the Admin Panel
+### 1. Setup (Choose One Method)
+
+#### Option A: Server-Based (Recommended) - Automatic Updates
+```bash
+# Install dependencies
+npm install
+
+# Start the server
+npm start
+# or
+node server.js
+```
+
+#### Option B: Browser-Only - Manual File Updates
+Simply open `admin.html` in your browser (no server needed)
+
+### 2. Access the Admin Panel
 Open `admin.html` in your web browser to access the management interface.
 
-### 2. Input Match Results
+### 3. Input Match Results
 1. Select a match from the dropdown (shows pending matches only)
 2. Enter the home team score
 3. Enter the away team score
 4. If the match involves corners predictions, enter corner counts
 5. Click "Update Match Result"
 
-### 3. Automatic Updates
-The system will automatically:
-- ✅ Validate all predictions for that match
-- 📈 Recalculate statistics for all prediction types
-- 🔄 Update all relevant HTML pages
-- 💾 Save all changes to the JSON data file
+### 4. Update Pages
+**With Server (Automatic):**
+- Click "Update All Pages" → Files update instantly on server
+- Your website is immediately updated! ✨
 
-### 4. Verify Updates
+**Without Server (Manual):**
+- Click "Update All Pages" → Downloads updated HTML files
+- Replace existing files on your website with downloaded ones
+- Upload to your web server
+
+### 5. Verify Updates
 - Check the updated statistics in the admin panel
 - Visit individual prediction pages to see updated "Previously Won" sections
 - Use the test system to verify everything works correctly

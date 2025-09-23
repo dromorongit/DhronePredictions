@@ -137,6 +137,15 @@
             <div class="info" style="background: #e7f3ff; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
                 <strong>Instructions:</strong> Select a pending match from the dropdown, enter the final scores, and click "Update Match Result". The system will automatically validate predictions and update all relevant pages.
             </div>
+            <div class="info" style="background: #fff3cd; padding: 10px; margin-bottom: 15px; border-radius: 4px; border-left: 4px solid #ffc107;">
+                <strong>💡 How it works:</strong><br>
+                1. Enter match scores → System validates predictions<br>
+                2. Click "Update All Pages" → Server automatically updates files<br>
+                3. Your website is instantly updated! ✨<br><br>
+                <strong>🔧 To enable automatic updates:</strong><br>
+                • Run the server: <code>node server.js</code><br>
+                • Without server: Files download for manual upload
+            </div>
             <form id="matchResultForm">
                 <div class="form-group">
                     <label for="fixtureSelect">Select Match:</label>
@@ -166,7 +175,9 @@
                 </div>
 
                 <button type="submit" class="btn">Update Match Result</button>
-                <button type="button" class="btn btn-success" id="updateAllPages">Update All Pages</button>
+                <button type="button" class="btn btn-success" id="updateAllPages" style="background: #28a745;">
+                    🔄 Update All Pages
+                </button>
             </form>
         </div>
 

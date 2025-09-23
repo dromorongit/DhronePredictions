@@ -201,15 +201,100 @@ class HTMLUpdateSystem {
     }
 
     async writeHTMLFile(filename, content) {
-        // In a real implementation, this would write to the actual file
-        // For now, we'll simulate the update
-        console.log(`Writing updated content to ${filename}`);
+        // Try server-side update first
+        try {
+            const response = await fetch('/update-html', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    filename: filename,
+                    content: content
+                })
+            });
 
-        // This is where you would actually write the file
-        // In a browser environment, this would require special permissions
-        // or a server-side component
+            const result = await response.json();
 
-        return true;
+            if (result.success) {
+                console.log(`✅ Server updated ${filename}`);
+                this.showUpdatePreview(filename, content, 'server');
+                return true;
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (serverError) {
+            console.log('Server update failed, falling back to download method:', serverError.message);
+
+            // Fallback to downloadable file
+            this.createDownloadableFile(filename, content);
+            this.showUpdatePreview(filename, content, 'download');
+            return true;
+        }
+    }
+
+    createDownloadableFile(filename, content) {
+        const blob = new Blob([content], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.style.display = 'none';
+
+        // Add to page temporarily
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Clean up
+        URL.revokeObjectURL(url);
+    }
+
+    showUpdatePreview(filename, content, method = 'download') {
+        // Create a preview modal or section
+        const previewDiv = document.createElement('div');
+        previewDiv.id = 'update-preview';
+        previewDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 400px;
+            max-height: 300px;
+            background: white;
+            border: 2px solid ${method === 'server' ? '#28a745' : '#007bff'};
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            overflow-y: auto;
+            font-size: 12px;
+        `;
+
+        const methodColor = method === 'server' ? '#28a745' : '#ffc107';
+        const methodText = method === 'server' ? 'Server Updated' : 'Downloaded';
+        const methodIcon = method === 'server' ? '✅' : '📥';
+
+        previewDiv.innerHTML = `
+            <h4 style="margin: 0 0 10px 0; color: ${method === 'server' ? '#28a745' : '#007bff'};">${methodIcon} Update Preview</h4>
+            <p><strong>File:</strong> ${filename}</p>
+            <p><strong>Status:</strong> <span style="color: ${methodColor};">${methodIcon} ${methodText}</span></p>
+            ${method === 'server' ?
+                '<p><strong>Action:</strong> File updated on server automatically</p>' +
+                '<p><strong>Result:</strong> Your website is now live with updates!</p>' :
+                '<p><strong>Action:</strong> File downloaded to your device</p>' +
+                '<p><strong>Instructions:</strong> Replace the existing file on your website</p>'
+            }
+            <button onclick="this.parentElement.remove()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Close</button>
+        `;
+
+        document.body.appendChild(previewDiv);
+
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (previewDiv.parentElement) {
+                previewDiv.remove();
+            }
+        }, 10000);
     }
 
     // Method to add new predictions to the system

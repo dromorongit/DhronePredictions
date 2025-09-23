@@ -238,7 +238,8 @@ class PredictionManager {
 
     async saveData() {
         try {
-            const response = await fetch('predictions-data.json', {
+            // Try server-side save first
+            const response = await fetch('/update-data', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -246,12 +247,35 @@ class PredictionManager {
                 body: JSON.stringify(this.data, null, 2)
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to save data');
+            if (response.ok) {
+                const result = await response.json();
+                console.log('✅ Data saved via server');
+                return;
+            } else {
+                throw new Error('Server save failed');
             }
         } catch (error) {
-            console.error('Error saving data:', error);
-            alert('Error saving data. Please try again.');
+            console.log('Server save failed, trying direct file save:', error.message);
+
+            // Fallback to direct file save (for development)
+            try {
+                const fallbackResponse = await fetch('predictions-data.json', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(this.data, null, 2)
+                });
+
+                if (!fallbackResponse.ok) {
+                    throw new Error('Direct save also failed');
+                }
+
+                console.log('✅ Data saved via direct method');
+            } catch (fallbackError) {
+                console.error('Error saving data:', fallbackError);
+                alert('Error saving data. Please try again.');
+            }
         }
     }
 
@@ -318,18 +342,56 @@ class PredictionManager {
             const updateSystem = new HTMLUpdateSystem();
             await updateSystem.init();
 
+            console.log('Starting page updates...');
             const result = await updateSystem.updateAllPages();
 
             if (result.success) {
-                alert('✅ All pages updated successfully! The new match results and statistics have been applied to all prediction pages.');
+                // Show success message with instructions
+                this.showSuccessMessage();
             } else {
                 alert('❌ Error updating pages. Please try again.');
             }
 
         } catch (error) {
             console.error('Error updating pages:', error);
-            alert('Error updating pages. Please try again.');
+            alert(`Error updating pages: ${error.message}. Please check the console for details.`);
         }
+    }
+
+    showSuccessMessage() {
+        // Create a comprehensive success message
+        const successDiv = document.createElement('div');
+        successDiv.id = 'success-message';
+        successDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 2000;
+            max-width: 500px;
+            text-align: center;
+        `;
+
+        successDiv.innerHTML = `
+            <h3 style="color: #28a745; margin: 0 0 15px 0;">✅ Pages Updated Successfully!</h3>
+            <p style="margin: 10px 0;">Updated HTML files have been downloaded to your device.</p>
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; text-align: left;">
+                <strong>Next Steps:</strong><br>
+                1. Find the downloaded HTML files in your Downloads folder<br>
+                2. Replace the existing files on your website with the updated ones<br>
+                3. Upload the updated files to your web server
+            </div>
+            <button onclick="this.parentElement.remove()" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                Got it!
+            </button>
+        `;
+
+        document.body.appendChild(successDiv);
     }
 }
 
