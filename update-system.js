@@ -217,8 +217,17 @@ class HTMLUpdateSystem {
             const result = await response.json();
 
             if (result.success) {
-                console.log(`✅ Server updated ${filename}`);
-                this.showUpdatePreview(filename, content, 'server');
+                console.log(`✅ Server processed ${filename}`);
+
+                // Check if server returned content (Railway read-only filesystem)
+                if (result.content) {
+                    console.log(`📥 Server returned content for ${filename} (Railway filesystem)`);
+                    this.createDownloadableFile(filename, result.content);
+                    this.showUpdatePreview(filename, result.content, 'download');
+                } else {
+                    // Server updated file successfully
+                    this.showUpdatePreview(filename, content, 'server');
+                }
                 return true;
             } else {
                 throw new Error(result.error);

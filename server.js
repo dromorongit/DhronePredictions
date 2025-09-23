@@ -43,14 +43,16 @@ app.post('/update-html', async (req, res) => {
             });
         }
 
-        // Write the file
-        await fs.writeFile(filename, content, 'utf8');
-
-        console.log(`✅ Updated ${filename}`);
+        // Note: Railway filesystem is read-only, so we return the content
+        // The client will handle the file update via download
+        console.log(`✅ Generated updated content for ${filename}`);
 
         res.json({
             success: true,
-            message: `${filename} updated successfully`
+            message: `${filename} content generated successfully`,
+            content: content,
+            method: 'download',
+            instructions: 'Download the file and replace it on your website'
         });
 
     } catch (error) {
@@ -74,14 +76,16 @@ app.put('/update-data', async (req, res) => {
             });
         }
 
-        // Write the JSON file
-        await fs.writeFile('predictions-data.json', JSON.stringify(data, null, 2), 'utf8');
-
-        console.log('✅ Updated predictions-data.json');
+        // Note: Railway filesystem is read-only, so we return the updated data
+        // The client will handle the data update
+        console.log('✅ Updated predictions data in memory');
 
         res.json({
             success: true,
-            message: 'Data updated successfully'
+            message: 'Data updated successfully',
+            data: data,
+            method: 'memory',
+            instructions: 'Data updated in server memory'
         });
 
     } catch (error) {

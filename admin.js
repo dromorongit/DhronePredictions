@@ -249,7 +249,13 @@ class PredictionManager {
 
             if (response.ok) {
                 const result = await response.json();
-                console.log('✅ Data saved via server');
+                console.log('✅ Data processed via server');
+
+                // If server returned updated data (Railway read-only filesystem)
+                if (result.data) {
+                    console.log('📥 Server returned updated data (Railway filesystem)');
+                    this.data = result.data; // Update local data
+                }
                 return;
             } else {
                 throw new Error('Server save failed');
