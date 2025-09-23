@@ -246,3 +246,6 @@ class StatisticsCalculator {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = StatisticsCalculator;
 }
+
+// ES6 export for modern browsers
+export { StatisticsCalculator };

@@ -356,3 +356,6 @@ class HTMLUpdateSystem {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = HTMLUpdateSystem;
 }
+
+// ES6 export for modern browsers
+export { HTMLUpdateSystem };
