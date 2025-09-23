@@ -1,0 +1,250 @@
+{
+  "predictions": [
+    {
+      "id": "match-001",
+      "fixture": "Dreams FC vs Accra Hearts of Oak",
+      "competition": "Ghana Premier League",
+      "date": "2024-09-23",
+      "time": "15:00",
+      "homeTeam": "Dreams FC",
+      "awayTeam": "Accra Hearts of Oak",
+      "predictions": {
+        "double-chance": "X2",
+        "over-2-5": null,
+        "btts-gg": null
+      },
+      "result": {
+        "homeScore": 0,
+        "awayScore": 1,
+        "finalScore": "0-1",
+        "status": "completed",
+        "validation": {
+          "double-chance": "won",
+          "over-2-5": "lost",
+          "btts-gg": "lost"
+        }
+      }
+    },
+    {
+      "id": "match-002",
+      "fixture": "Millwall vs Watford",
+      "competition": "England Championship",
+      "date": "2024-09-23",
+      "time": "19:00",
+      "homeTeam": "Millwall",
+      "awayTeam": "Watford",
+      "predictions": {
+        "double-chance": "1X",
+        "over-2-5": null,
+        "btts-gg": null
+      },
+      "result": {
+        "homeScore": 1,
+        "awayScore": 0,
+        "finalScore": "1-0",
+        "status": "completed",
+        "validation": {
+          "double-chance": "won",
+          "over-2-5": "lost",
+          "btts-gg": "lost"
+        }
+      }
+    },
+    {
+      "id": "match-003",
+      "fixture": "Botev Vratsa vs CSKA Sofia",
+      "competition": "Bulgaria Parva Liga",
+      "date": "2024-09-23",
+      "time": "17:30",
+      "homeTeam": "Botev Vratsa",
+      "awayTeam": "CSKA Sofia",
+      "predictions": {
+        "double-chance": "X1",
+        "over-2-5": null,
+        "btts-gg": null
+      },
+      "result": {
+        "homeScore": 1,
+        "awayScore": 1,
+        "finalScore": "1-1",
+        "status": "completed",
+        "validation": {
+          "double-chance": "won",
+          "over-2-5": "lost",
+          "btts-gg": "won"
+        }
+      }
+    },
+    {
+      "id": "match-004",
+      "fixture": "Vukovar '91 vs Rijeka",
+      "competition": "Croatia HNL",
+      "date": "2024-09-23",
+      "time": "16:00",
+      "homeTeam": "Vukovar '91",
+      "awayTeam": "Rijeka",
+      "predictions": {
+        "double-chance": "X2",
+        "over-2-5": null,
+        "btts-gg": null
+      },
+      "result": {
+        "homeScore": 3,
+        "awayScore": 2,
+        "finalScore": "3-2",
+        "status": "completed",
+        "validation": {
+          "double-chance": "lost",
+          "over-2-5": "won",
+          "btts-gg": "won"
+        }
+      }
+    },
+    {
+      "id": "match-005",
+      "fixture": "Pharco vs Al Masry",
+      "competition": "Egypt Premier League",
+      "date": "2024-09-23",
+      "time": "14:00",
+      "homeTeam": "Pharco",
+      "awayTeam": "Al Masry",
+      "predictions": {
+        "double-chance": "X2",
+        "over-2-5": null,
+        "btts-gg": null
+      },
+      "result": {
+        "homeScore": 0,
+        "awayScore": 0,
+        "finalScore": "0-0",
+        "status": "completed",
+        "validation": {
+          "double-chance": "won",
+          "over-2-5": "lost",
+          "btts-gg": "lost"
+        }
+      }
+    },
+    {
+      "id": "match-006",
+      "fixture": "Drogheda vs Shelbourne",
+      "competition": "Ireland Premier Division",
+      "date": "2024-09-23",
+      "time": "18:45",
+      "homeTeam": "Drogheda",
+      "awayTeam": "Shelbourne",
+      "predictions": {
+        "double-chance": "X2",
+        "over-2-5": null,
+        "btts-gg": null
+      },
+      "result": {
+        "homeScore": 2,
+        "awayScore": 1,
+        "finalScore": "2-1",
+        "status": "completed",
+        "validation": {
+          "double-chance": "lost",
+          "over-2-5": "lost",
+          "btts-gg": "won"
+        }
+      }
+    },
+    {
+      "id": "match-007",
+      "fixture": "Norrkoping vs AIK",
+      "competition": "Sweden Allsvenskan",
+      "date": "2024-09-23",
+      "time": "17:10",
+      "homeTeam": "Norrkoping",
+      "awayTeam": "AIK",
+      "predictions": {
+        "double-chance": "12",
+        "over-2-5": null,
+        "btts-gg": null
+      },
+      "result": {
+        "homeScore": 3,
+        "awayScore": 1,
+        "finalScore": "3-1",
+        "status": "completed",
+        "validation": {
+          "double-chance": "won",
+          "over-2-5": "won",
+          "btts-gg": "won"
+        }
+      }
+    },
+    {
+      "id": "match-008",
+      "fixture": "Los Angeles FC vs Real Salt Lake",
+      "competition": "USA MLS",
+      "date": "2024-09-23",
+      "time": "01:00",
+      "homeTeam": "Los Angeles FC",
+      "awayTeam": "Real Salt Lake",
+      "predictions": {
+        "double-chance": "1X",
+        "over-2-5": null,
+        "btts-gg": null
+      },
+      "result": {
+        "homeScore": 4,
+        "awayScore": 1,
+        "finalScore": "4-1",
+        "status": "completed",
+        "validation": {
+          "double-chance": "won",
+          "over-2-5": "won",
+          "btts-gg": "won"
+        }
+      }
+    },
+    {
+      "id": "match-009",
+      "fixture": "Valur Reykjavik vs Breidablik Kopavogur",
+      "competition": "Besta Deild karla",
+      "date": "2024-09-23",
+      "time": "19:15",
+      "homeTeam": "Valur Reykjavik",
+      "awayTeam": "Breidablik Kopavogur",
+      "predictions": {
+        "super-single": "Over 10.5 Corners",
+        "over-corners": "Over 10.5"
+      },
+      "result": {
+        "homeScore": null,
+        "awayScore": null,
+        "finalScore": null,
+        "homeCorners": 12,
+        "awayCorners": 11,
+        "totalCorners": 23,
+        "status": "completed",
+        "validation": {
+          "super-single": "won",
+          "over-corners": "won"
+        }
+      }
+    }
+  ],
+  "statistics": {
+    "double-chance": {
+      "total": 8,
+      "won": 6,
+      "lost": 2,
+      "winRate": 75
+    },
+    "super-single": {
+      "total": 1,
+      "won": 1,
+      "lost": 0,
+      "winRate": 100
+    },
+    "free-2-odds": {
+      "total": 6,
+      "won": 3,
+      "lost": 3,
+      "winRate": 50
+    }
+  }
+}
