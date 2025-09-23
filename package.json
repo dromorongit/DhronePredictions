@@ -5,8 +5,7 @@
   "main": "admin.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "test": "node -e \"console.log('System ready for testing!')\""
+    "dev": "node server.js"
   },
   "engines": {
     "node": ">=18.0.0"
