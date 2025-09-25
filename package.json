@@ -7,6 +7,7 @@
     "start": "node bot-production.js",
     "dev": "node telegram-bot.js",
     "test": "node test-bot-connection.js",
+    "test-token": "node test-bot-token.js",
     "generate-codes": "node generate-codes.js",
     "railway": "node bot-production.js"
   },

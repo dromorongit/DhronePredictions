@@ -14,6 +14,15 @@ if (!BOT_TOKEN || !ADMIN_USER_ID) {
   process.exit(1);
 }
 
+// Validate BOT_TOKEN format
+if (!BOT_TOKEN.includes(':')) {
+  console.error('❌ Invalid BOT_TOKEN format. Expected format: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz');
+  process.exit(1);
+}
+
+console.log('✅ BOT_TOKEN format validated');
+console.log('✅ ADMIN_USER_ID set');
+
 // Initialize bot with production settings
 const botOptions = {
   polling: true,
@@ -418,10 +427,28 @@ bot.on('callback_query', (query) => {
 
 // Error handling
 bot.on('polling_error', (error) => {
-  log('error', 'Polling error occurred', { error: error.message });
+  console.error('🚨 POLLING ERROR:', error.message);
+  console.error('Error code:', error.code);
+  console.error('Error response:', error.response?.body);
+
+  // Provide specific error messages
+  if (error.code === 'EFATAL') {
+    console.error('💀 FATAL ERROR: Bot token may be invalid or bot is blocked');
+  } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+    console.error('🌐 NETWORK ERROR: Cannot reach Telegram servers');
+  } else if (error.code === 'ETIMEDOUT') {
+    console.error('⏰ TIMEOUT ERROR: Request to Telegram timed out');
+  }
+
+  log('error', 'Polling error occurred', {
+    error: error.message,
+    code: error.code,
+    response: error.response?.body
+  });
 });
 
 bot.on('error', (error) => {
+  console.error('🚨 BOT ERROR:', error.message);
   log('error', 'Bot error occurred', { error: error.message });
 });
 
