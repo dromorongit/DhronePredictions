@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Load configuration from environment variables (Railway-friendly)
-const BOT_TOKEN = process.env.BOT_TOKEN || '8284449243:AAFUhi2-GkVbb4Lp3Or_SbBsREnCUaTaPls';
+const BOT_TOKEN = process.env.BOT_TOKEN || '8284449243:AAGIVO5aVfo1LAcQ29wXxHJoY3Pq4QqVOZ0';
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID || '5872136698';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -76,10 +76,12 @@ function log(level, message, data = null) {
     console.log(logMessage);
   }
 
-  // In production, you might want to send logs to a service
-  if (NODE_ENV === 'production' && level === 'error') {
-    // Send error to admin
-    bot.sendMessage(ADMIN_USER_ID, `🚨 Bot Error: ${message}`).catch(() => {});
+  // In production, send critical errors to admin (but not polling errors to avoid spam)
+  if (NODE_ENV === 'production' && level === 'error' && !message.includes('Polling error')) {
+    // Send error to admin (only for non-polling errors)
+    bot.sendMessage(ADMIN_USER_ID, `🚨 Bot Error: ${message}`).catch(() => {
+      console.log('Failed to send error message to admin (bot may have issues)');
+    });
   }
 }
 
@@ -425,25 +427,49 @@ bot.on('callback_query', (query) => {
   }
 });
 
-// Error handling
+// Error handling with retry mechanism
+let pollingRetryCount = 0;
+const MAX_POLLING_RETRIES = 5;
+const POLLING_RETRY_DELAY = 10000; // 10 seconds
+
 bot.on('polling_error', (error) => {
-  console.error('🚨 POLLING ERROR:', error.message);
+  pollingRetryCount++;
+  console.error(`🚨 POLLING ERROR #${pollingRetryCount}:`, error.message);
   console.error('Error code:', error.code);
   console.error('Error response:', error.response?.body);
 
   // Provide specific error messages
   if (error.code === 'EFATAL') {
     console.error('💀 FATAL ERROR: Bot token may be invalid or bot is blocked');
+    console.error('🔄 Stopping polling to prevent spam...');
+    bot.stopPolling();
+    return;
   } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
     console.error('🌐 NETWORK ERROR: Cannot reach Telegram servers');
   } else if (error.code === 'ETIMEDOUT') {
     console.error('⏰ TIMEOUT ERROR: Request to Telegram timed out');
   }
 
+  // Retry logic
+  if (pollingRetryCount < MAX_POLLING_RETRIES) {
+    console.log(`⏳ Retrying in ${POLLING_RETRY_DELAY / 1000} seconds... (${pollingRetryCount}/${MAX_POLLING_RETRIES})`);
+    setTimeout(() => {
+      console.log('🔄 Attempting to restart polling...');
+      bot.startPolling().catch(retryError => {
+        console.error('❌ Retry failed:', retryError.message);
+      });
+    }, POLLING_RETRY_DELAY);
+  } else {
+    console.error('💀 MAX RETRIES REACHED: Giving up on polling');
+    console.error('💡 Please check your BOT_TOKEN and network connectivity');
+    bot.stopPolling();
+  }
+
   log('error', 'Polling error occurred', {
     error: error.message,
     code: error.code,
-    response: error.response?.body
+    response: error.response?.body,
+    retryCount: pollingRetryCount
   });
 });
 
@@ -465,12 +491,69 @@ process.on('SIGTERM', () => {
   process.exit(0);
 });
 
-// Startup message
-console.log('🤖 Dhrone Predictions Telegram Bot Starting...');
-console.log(`📅 Environment: ${NODE_ENV}`);
-console.log(`🔢 Total access codes loaded: ${validCodes.size}`);
-console.log(`👤 Admin User ID: ${ADMIN_USER_ID}`);
-console.log('✅ Bot is ready to receive messages!\n');
+// Validate bot token before starting
+async function validateBotToken() {
+  try {
+    console.log('🔍 Validating bot token...');
+    const botInfo = await bot.getMe();
+    console.log('✅ Bot token is valid!');
+    console.log(`🤖 Bot Name: ${botInfo.first_name}`);
+    console.log(`👤 Bot Username: @${botInfo.username}`);
+    console.log(`🆔 Bot ID: ${botInfo.id}`);
+    return true;
+  } catch (error) {
+    console.error('❌ Bot token validation failed:');
+    console.error(`Error: ${error.message}`);
+
+    if (error.response) {
+      console.error(`Status Code: ${error.response.statusCode}`);
+      console.error(`Response: ${JSON.stringify(error.response.body, null, 2)}`);
+    }
+
+    if (error.message.includes('401')) {
+      console.error('💡 This usually means:');
+      console.error('   - Bot token is invalid or expired');
+      console.error('   - Bot was deleted from Telegram');
+      console.error('   - Bot was blocked by Telegram');
+    }
+
+    return false;
+  }
+}
+
+// Initialize bot
+async function startBot() {
+  console.log('🤖 Dhrone Predictions Telegram Bot Starting...');
+  console.log(`📅 Environment: ${NODE_ENV}`);
+  console.log(`🔢 Total access codes loaded: ${validCodes.size}`);
+  console.log(`👤 Admin User ID: ${ADMIN_USER_ID}`);
+
+  // Validate token first
+  const isTokenValid = await validateBotToken();
+
+  if (!isTokenValid) {
+    console.error('💀 Cannot start bot: Invalid token');
+    console.error('🔧 Please fix BOT_TOKEN in Railway environment variables');
+    process.exit(1);
+  }
+
+  console.log('✅ Bot is ready to receive messages!\n');
+
+  // Start polling with error handling
+  try {
+    await bot.startPolling();
+    console.log('🔄 Polling started successfully');
+  } catch (error) {
+    console.error('❌ Failed to start polling:', error.message);
+    process.exit(1);
+  }
+}
+
+// Start the bot
+startBot().catch(error => {
+  console.error('💀 Fatal error starting bot:', error);
+  process.exit(1);
+});
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {

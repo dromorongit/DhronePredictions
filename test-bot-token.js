@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 // Test bot token validation
-const BOT_TOKEN = process.env.BOT_TOKEN || '8284449243:AAFUhi2-GkVbb4Lp3Or_SbBsREnCUaTaPls';
+const BOT_TOKEN = process.env.BOT_TOKEN || '8284449243:AAGIVO5aVfo1LAcQ29wXxHJoY3Pq4QqVOZ0';
 
 console.log('🔍 Testing Bot Token Validation...');
 console.log(`🤖 Bot Token: ${BOT_TOKEN.substring(0, 10)}...${BOT_TOKEN.substring(BOT_TOKEN.length - 5)}`);
