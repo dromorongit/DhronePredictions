@@ -1,0 +1,22 @@
+{
+  "name": "dhrone-predictions-bot",
+  "version": "1.0.0",
+  "description": "Telegram Bot for Dhrone Predictions VVIP Access",
+  "main": "bot-production.js",
+  "scripts": {
+    "start": "node bot-production.js",
+    "dev": "node telegram-bot.js",
+    "test": "node test-bot-connection.js",
+    "generate-codes": "node generate-codes.js",
+    "railway": "node bot-production.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.66.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": ["telegram", "bot", "predictions", "vvip", "access", "railway"],
+  "author": "Dhrone Predictions",
+  "license": "MIT"
+}

@@ -1,0 +1,24 @@
+[build]
+builder = "nodejs"
+
+[deploy]
+startCommand = "npm run railway"
+healthcheckPath = "/"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+[environments]
+production = {
+  variables = {
+    NODE_ENV = "production",
+    BOT_TOKEN = "${{BOT_TOKEN}}",
+    ADMIN_USER_ID = "${{ADMIN_USER_ID}}",
+    ACCESS_CODES = "${{ACCESS_CODES}}"
+  }
+}
+
+development = {
+  variables = {
+    NODE_ENV = "development"
+  }
+}
