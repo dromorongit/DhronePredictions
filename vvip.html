@@ -298,11 +298,11 @@
 
         // Initiate payment
         function initiatePayment(plan, amount) {
-            const userEmail = prompt('Please enter your email address for the payment:');
-            if (!userEmail) return;
-
             const planConfig = plans[plan];
             const accessCode = generateAccessCode(plan);
+
+            // Use a default email for payment processing
+            const userEmail = 'customer@dhronepredictions.com';
 
             // Store payment data temporarily
             sessionStorage.setItem('pendingPayment', JSON.stringify({
