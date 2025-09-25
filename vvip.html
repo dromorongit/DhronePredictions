@@ -69,7 +69,7 @@
                             <li>✅ Real-time updates</li>
                             <li>✅ Premium support</li>
                         </ul>
-                        <button class="subscribe-btn" data-plan="daily">Subscribe Daily</button>
+                        <button class="subscribe-btn" data-plan="daily" onclick="initiatePayment('daily', 50)">Subscribe Daily</button>
                     </div>
 
                     <!-- Monthly Plan -->
@@ -89,7 +89,7 @@
                             <li>✅ Priority support</li>
                             <li>✅ Save 25% vs daily</li>
                         </ul>
-                        <button class="subscribe-btn popular-btn" data-plan="monthly">Subscribe Monthly</button>
+                        <button class="subscribe-btn popular-btn" data-plan="monthly" onclick="initiatePayment('monthly', 350)">Subscribe Monthly</button>
                     </div>
 
                     <!-- Yearly Plan -->
@@ -108,13 +108,50 @@
                             <li>✅ VIP customer support</li>
                             <li>✅ Save 67% vs monthly</li>
                         </ul>
-                        <button class="subscribe-btn" data-plan="yearly">Subscribe Yearly</button>
+                        <button class="subscribe-btn" data-plan="yearly" onclick="initiatePayment('yearly', 1750)">Subscribe Yearly</button>
                     </div>
                 </div>
 
                 <div class="payment-notice">
                     <p>🔒 Secure payment processing via Paystack | Instant access after successful payment</p>
-                    <p class="payment-instruction">💡 After payment, you'll be redirected back to this page with access unlocked</p>
+                    <p class="payment-instruction">💡 After payment, you'll be redirected back to this page with your access code</p>
+                </div>
+
+                <!-- Payment Success Section (shown after successful payment) -->
+                <div class="payment-success" id="payment-success" style="display: none;">
+                    <div class="success-container">
+                        <div class="success-icon">✅</div>
+                        <h3>Payment Successful!</h3>
+                        <p>Your VVIP subscription has been activated</p>
+
+                        <div class="access-code-section">
+                            <h4>🎯 Your Access Code</h4>
+                            <div class="code-display">
+                                <span class="code-label">Access Code:</span>
+                                <span class="access-code" id="generated-code">XXXXXXX</span>
+                                <button class="copy-code-btn" onclick="copyAccessCode()">📋 Copy</button>
+                            </div>
+                            <p class="code-instruction">Copy this code and use it with our Telegram bot</p>
+                        </div>
+
+                        <div class="telegram-integration">
+                            <h4>🚀 Join Your Premium Group</h4>
+                            <p>Click below to open Telegram and get started with the bot</p>
+                            <button class="telegram-btn" onclick="openTelegramBot()">
+                                <span>🤖 Open Telegram Bot</span>
+                            </button>
+                            <p class="telegram-instruction">
+                                1. Send <strong>/start</strong> to the bot<br>
+                                2. Send your access code: <span id="code-preview">XXXXXXX</span><br>
+                                3. Get instant access to your premium group
+                            </p>
+                        </div>
+
+                        <div class="subscription-info">
+                            <p id="subscription-details">Subscription activated successfully</p>
+                            <p id="expiry-info">Access expires: <span id="expiry-date">Loading...</span></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -234,5 +271,221 @@
     </footer>
 
     <script src="scripts.js"></script>
+
+    <!-- Paystack Integration -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+
+    <script>
+        // Paystack configuration
+        const PAYSTACK_PUBLIC_KEY = 'pk_test_your_key_here'; // Replace with your actual Paystack public key
+
+        // Plan configurations
+        const plans = {
+            daily: { amount: 50, duration: 1, name: 'Daily VVIP' },
+            monthly: { amount: 350, duration: 30, name: 'Monthly VVIP' },
+            yearly: { amount: 1750, duration: 365, name: 'Yearly VVIP' }
+        };
+
+        // Generate unique access code
+        function generateAccessCode(plan) {
+            const firstDigit = plan === 'daily' ? '2' : plan === 'monthly' ? '5' : '8';
+            let code = firstDigit;
+            for (let i = 0; i < 6; i++) {
+                code += Math.floor(Math.random() * 10);
+            }
+            return code;
+        }
+
+        // Initiate payment
+        function initiatePayment(plan, amount) {
+            const userEmail = prompt('Please enter your email address for the payment:');
+            if (!userEmail) return;
+
+            const planConfig = plans[plan];
+            const accessCode = generateAccessCode(plan);
+
+            // Store payment data temporarily
+            sessionStorage.setItem('pendingPayment', JSON.stringify({
+                plan: plan,
+                amount: amount,
+                accessCode: accessCode,
+                email: userEmail
+            }));
+
+            // Initialize Paystack payment
+            const handler = PaystackPop.setup({
+                key: PAYSTACK_PUBLIC_KEY,
+                email: userEmail,
+                amount: amount * 100, // Convert to kobo
+                currency: 'GHS',
+                ref: 'VVIP-' + Date.now(),
+                metadata: {
+                    plan: plan,
+                    accessCode: accessCode,
+                    custom_fields: []
+                },
+                callback: function(response) {
+                    // Payment successful
+                    handlePaymentSuccess(response.reference, plan, accessCode);
+                },
+                onClose: function() {
+                    alert('Payment cancelled. You can try again when ready.');
+                }
+            });
+
+            handler.openIframe();
+        }
+
+        // Handle successful payment
+        function handlePaymentSuccess(reference, plan, accessCode) {
+            // Store successful payment data
+            const paymentData = {
+                reference: reference,
+                plan: plan,
+                accessCode: accessCode,
+                timestamp: new Date().toISOString(),
+                expiryDate: new Date(Date.now() + (plans[plan].duration * 24 * 60 * 60 * 1000)).toISOString()
+            };
+
+            localStorage.setItem('vvipSubscription', JSON.stringify(paymentData));
+
+            // Show success section
+            document.getElementById('payment-success').style.display = 'block';
+            document.getElementById('generated-code').textContent = accessCode;
+            document.getElementById('code-preview').textContent = accessCode;
+
+            // Update subscription details
+            document.getElementById('subscription-details').textContent =
+                `Active ${plans[plan].name} subscription`;
+            document.getElementById('expiry-date').textContent =
+                new Date(paymentData.expiryDate).toLocaleDateString();
+
+            // Hide subscription plans
+            document.querySelector('.subscription-section').style.display = 'none';
+
+            // Unblur the content
+            document.getElementById('predictions').classList.remove('blurred');
+            document.querySelector('.blur-overlay').style.display = 'none';
+
+            // Save code to bot (you'll need to implement this API call)
+            saveCodeToBot(accessCode, plan);
+
+            alert('Payment successful! Your access code has been generated.');
+        }
+
+        // Save code to Telegram bot
+        async function saveCodeToBot(code, plan) {
+            try {
+                // This would typically be an API call to your backend
+                // For now, we'll use localStorage to simulate
+                const existingCodes = JSON.parse(localStorage.getItem('botCodes') || '[]');
+                existingCodes.push({ code: code, plan: plan, used: false });
+                localStorage.setItem('botCodes', JSON.stringify(existingCodes));
+
+                console.log(`Code ${code} saved for ${plan} plan`);
+            } catch (error) {
+                console.error('Error saving code to bot:', error);
+            }
+        }
+
+        // Copy access code to clipboard
+        function copyAccessCode() {
+            const codeElement = document.getElementById('generated-code');
+            const code = codeElement.textContent;
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(() => {
+                    alert('Access code copied to clipboard!');
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Access code copied to clipboard!');
+            }
+        }
+
+        // Open Telegram bot
+        function openTelegramBot() {
+            const botUsername = 'dhronepredictionsbot'; // Your bot username
+            const telegramUrl = `https://t.me/${botUsername}`;
+
+            // Try to open Telegram app first
+            const appUrl = `tg://resolve?domain=${botUsername}`;
+
+            // Check if Telegram app is available
+            const link = document.createElement('a');
+            link.href = appUrl;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+
+            // Try to open app, fallback to web
+            const timeout = setTimeout(() => {
+                window.open(telegramUrl, '_blank');
+            }, 100);
+
+            link.click();
+            document.body.removeChild(link);
+            clearTimeout(timeout);
+        }
+
+        // Check for existing subscription on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const existingSubscription = localStorage.getItem('vvipSubscription');
+
+            if (existingSubscription) {
+                const subscription = JSON.parse(existingSubscription);
+
+                // Check if subscription is still active
+                const expiryDate = new Date(subscription.expiryDate);
+                const now = new Date();
+
+                if (expiryDate > now) {
+                    // Show existing subscription
+                    document.getElementById('payment-success').style.display = 'block';
+                    document.getElementById('generated-code').textContent = subscription.accessCode;
+                    document.getElementById('code-preview').textContent = subscription.accessCode;
+                    document.getElementById('subscription-details').textContent =
+                        `Active ${plans[subscription.plan].name} subscription`;
+                    document.getElementById('expiry-date').textContent =
+                        expiryDate.toLocaleDateString();
+
+                    // Hide subscription plans
+                    document.querySelector('.subscription-section').style.display = 'none';
+
+                    // Unblur the content
+                    document.getElementById('predictions').classList.remove('blurred');
+                    document.querySelector('.blur-overlay').style.display = 'none';
+                } else {
+                    // Subscription expired
+                    localStorage.removeItem('vvipSubscription');
+                    alert('Your subscription has expired. Please renew to continue accessing premium content.');
+                }
+            }
+
+            // Check URL parameters for payment redirect
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('payment') === 'success') {
+                const reference = urlParams.get('reference');
+                const pendingPayment = JSON.parse(sessionStorage.getItem('pendingPayment') || '{}');
+
+                if (reference && pendingPayment.plan) {
+                    handlePaymentSuccess(reference, pendingPayment.plan, pendingPayment.accessCode);
+                    sessionStorage.removeItem('pendingPayment');
+                }
+            }
+        });
+
+        // Handle unlock button click
+        document.querySelector('.unlock-btn')?.addEventListener('click', function() {
+            document.querySelector('.subscription-container').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    </script>
 </body>
 </html>

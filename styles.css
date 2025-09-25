@@ -3975,53 +3975,304 @@ body:has(.user-avatar) .nav-menu li a:hover {
   }
 }
 
-/* Responsive Design for Telegram Modal */
+/* Payment Success Section */
+.payment-success-section {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.payment-success-container {
+  background: linear-gradient(135deg, var(--white) 0%, var(--light-gray) 100%);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  box-shadow: 0 10px 30px var(--shadow);
+  text-align: center;
+  border: 2px solid var(--primary-blue);
+}
+
+.payment-success-container h2 {
+  color: var(--primary-blue);
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.success-description {
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.success-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.success-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px var(--shadow);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.success-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px var(--shadow-deep);
+  border-color: var(--accent-purple);
+}
+
+.success-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-blue-purple);
+}
+
+.success-card h3 {
+  color: var(--primary-blue);
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.success-card p {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.access-code-display {
+  background: rgba(0, 123, 255, 0.05);
+  border: 2px solid var(--primary-blue);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.access-code {
+  font-family: 'Courier New', monospace;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--accent-purple);
+  background: rgba(111, 66, 193, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+  margin: 0.5rem 0;
+  letter-spacing: 0.1rem;
+  border: 1px solid var(--accent-purple);
+}
+
+.code-label {
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.success-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.success-btn {
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 150px;
+  justify-content: center;
+}
+
+.success-btn.primary {
+  background: var(--gradient-blue-purple);
+  color: var(--white);
+}
+
+.success-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--shadow-glow);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.success-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.success-btn.secondary:hover {
+  background: var(--primary-blue);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
+.success-icon {
+  font-size: 1.2rem;
+}
+
+.subscription-info {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.subscription-info p {
+  color: #155724;
+  margin: 0;
+  font-weight: 500;
+}
+
+.subscription-info .plan-name {
+  font-weight: 600;
+  color: var(--accent-purple);
+}
+
+.subscription-info .expiry-date {
+  font-weight: 500;
+  color: var(--primary-blue);
+}
+
+/* Responsive Design for Payment Success */
 @media (max-width: 768px) {
-  .telegram-modal-content {
-    margin: 1rem;
-    width: calc(100% - 2rem);
+  .payment-success-container {
+    padding: 2rem 1.5rem;
   }
 
-  .telegram-modal-header {
-    padding: 1.5rem;
+  .payment-success-container h2 {
+    font-size: 2rem;
   }
 
-  .telegram-modal-header h2 {
-    font-size: 1.6rem;
+  .success-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
-  .telegram-modal-header p {
-    font-size: 1rem;
-  }
-
-  .telegram-access-info {
+  .success-card {
     padding: 1.5rem;
   }
 
   .access-code {
-    font-size: 1.5rem;
-    padding: 0.8rem 1.5rem;
+    font-size: 1.4rem;
+    padding: 0.4rem 0.8rem;
   }
 
-  .telegram-join-btn {
-    padding: 0.8rem 1.5rem;
+  .success-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .success-btn {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-success-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .payment-success-container h2 {
+    font-size: 1.8rem;
+  }
+
+  .success-description {
     font-size: 1rem;
   }
 
-  .telegram-instructions {
+  .success-card {
     padding: 1rem;
   }
 
-  .telegram-modal-actions {
-    padding: 0 1.5rem 1.5rem;
-    flex-direction: column;
+  .success-card h3 {
+    font-size: 1.1rem;
   }
 
-  .continue-to-vvip-btn,
-  .copy-code-btn {
-    width: 100%;
-    min-width: auto;
+  .access-code {
+    font-size: 1.2rem;
+    padding: 0.3rem 0.6rem;
   }
+
+  .success-btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Responsive Design for Telegram Modal */
+@media (max-width: 768px) {
+   .telegram-modal-content {
+     margin: 1rem;
+     width: calc(100% - 2rem);
+   }
+
+   .telegram-modal-header {
+     padding: 1.5rem;
+   }
+
+   .telegram-modal-header h2 {
+     font-size: 1.6rem;
+   }
+
+   .telegram-modal-header p {
+     font-size: 1rem;
+   }
+
+   .telegram-access-info {
+     padding: 1.5rem;
+   }
+
+   .access-code {
+     font-size: 1.5rem;
+     padding: 0.8rem 1.5rem;
+   }
+
+   .telegram-join-btn {
+     padding: 0.8rem 1.5rem;
+     font-size: 1rem;
+   }
+
+   .telegram-instructions {
+     padding: 1rem;
+   }
+
+   .telegram-modal-actions {
+     padding: 0 1.5rem 1.5rem;
+     flex-direction: column;
+   }
+
+   .continue-to-vvip-btn,
+   .copy-code-btn {
+     width: 100%;
+     min-width: auto;
+   }
 }
 
 @media (max-width: 480px) {
