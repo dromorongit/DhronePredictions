@@ -653,7 +653,7 @@ footer::before {
 /* Upcoming Picks Section */
 .upcoming-picks-section {
   padding: 4rem 0;
-  background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-bg) 100%);
+  background: linear-gradient(135deg, var(--white) 0%, var(--light-gray) 100%);
   position: relative;
 }
 
