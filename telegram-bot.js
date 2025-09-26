@@ -34,10 +34,11 @@ const validCodes = new Set([
   '7197059',
   '0691417',
   '5057369',
-  // Monthly VVIP Test Codes (start with 5)
-  '5123456',
   '5234567',
-  '5345678'
+  '5345678',
+  '4285826',
+  '7583308',
+  '4155701'
 ]);
 
 console.log('🤖 Telegram Bot is running...');
