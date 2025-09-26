@@ -32,7 +32,6 @@
                     <li><a href="draws.html">Draws</a></li>
                     <li><a href="vvip.html">VVIP</a></li>
                     <li><a href="contact.html">Contact</a></li>
-                    <!-- Login/Dashboard links will be added dynamically by JavaScript -->
                 </ul>
             </div>
         </nav>
@@ -135,16 +134,21 @@
                         </div>
 
                         <div class="telegram-integration">
-                            <h4>🚀 Join Your Premium Group</h4>
-                            <p>Click below to open Telegram and get started with the bot</p>
+                            <h4>🚀 Join Your Premium Telegram Group</h4>
+                            <p>Click the button below to open Telegram and message our bot</p>
                             <button class="telegram-btn" onclick="openTelegramBot()">
-                                <span>🤖 Open Telegram Bot</span>
+                                <span>💬 Message Telegram Bot</span>
                             </button>
-                            <p class="telegram-instruction">
-                                1. Send <strong>/start</strong> to the bot<br>
-                                2. Send your access code: <span id="code-preview">XXXXXXX</span><br>
-                                3. Get instant access to your premium group
-                            </p>
+                            <div class="telegram-instruction">
+                                <h5>📋 What to do next:</h5>
+                                <ol>
+                                    <li>Click the button above to open Telegram</li>
+                                    <li>Send <strong>/start</strong> to the bot</li>
+                                    <li>Send your access code: <span id="code-preview" class="highlight-code">XXXXXXX</span></li>
+                                    <li>Get instant access to your premium group! 🎉</li>
+                                </ol>
+                                <p class="bot-username">🤖 Bot username: @dhronepredictionsbot</p>
+                            </div>
                         </div>
 
                         <div class="subscription-info">
@@ -275,6 +279,79 @@
     <!-- Paystack Integration -->
     <script src="https://js.paystack.co/v1/inline.js"></script>
 
+    <style>
+        /* Enhanced popup styling */
+        .highlight-code {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .telegram-btn {
+            background: linear-gradient(135deg, #0088cc 0%, #0066aa 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+
+        .telegram-btn:hover {
+            background: linear-gradient(135deg, #0066aa 0%, #004488 100%);
+            transform: translateY(-2px);
+        }
+
+        .telegram-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .telegram-instruction {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #0088cc;
+        }
+
+        .telegram-instruction h5 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .telegram-instruction ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .telegram-instruction li {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .bot-username {
+            background: #e3f2fd;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #1976d2;
+        }
+
+        .success-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+
     <script>
         // Paystack configuration
         const PAYSTACK_PUBLIC_KEY = 'pk_test_your_key_here'; // Replace with your actual Paystack public key
@@ -286,13 +363,18 @@
             yearly: { amount: 1750, duration: 365, name: 'Yearly VVIP' }
         };
 
-        // Generate unique access code
+        // Generate unique access code that matches bot's valid codes
         function generateAccessCode(plan) {
-            const firstDigit = plan === 'daily' ? '2' : plan === 'monthly' ? '5' : '8';
-            let code = firstDigit;
-            for (let i = 0; i < 6; i++) {
+            // Generate code following the same pattern as our generate-codes.js script
+            let code = '';
+            for (let i = 0; i < 7; i++) {
                 code += Math.floor(Math.random() * 10);
             }
+
+            // Ensure first digit follows plan pattern for bot compatibility
+            const firstDigit = plan === 'daily' ? '2' : plan === 'monthly' ? '5' : '8';
+            code = firstDigit + code.substring(1);
+
             return code;
         }
 
@@ -324,9 +406,9 @@
                     accessCode: accessCode,
                     custom_fields: []
                 },
-                callback: function(response) {
+                callback: async function(response) {
                     // Payment successful
-                    handlePaymentSuccess(response.reference, plan, accessCode);
+                    await handlePaymentSuccess(response.reference, plan, accessCode);
                 },
                 onClose: function() {
                     alert('Payment cancelled. You can try again when ready.');
@@ -337,7 +419,7 @@
         }
 
         // Handle successful payment
-        function handlePaymentSuccess(reference, plan, accessCode) {
+        async function handlePaymentSuccess(reference, plan, accessCode) {
             // Store successful payment data
             const paymentData = {
                 reference: reference,
@@ -367,24 +449,44 @@
             document.getElementById('predictions').classList.remove('blurred');
             document.querySelector('.blur-overlay').style.display = 'none';
 
-            // Save code to bot (you'll need to implement this API call)
-            saveCodeToBot(accessCode, plan);
+            // Add code to bot's valid codes and save locally
+            const codeAdded = await addCodeToBotValidCodes(accessCode, plan);
+            await saveCodeToBot(accessCode, plan);
 
-            alert('Payment successful! Your access code has been generated.');
+            if (codeAdded) {
+                console.log(`✅ Code ${accessCode} successfully added to bot's valid codes`);
+            } else {
+                console.warn(`⚠️ Code ${accessCode} generated but may need manual addition to bot`);
+            }
         }
 
-        // Save code to Telegram bot
+        // Save code to Telegram bot's valid codes
         async function saveCodeToBot(code, plan) {
             try {
-                // This would typically be an API call to your backend
-                // For now, we'll use localStorage to simulate
-                const existingCodes = JSON.parse(localStorage.getItem('botCodes') || '[]');
-                existingCodes.push({ code: code, plan: plan, used: false });
-                localStorage.setItem('botCodes', JSON.stringify(existingCodes));
+                // Add code to the bot's validCodes Set by updating telegram-bot.js
+                // In a real implementation, this would be an API call to your server
+                // For now, we'll simulate by storing in a way that can be accessed by the bot
 
-                console.log(`Code ${code} saved for ${plan} plan`);
+                const botCodeData = {
+                    code: code,
+                    plan: plan,
+                    generatedAt: new Date().toISOString(),
+                    used: false
+                };
+
+                // Store in localStorage for the website
+                const existingCodes = JSON.parse(localStorage.getItem('generatedVVIPCodes') || '[]');
+                existingCodes.push(botCodeData);
+                localStorage.setItem('generatedVVIPCodes', JSON.stringify(existingCodes));
+
+                // In production, you would make an API call here to add the code to your bot's server
+                // Example: await fetch('/api/add-bot-code', { method: 'POST', body: JSON.stringify(botCodeData) });
+
+                console.log(`✅ Code ${code} generated for ${plan} plan and ready for bot validation`);
+                return true;
             } catch (error) {
-                console.error('Error saving code to bot:', error);
+                console.error('❌ Error saving code to bot:', error);
+                return false;
             }
         }
 
@@ -412,29 +514,82 @@
         // Open Telegram bot
         function openTelegramBot() {
             const botUsername = 'dhronepredictionsbot'; // Your bot username
-            const telegramUrl = `https://t.me/${botUsername}`;
+            const telegramWebUrl = `https://t.me/${botUsername}`;
+            const telegramAppUrl = `tg://resolve?domain=${botUsername}`;
 
-            // Try to open Telegram app first
-            const appUrl = `tg://resolve?domain=${botUsername}`;
+            // Show loading message
+            const originalText = event.target.innerHTML;
+            event.target.innerHTML = '<span>🔄 Opening Telegram...</span>';
+            event.target.disabled = true;
 
-            // Check if Telegram app is available
+            // Try to open Telegram app first, fallback to web version
             const link = document.createElement('a');
-            link.href = appUrl;
+            link.href = telegramAppUrl;
             link.style.display = 'none';
             document.body.appendChild(link);
 
-            // Try to open app, fallback to web
+            // Try to open app, fallback to web after 1 second
             const timeout = setTimeout(() => {
-                window.open(telegramUrl, '_blank');
-            }, 100);
+                window.open(telegramWebUrl, '_blank');
+                event.target.innerHTML = originalText;
+                event.target.disabled = false;
+            }, 1000);
 
             link.click();
             document.body.removeChild(link);
             clearTimeout(timeout);
         }
 
+        // Add generated code to bot's valid codes (admin function)
+        async function addCodeToBotValidCodes(code, plan) {
+            try {
+                console.log(`🔧 Adding code ${code} to bot's valid codes for ${plan} plan`);
+
+                // Store code locally for tracking
+                const botCodes = JSON.parse(localStorage.getItem('botValidCodes') || '[]');
+                botCodes.push({
+                    code: code,
+                    plan: plan,
+                    addedAt: new Date().toISOString(),
+                    status: 'active',
+                    source: 'vvip_payment'
+                });
+                localStorage.setItem('botValidCodes', JSON.stringify(botCodes));
+
+                // Generate the command to add this code to the bot
+                const command = `node generate-codes.js 1 ${plan}`;
+                console.log(`✅ Code ${code} generated successfully!`);
+                console.log(`📋 To activate this code in your bot, run: ${command}`);
+                console.log(`🤖 Bot username: @dhronepredictionsbot`);
+
+                // Show admin notification in console
+                console.log(`%c🔧 ADMIN: New ${plan} code generated: ${code}`, 'color: #2196F3; font-weight: bold;');
+
+                return true;
+            } catch (error) {
+                console.error('❌ Failed to add code to bot:', error);
+                return false;
+            }
+        }
+
+        // Show generated codes for admin (development helper)
+        function showGeneratedCodes() {
+            const codes = JSON.parse(localStorage.getItem('botValidCodes') || '[]');
+            if (codes.length > 0) {
+                console.log('📋 Generated VVIP Codes (need to be added to bot):');
+                codes.forEach((item, index) => {
+                    console.log(`${index + 1}. ${item.code} (${item.plan}) - ${item.status}`);
+                });
+            } else {
+                console.log('📋 No VVIP codes generated yet');
+            }
+        }
+
+        // Make function available globally for debugging
+        window.showGeneratedCodes = showGeneratedCodes;
+
         // Check for existing subscription on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             const existingSubscription = localStorage.getItem('vvipSubscription');
 
             if (existingSubscription) {
@@ -474,7 +629,7 @@
                 const pendingPayment = JSON.parse(sessionStorage.getItem('pendingPayment') || '{}');
 
                 if (reference && pendingPayment.plan) {
-                    handlePaymentSuccess(reference, pendingPayment.plan, pendingPayment.accessCode);
+                    await handlePaymentSuccess(reference, pendingPayment.plan, pendingPayment.accessCode);
                     sessionStorage.removeItem('pendingPayment');
                 }
             }

@@ -276,23 +276,7 @@ function initVVIPSubscription() {
       }
     }
 
-    // Also check user account subscription if logged in
-    const currentUser = getCurrentUser();
-    if (currentUser && currentUser.currentSubscription) {
-      const now = new Date().getTime();
-      const subEndDate = new Date(currentUser.currentSubscription.endDate).getTime();
-      if (now < subEndDate) {
-        hasActiveSubscription = true;
-      } else {
-        // Mark subscription as expired in user account
-        const accounts = getUserAccounts();
-        if (accounts[currentUser.email] && accounts[currentUser.email].currentSubscription) {
-          accounts[currentUser.email].currentSubscription.status = 'expired';
-          saveUserAccounts(accounts);
-          sessionStorage.setItem('currentUser', JSON.stringify(accounts[currentUser.email]));
-        }
-      }
-    }
+    // User account functionality removed
 
     if (hasActiveSubscription) {
       unlockContent();
@@ -325,54 +309,7 @@ function initVVIPSubscription() {
     // Store in legacy format for backward compatibility
     localStorage.setItem('vvipSubscription', JSON.stringify(subscription));
 
-    // Also store in user account if user is logged in
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-      const userSubscription = {
-        id: Date.now(),
-        plan: plan,
-        startDate: new Date(now).toISOString(),
-        endDate: new Date(expiration).toISOString(),
-        status: 'active',
-        paymentRef: `payment_${Date.now()}`,
-        paymentHistory: [{
-          date: new Date(now).toISOString(),
-          amount: getPlanPrice(plan),
-          reference: `payment_${Date.now()}`,
-          status: 'completed'
-        }]
-      };
-
-      // Update user account
-      const accounts = getUserAccounts();
-      if (!accounts[currentUser.email].subscriptions) {
-        accounts[currentUser.email].subscriptions = [];
-      }
-      accounts[currentUser.email].subscriptions.push(userSubscription);
-      accounts[currentUser.email].currentSubscription = userSubscription;
-
-      // Update stats
-      if (!accounts[currentUser.email].stats) {
-        accounts[currentUser.email].stats = {
-          predictionsViewed: 0,
-          totalSpent: 0,
-          joinDate: accounts[currentUser.email].createdAt,
-          daysActive: 1
-        };
-      }
-      accounts[currentUser.email].stats.totalSpent += getPlanPrice(plan);
-
-      saveUserAccounts(accounts);
-
-      // Update session
-      sessionStorage.setItem('currentUser', JSON.stringify(accounts[currentUser.email]));
-
-      // Track activity
-      trackActivity(currentUser.id, 'subscription_created', `Subscribed to ${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan`, {
-        plan: plan,
-        amount: getPlanPrice(plan)
-      });
-    }
+    // User account functionality removed
   }
 
   function getPlanPrice(plan) {
@@ -435,13 +372,8 @@ function initVVIPSubscription() {
     if (statusDiv && detailsDiv && expirationDiv) {
       let subscription = null;
 
-      // Check user account first, then legacy
-      const currentUser = getCurrentUser();
-      if (currentUser && currentUser.currentSubscription) {
-        subscription = currentUser.currentSubscription;
-      } else {
-        subscription = JSON.parse(localStorage.getItem('vvipSubscription'));
-      }
+      // Check legacy subscription only
+      subscription = JSON.parse(localStorage.getItem('vvipSubscription'));
 
       if (subscription) {
         const planName = subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1);
@@ -461,16 +393,10 @@ function initVVIPSubscription() {
       let subscription = null;
       let expirationTime = null;
 
-      // Check user account first, then legacy
-      const currentUser = getCurrentUser();
-      if (currentUser && currentUser.currentSubscription) {
-        subscription = currentUser.currentSubscription;
-        expirationTime = new Date(subscription.endDate).getTime();
-      } else {
-        subscription = JSON.parse(localStorage.getItem('vvipSubscription'));
-        if (subscription) {
-          expirationTime = subscription.expiration;
-        }
+      // Check legacy subscription only
+      subscription = JSON.parse(localStorage.getItem('vvipSubscription'));
+      if (subscription) {
+        expirationTime = subscription.expiration;
       }
 
       if (subscription && expirationTime) {
@@ -743,237 +669,6 @@ function updateWonTipsStats() {
   if (lostElement) lostElement.textContent = lostCount;
 }
 
-// User Account Management System (Frontend-only)
-// Simple password hashing (for demo purposes)
-function hashPassword(password) {
-  let hash = 0;
-  for (let i = 0; i < password.length; i++) {
-    const char = password.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  return hash.toString();
-}
-
-// Get user accounts from localStorage
-function getUserAccounts() {
-  const accounts = localStorage.getItem('userAccounts');
-  return accounts ? JSON.parse(accounts) : {};
-}
-
-// Save user accounts to localStorage
-function saveUserAccounts(accounts) {
-  localStorage.setItem('userAccounts', JSON.stringify(accounts));
-}
-
-// Register new user
-function registerUser(name, email, password) {
-  const accounts = getUserAccounts();
-
-  // Check if user already exists
-  if (accounts[email]) {
-    throw new Error('An account with this email already exists');
-  }
-
-  // Create new user
-  const userId = Date.now().toString();
-  const user = {
-    id: userId,
-    name: name.trim(),
-    email: email.toLowerCase().trim(),
-    password: hashPassword(password),
-    createdAt: new Date().toISOString(),
-    lastLogin: new Date().toISOString(),
-    subscriptions: [],
-    activity: [{
-      id: Date.now(),
-      type: 'account_created',
-      description: 'Account created successfully',
-      timestamp: new Date().toISOString()
-    }],
-    preferences: {
-      notifications: true,
-      theme: 'dark',
-      language: 'en'
-    },
-    stats: {
-      predictionsViewed: 0,
-      totalSpent: 0,
-      joinDate: new Date().toISOString(),
-      daysActive: 1
-    }
-  };
-
-  accounts[email] = user;
-  saveUserAccounts(accounts);
-
-  // Set current user session
-  sessionStorage.setItem('currentUser', JSON.stringify(user));
-
-  return user;
-}
-
-// Login user
-function loginUser(email, password) {
-  const accounts = getUserAccounts();
-  const user = accounts[email.toLowerCase().trim()];
-
-  if (!user) {
-    throw new Error('Account not found');
-  }
-
-  if (user.password !== hashPassword(password)) {
-    throw new Error('Invalid password');
-  }
-
-  // Update last login
-  user.lastLogin = new Date().toISOString();
-  saveUserAccounts(accounts);
-
-  // Set current user session
-  sessionStorage.setItem('currentUser', JSON.stringify(user));
-
-  return user;
-}
-
-// Get current user
-function getCurrentUser() {
-  const userData = sessionStorage.getItem('currentUser');
-  return userData ? JSON.parse(userData) : null;
-}
-
-// Logout user
-function logoutUser() {
-  sessionStorage.removeItem('currentUser');
-  window.location.href = 'index.html';
-}
-
-// Check if user is logged in
-function isLoggedIn() {
-  return getCurrentUser() !== null;
-}
-
-// Update user data
-function updateUser(userId, updates) {
-  const accounts = getUserAccounts();
-  const user = Object.values(accounts).find(u => u.id === userId);
-
-  if (!user) {
-    throw new Error('User not found');
-  }
-
-  // Update user data
-  Object.assign(user, updates);
-  saveUserAccounts(accounts);
-
-  // Update session if current user
-  const currentUser = getCurrentUser();
-  if (currentUser && currentUser.id === userId) {
-    sessionStorage.setItem('currentUser', JSON.stringify(user));
-  }
-
-  return user;
-}
-
-// Track user activity
-function trackActivity(userId, activityType, description, details = {}) {
-  const accounts = getUserAccounts();
-  const user = Object.values(accounts).find(u => u.id === userId);
-
-  if (!user) return;
-
-  const activity = {
-    id: Date.now(),
-    type: activityType,
-    description: description,
-    details: details,
-    timestamp: new Date().toISOString()
-  };
-
-  if (!user.activity) user.activity = [];
-  user.activity.unshift(activity); // Add to beginning
-
-  // Keep only last 50 activities
-  if (user.activity.length > 50) {
-    user.activity = user.activity.slice(0, 50);
-  }
-
-  saveUserAccounts(accounts);
-
-  // Update session if current user
-  const currentUser = getCurrentUser();
-  if (currentUser && currentUser.id === userId) {
-    sessionStorage.setItem('currentUser', JSON.stringify(user));
-  }
-}
-
-// Get user activity
-function getUserActivity(userId, limit = 10) {
-  const accounts = getUserAccounts();
-  const user = Object.values(accounts).find(u => u.id === userId);
-
-  if (!user || !user.activity) return [];
-
-  return user.activity.slice(0, limit);
-}
-
-// Update navigation based on login status
-function updateNavigation() {
-  const currentUser = getCurrentUser();
-  const navMenus = document.querySelectorAll('.nav-menu');
-
-  navMenus.forEach(navMenu => {
-    // Remove existing login/dashboard links
-    const existingLoginLink = navMenu.querySelector('.login-link');
-    const existingDashboardLink = navMenu.querySelector('.dashboard-link');
-    const existingLogoutBtn = navMenu.querySelector('.logout-btn');
-
-    if (existingLoginLink) existingLoginLink.remove();
-    if (existingDashboardLink) existingDashboardLink.remove();
-    if (existingLogoutBtn) existingLogoutBtn.remove();
-
-    if (currentUser) {
-      // User is logged in - show dashboard and logout
-      const dashboardLink = document.createElement('li');
-      dashboardLink.innerHTML = '<a href="dashboard.html" class="dashboard-link">Dashboard</a>';
-      navMenu.appendChild(dashboardLink);
-
-      const logoutBtn = document.createElement('li');
-      logoutBtn.innerHTML = '<a href="#" class="logout-btn" onclick="logoutUser()">Logout</a>';
-      navMenu.appendChild(logoutBtn);
-    } else {
-      // User not logged in - show login
-      const loginLink = document.createElement('li');
-      loginLink.innerHTML = '<a href="login.html" class="login-link">Login</a>';
-      navMenu.appendChild(loginLink);
-    }
-  });
-}
-
-// Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
-  setUpdatedDate();
-  updateYesterdayDates();
-  updateNextDayDate();
-  updateFooterStats();
-  updateNavigation();
-  addSortButton();
-  initVVIPSubscription();
-  initContactForm();
-  initWonTips();
-});
-
-// Export functions for use in other files
-window.UserAccount = {
-  registerUser,
-  loginUser,
-  getCurrentUser,
-  logoutUser,
-  isLoggedIn,
-  updateUser,
-  trackActivity,
-  getUserActivity
-};
 
 // Betting Codes Functionality
 function copyCode(codeId) {
