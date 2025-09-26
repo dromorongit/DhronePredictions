@@ -1,4 +1,4 @@
-ver side p[build]
+[build]
 builder = "nixpacks"
 
 [deploy]
