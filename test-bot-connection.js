@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 // Your bot configuration
-const BOT_TOKEN = '8284449243:AAFUhi2-GkVbb4Lp3Or_SbBsREnCUaTaPls';
+const BOT_TOKEN = '8284449243:AAGIVO5aVfo1LAcQ29wXxHJoY3Pq4QqVOZ0';
 const ADMIN_USER_ID = '5872136698';
 
 console.log('🔍 Testing Telegram Bot Connection...\n');

@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 // Replace with your bot token from @BotFather
-const BOT_TOKEN = '8284449243:AAFUhi2-GkVbb4Lp3Or_SbBsREnCUaTaPls';
+const BOT_TOKEN = '8284449243:AAGIVO5aVfo1LAcQ29wXxHJoY3Pq4QqVOZ0';
 
 // Replace with your Telegram user ID (get this by messaging @userinfobot)
 const ADMIN_USER_ID = '5872136698';
@@ -38,7 +38,12 @@ const validCodes = new Set([
   '5345678',
   '4285826',
   '7583308',
-  '4155701'
+  '4155701',
+  '1534247',
+  '8320381',
+  '2544501',
+  '1948103',
+  '9788757'
 ]);
 
 console.log('🤖 Telegram Bot is running...');
