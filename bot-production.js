@@ -50,10 +50,10 @@ let validCodes = new Set([
   '0331428',
   '2633376',
   '5532437',
-  // Monthly VVIP Test Codes (start with 5)
-  '5123456',
-  '5234567',
-  '5345678'
+  // Monthly VVIP Access Codes (First digit 4-6)
+  '4123456', '4234567', '4345678', '4456789', '4567890',
+  '5123456', '5234567', '5345678', '5456789', '5567890',
+  '6123456', '6234567'
 ]);
 
 // Load additional codes from environment variable
