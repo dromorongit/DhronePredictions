@@ -1,3 +1,16 @@
+<!-- ==========================================
+     VVIP PAGE - PAYSTACK PAYMENT LINKS ACTIVE
+     ==========================================
+
+     PAYMENT BUTTONS NOW REDIRECT TO YOUR PAYSTACK PAGES:
+     - Daily: https://paystack.com/buy/dhrone-predictions-daily-vvip-fee
+     - Monthly: https://paystack.com/buy/dhrone-predictions-monthly-vvip-fee
+     - Yearly: https://paystack.com/buy/dhrone-predictions-yearly-vvip-fee
+
+     ✅ SETUP COMPLETE - All payment links are active!
+     Users will be taken directly to Paystack to complete payment.
+     ========================================== -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,7 +81,7 @@
                             <li>✅ Real-time updates</li>
                             <li>✅ Premium support</li>
                         </ul>
-                        <button class="subscribe-btn" data-plan="daily" onclick="initiatePayment('daily', 50)">Subscribe Daily</button>
+                        <button class="subscribe-btn" data-plan="daily" onclick="window.open('https://paystack.com/buy/dhrone-predictions-daily-vvip-fee', '_blank')">Subscribe Daily</button>
                     </div>
 
                     <!-- Monthly Plan -->
@@ -88,7 +101,7 @@
                             <li>✅ Priority support</li>
                             <li>✅ Save 25% vs daily</li>
                         </ul>
-                        <button class="subscribe-btn popular-btn" data-plan="monthly" onclick="initiatePayment('monthly', 350)">Subscribe Monthly</button>
+                        <button class="subscribe-btn popular-btn" data-plan="monthly" onclick="window.open('https://paystack.com/buy/dhrone-predictions-monthly-vvip-fee', '_blank')">Subscribe Monthly</button>
                     </div>
 
                     <!-- Yearly Plan -->
@@ -107,13 +120,13 @@
                             <li>✅ VIP customer support</li>
                             <li>✅ Save 67% vs monthly</li>
                         </ul>
-                        <button class="subscribe-btn" data-plan="yearly" onclick="initiatePayment('yearly', 1750)">Subscribe Yearly</button>
+                        <button class="subscribe-btn" data-plan="yearly" onclick="window.open('https://paystack.com/buy/dhrone-predictions-yearly-vvip-fee', '_blank')">Subscribe Yearly</button>
                     </div>
                 </div>
 
                 <div class="payment-notice">
                     <p>🔒 Secure payment processing via Paystack | Instant access after successful payment</p>
-                    <p class="payment-instruction">💡 After payment, you'll be redirected back to this page with your access code</p>
+                    <p class="payment-instruction">💡 Click any subscription button above to go directly to Paystack payment</p>
                 </div>
 
                 <!-- Payment Success Section (shown after successful payment) -->
@@ -276,8 +289,6 @@
 
     <script src="scripts.js"></script>
 
-    <!-- Paystack Integration -->
-    <script src="https://js.paystack.co/v1/inline.js"></script>
 
     <style>
         /* Enhanced popup styling */
@@ -353,8 +364,24 @@
     </style>
 
     <script>
-        // Paystack configuration
-        const PAYSTACK_PUBLIC_KEY = 'pk_test_your_key_here'; // Replace with your actual Paystack public key
+        // ==========================================
+        // PAYMENT PAGE REDIRECTS - NO SETUP NEEDED
+        // ==========================================
+
+        // Subscribe buttons now redirect to dedicated payment pages
+        // No Paystack configuration required on this page
+        // Users will be taken to /payment/daily, /payment/monthly, /payment/yearly
+
+        // Website configuration
+        const WEBSITE_CONFIG = {
+            name: 'Dhrone Predictions',
+            supportEmail: 'support@dhronepredictions.com',
+            telegramBot: '@dhronepredictionsbot'
+        };
+
+        // ==========================================
+        // END OF CONFIGURATION
+        // ==========================================
 
         // Plan configurations
         const plans = {
@@ -363,230 +390,8 @@
             yearly: { amount: 1750, duration: 365, name: 'Yearly VVIP' }
         };
 
-        // Generate unique access code that matches bot's valid codes
-        function generateAccessCode(plan) {
-            // Generate code following the same pattern as our generate-codes.js script
-            let code = '';
-            for (let i = 0; i < 7; i++) {
-                code += Math.floor(Math.random() * 10);
-            }
-
-            // Ensure first digit follows plan pattern for bot compatibility
-            const firstDigit = plan === 'daily' ? '2' : plan === 'monthly' ? '5' : '8';
-            code = firstDigit + code.substring(1);
-
-            return code;
-        }
-
-        // Initiate payment
-        function initiatePayment(plan, amount) {
-            const planConfig = plans[plan];
-            const accessCode = generateAccessCode(plan);
-
-            // Use a default email for payment processing
-            const userEmail = 'customer@dhronepredictions.com';
-
-            // Store payment data temporarily
-            sessionStorage.setItem('pendingPayment', JSON.stringify({
-                plan: plan,
-                amount: amount,
-                accessCode: accessCode,
-                email: userEmail
-            }));
-
-            // Initialize Paystack payment
-            const handler = PaystackPop.setup({
-                key: PAYSTACK_PUBLIC_KEY,
-                email: userEmail,
-                amount: amount * 100, // Convert to kobo
-                currency: 'GHS',
-                ref: 'VVIP-' + Date.now(),
-                metadata: {
-                    plan: plan,
-                    accessCode: accessCode,
-                    custom_fields: []
-                },
-                callback: async function(response) {
-                    // Payment successful
-                    await handlePaymentSuccess(response.reference, plan, accessCode);
-                },
-                onClose: function() {
-                    alert('Payment cancelled. You can try again when ready.');
-                }
-            });
-
-            handler.openIframe();
-        }
-
-        // Handle successful payment
-        async function handlePaymentSuccess(reference, plan, accessCode) {
-            // Store successful payment data
-            const paymentData = {
-                reference: reference,
-                plan: plan,
-                accessCode: accessCode,
-                timestamp: new Date().toISOString(),
-                expiryDate: new Date(Date.now() + (plans[plan].duration * 24 * 60 * 60 * 1000)).toISOString()
-            };
-
-            localStorage.setItem('vvipSubscription', JSON.stringify(paymentData));
-
-            // Show success section
-            document.getElementById('payment-success').style.display = 'block';
-            document.getElementById('generated-code').textContent = accessCode;
-            document.getElementById('code-preview').textContent = accessCode;
-
-            // Update subscription details
-            document.getElementById('subscription-details').textContent =
-                `Active ${plans[plan].name} subscription`;
-            document.getElementById('expiry-date').textContent =
-                new Date(paymentData.expiryDate).toLocaleDateString();
-
-            // Hide subscription plans
-            document.querySelector('.subscription-section').style.display = 'none';
-
-            // Unblur the content
-            document.getElementById('predictions').classList.remove('blurred');
-            document.querySelector('.blur-overlay').style.display = 'none';
-
-            // Add code to bot's valid codes and save locally
-            const codeAdded = await addCodeToBotValidCodes(accessCode, plan);
-            await saveCodeToBot(accessCode, plan);
-
-            if (codeAdded) {
-                console.log(`✅ Code ${accessCode} successfully added to bot's valid codes`);
-            } else {
-                console.warn(`⚠️ Code ${accessCode} generated but may need manual addition to bot`);
-            }
-        }
-
-        // Save code to Telegram bot's valid codes
-        async function saveCodeToBot(code, plan) {
-            try {
-                // Add code to the bot's validCodes Set by updating telegram-bot.js
-                // In a real implementation, this would be an API call to your server
-                // For now, we'll simulate by storing in a way that can be accessed by the bot
-
-                const botCodeData = {
-                    code: code,
-                    plan: plan,
-                    generatedAt: new Date().toISOString(),
-                    used: false
-                };
-
-                // Store in localStorage for the website
-                const existingCodes = JSON.parse(localStorage.getItem('generatedVVIPCodes') || '[]');
-                existingCodes.push(botCodeData);
-                localStorage.setItem('generatedVVIPCodes', JSON.stringify(existingCodes));
-
-                // In production, you would make an API call here to add the code to your bot's server
-                // Example: await fetch('/api/add-bot-code', { method: 'POST', body: JSON.stringify(botCodeData) });
-
-                console.log(`✅ Code ${code} generated for ${plan} plan and ready for bot validation`);
-                return true;
-            } catch (error) {
-                console.error('❌ Error saving code to bot:', error);
-                return false;
-            }
-        }
-
-        // Copy access code to clipboard
-        function copyAccessCode() {
-            const codeElement = document.getElementById('generated-code');
-            const code = codeElement.textContent;
-
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(code).then(() => {
-                    alert('Access code copied to clipboard!');
-                });
-            } else {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = code;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert('Access code copied to clipboard!');
-            }
-        }
-
-        // Open Telegram bot
-        function openTelegramBot() {
-            const botUsername = 'dhronepredictionsbot'; // Your bot username
-            const telegramWebUrl = `https://t.me/${botUsername}`;
-            const telegramAppUrl = `tg://resolve?domain=${botUsername}`;
-
-            // Show loading message
-            const originalText = event.target.innerHTML;
-            event.target.innerHTML = '<span>🔄 Opening Telegram...</span>';
-            event.target.disabled = true;
-
-            // Try to open Telegram app first, fallback to web version
-            const link = document.createElement('a');
-            link.href = telegramAppUrl;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-
-            // Try to open app, fallback to web after 1 second
-            const timeout = setTimeout(() => {
-                window.open(telegramWebUrl, '_blank');
-                event.target.innerHTML = originalText;
-                event.target.disabled = false;
-            }, 1000);
-
-            link.click();
-            document.body.removeChild(link);
-            clearTimeout(timeout);
-        }
-
-        // Add generated code to bot's valid codes (admin function)
-        async function addCodeToBotValidCodes(code, plan) {
-            try {
-                console.log(`🔧 Adding code ${code} to bot's valid codes for ${plan} plan`);
-
-                // Store code locally for tracking
-                const botCodes = JSON.parse(localStorage.getItem('botValidCodes') || '[]');
-                botCodes.push({
-                    code: code,
-                    plan: plan,
-                    addedAt: new Date().toISOString(),
-                    status: 'active',
-                    source: 'vvip_payment'
-                });
-                localStorage.setItem('botValidCodes', JSON.stringify(botCodes));
-
-                // Generate the command to add this code to the bot
-                const command = `node generate-codes.js 1 ${plan}`;
-                console.log(`✅ Code ${code} generated successfully!`);
-                console.log(`📋 To activate this code in your bot, run: ${command}`);
-                console.log(`🤖 Bot username: @dhronepredictionsbot`);
-
-                // Show admin notification in console
-                console.log(`%c🔧 ADMIN: New ${plan} code generated: ${code}`, 'color: #2196F3; font-weight: bold;');
-
-                return true;
-            } catch (error) {
-                console.error('❌ Failed to add code to bot:', error);
-                return false;
-            }
-        }
-
-        // Show generated codes for admin (development helper)
-        function showGeneratedCodes() {
-            const codes = JSON.parse(localStorage.getItem('botValidCodes') || '[]');
-            if (codes.length > 0) {
-                console.log('📋 Generated VVIP Codes (need to be added to bot):');
-                codes.forEach((item, index) => {
-                    console.log(`${index + 1}. ${item.code} (${item.plan}) - ${item.status}`);
-                });
-            } else {
-                console.log('📋 No VVIP codes generated yet');
-            }
-        }
-
-        // Make function available globally for debugging
-        window.showGeneratedCodes = showGeneratedCodes;
+        // Simple redirect functions for subscription buttons
+        // Users are redirected to dedicated payment pages
 
         // Check for existing subscription on page load
         document.addEventListener('DOMContentLoaded', async function() {
