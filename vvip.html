@@ -1,14 +1,16 @@
 <!-- ==========================================
-     VVIP PAGE - PAYSTACK PAYMENT LINKS ACTIVE
+     VVIP PAGE - PAYMENT FLOW WITH VERIFICATION
      ==========================================
 
-     PAYMENT BUTTONS NOW REDIRECT TO YOUR PAYSTACK PAGES:
-     - Daily: https://paystack.com/buy/dhrone-predictions-daily-vvip-fee
-     - Monthly: https://paystack.com/buy/dhrone-predictions-monthly-vvip-fee
-     - Yearly: https://paystack.com/buy/dhrone-predictions-yearly-vvip-fee
+     PAYMENT FLOW:
+     1. User clicks subscribe button
+     2. Redirected to Paystack payment page
+     3. After payment → payment-success.html page
+     4. User uploads payment proof screenshot
+     5. Access code generated and displayed
+     6. User can message Telegram bot
 
-     ✅ SETUP COMPLETE - All payment links are active!
-     Users will be taken directly to Paystack to complete payment.
+     ✅ SETUP COMPLETE - Full payment verification system active!
      ========================================== -->
 
 <!DOCTYPE html>
@@ -81,7 +83,7 @@
                             <li>✅ Real-time updates</li>
                             <li>✅ Premium support</li>
                         </ul>
-                        <button class="subscribe-btn" data-plan="daily" onclick="window.open('https://paystack.com/buy/dhrone-predictions-daily-vvip-fee', '_blank')">Subscribe Daily</button>
+                        <button class="subscribe-btn" data-plan="daily" onclick="window.open('https://paystack.com/buy/dhrone-predictions-daily-vvip-fee?return_url=https://dhronepredictions.com/payment-success.html?plan=daily', '_blank')">Subscribe Daily</button>
                     </div>
 
                     <!-- Monthly Plan -->
@@ -101,7 +103,7 @@
                             <li>✅ Priority support</li>
                             <li>✅ Save 25% vs daily</li>
                         </ul>
-                        <button class="subscribe-btn popular-btn" data-plan="monthly" onclick="window.open('https://paystack.com/buy/dhrone-predictions-monthly-vvip-fee', '_blank')">Subscribe Monthly</button>
+                        <button class="subscribe-btn popular-btn" data-plan="monthly" onclick="window.open('https://paystack.com/buy/dhrone-predictions-monthly-vvip-fee?return_url=https://dhronepredictions.com/payment-success.html?plan=monthly', '_blank')">Subscribe Monthly</button>
                     </div>
 
                     <!-- Yearly Plan -->
@@ -120,13 +122,13 @@
                             <li>✅ VIP customer support</li>
                             <li>✅ Save 67% vs monthly</li>
                         </ul>
-                        <button class="subscribe-btn" data-plan="yearly" onclick="window.open('https://paystack.com/buy/dhrone-predictions-yearly-vvip-fee', '_blank')">Subscribe Yearly</button>
+                        <button class="subscribe-btn" data-plan="yearly" onclick="window.open('https://paystack.com/buy/dhrone-predictions-yearly-vvip-fee?return_url=https://dhronepredictions.com/payment-success.html?plan=yearly', '_blank')">Subscribe Yearly</button>
                     </div>
                 </div>
 
                 <div class="payment-notice">
-                    <p>🔒 Secure payment processing via Paystack | Instant access after successful payment</p>
-                    <p class="payment-instruction">💡 Click any subscription button above to go directly to Paystack payment</p>
+                    <p>🔒 Secure payment processing via Paystack | Verification required for access</p>
+                    <p class="payment-instruction">💡 Complete payment → Upload proof → Get access code → Join Telegram group</p>
                 </div>
 
                 <!-- Payment Success Section (shown after successful payment) -->

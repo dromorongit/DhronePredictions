@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success - Dhrone Predictions</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .step-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .step.active {
+            background: #007bff;
+        }
+
+        .step.completed {
+            background: #28a745;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px auto;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .submit-proof-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-proof-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .access-code-popup {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 20px auto;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .access-code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+
+        .telegram-btn {
+            background: linear-gradient(135deg, #0088cc 0%, #0066aa 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .telegram-btn:hover {
+            background: linear-gradient(135deg, #0066aa 0%, #004488 100%);
+            transform: translateY(-2px);
+        }
+
+        .copy-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1>Payment Successful!</h1>
+        <p>Thank you for your subscription. Please complete the verification process below.</p>
+
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step active" data-step="1">1</div>
+            <div class="step" data-step="2">2</div>
+            <div class="step" data-step="3">3</div>
+        </div>
+
+        <!-- Step 1: Upload Payment Proof -->
+        <div class="step-container active" data-step="1">
+            <h3>📸 Submit Payment Proof</h3>
+            <p>Please upload a screenshot of your payment confirmation from Paystack or your bank/mobile money app.</p>
+
+            <div class="upload-area" onclick="document.getElementById('proof-upload').click()">
+                <div id="upload-text">
+                    <p>📸 Click here or drag & drop your payment screenshot</p>
+                    <p style="color: #666; font-size: 14px;">Supported formats: JPG, PNG, GIF (Max 5MB)</p>
+                </div>
+                <input type="file" id="proof-upload" accept="image/*" onchange="handleFileSelect(event)">
+            </div>
+
+            <img id="preview" class="preview-image" alt="Payment proof preview">
+
+            <br>
+            <button class="submit-proof-btn" onclick="submitPaymentProof()">Submit Payment Proof</button>
+        </div>
+
+        <!-- Step 2: Verification Processing -->
+        <div class="step-container" data-step="2">
+            <h3>🔍 Verifying Payment</h3>
+            <p>Please wait while we verify your payment proof...</p>
+            <div class="loading" id="verification-loader"></div>
+            <p id="verification-status">Checking payment details...</p>
+        </div>
+
+        <!-- Step 3: Access Code -->
+        <div class="step-container" data-step="3">
+            <div class="access-code-popup">
+                <h3>🎯 Your Access Code</h3>
+                <div class="access-code" id="access-code-display">XXXXXXX</div>
+                <button class="copy-btn" onclick="copyAccessCode()">📋 Copy Code</button>
+
+                <p style="color: #666; margin: 20px 0;">
+                    Use this code to access your premium Telegram group
+                </p>
+
+                <a href="https://t.me/dhronepredictionsbot" class="telegram-btn" target="_blank">
+                    💬 Message Telegram Bot
+                </a>
+
+                <div style="margin-top: 20px; font-size: 14px; color: #666;">
+                    <p><strong>Instructions:</strong></p>
+                    <ol style="text-align: left;">
+                        <li>Click the button above to open Telegram</li>
+                        <li>Send <strong>/start</strong> to the bot</li>
+                        <li>Send your access code: <span id="code-hint" style="font-weight: bold; color: #007bff;">XXXXXXX</span></li>
+                        <li>Get instant access to your premium group! 🎉</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        let generatedAccessCode = null;
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+
+                // Preview the image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('preview').style.display = 'block';
+                    document.getElementById('upload-text').innerHTML = '<p>✅ Screenshot uploaded successfully!</p>';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Handle drag and drop
+        const uploadArea = document.querySelector('.upload-area');
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFile = files[0];
+                document.getElementById('proof-upload').files = files;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('preview').style.display = 'block';
+                    document.getElementById('upload-text').innerHTML = '<p>✅ Screenshot uploaded successfully!</p>';
+                };
+                reader.readAsDataURL(files[0]);
+            }
+        });
+
+        // Submit payment proof
+        async function submitPaymentProof() {
+            if (!selectedFile) {
+                alert('Please upload a payment screenshot first!');
+                return;
+            }
+
+            // Show verification step
+            showStep(2);
+
+            try {
+                // Simulate payment verification (in real app, this would upload to server)
+                await simulateVerification();
+
+                // Generate access code
+                generatedAccessCode = generateAccessCode();
+
+                // Show access code step
+                showStep(3);
+
+                // Add code to bot's valid codes
+                await addCodeToBot(generatedAccessCode);
+
+            } catch (error) {
+                console.error('Verification failed:', error);
+                alert('Verification failed. Please contact support.');
+                showStep(1);
+            }
+        }
+
+        // Simulate payment verification
+        async function simulateVerification() {
+            return new Promise((resolve, reject) => {
+                document.getElementById('verification-status').textContent = 'Verifying payment details...';
+
+                setTimeout(() => {
+                    document.getElementById('verification-status').textContent = 'Payment verified successfully! Generating access code...';
+                    setTimeout(resolve, 1000);
+                }, 2000);
+            });
+        }
+
+        // Generate access code
+        function generateAccessCode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const plan = urlParams.get('plan') || 'monthly';
+
+            let code = '';
+            for (let i = 0; i < 7; i++) {
+                code += Math.floor(Math.random() * 10);
+            }
+
+            // Ensure first digit follows plan pattern for bot compatibility
+            const firstDigit = plan === 'daily' ? '2' : plan === 'monthly' ? '5' : '8';
+            code = firstDigit + code.substring(1);
+
+            return code;
+        }
+
+        // Add code to bot's valid codes
+        async function addCodeToBot(code) {
+            try {
+                // Get plan from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const plan = urlParams.get('plan') || 'monthly';
+
+                // In a real application, this would be an API call to your server
+                // For now, we'll store it locally and show instructions
+                const botCodes = JSON.parse(localStorage.getItem('botValidCodes') || '[]');
+                botCodes.push({
+                    code: code,
+                    plan: plan,
+                    addedAt: new Date().toISOString(),
+                    status: 'active',
+                    source: 'payment_verification'
+                });
+                localStorage.setItem('botValidCodes', JSON.stringify(botCodes));
+
+                // Also add to the actual telegram bot file (in production, this would be an API call)
+                console.log(`🔧 ADD THIS CODE TO YOUR TELEGRAM BOT:`);
+                console.log(`📋 Code: ${code}`);
+                console.log(`🎯 Plan: ${plan}`);
+                console.log(`⚡ To activate manually, add '${code}' to the validCodes Set in telegram-bot.js`);
+                console.log(`🤖 Bot will then accept this code for ${plan} access`);
+
+                return true;
+            } catch (error) {
+                console.error('Failed to add code to bot:', error);
+                return false;
+            }
+        }
+
+        // Show specific step
+        function showStep(stepNumber) {
+            // Hide all steps
+            document.querySelectorAll('.step-container').forEach(container => {
+                container.classList.remove('active');
+            });
+
+            // Show selected step
+            document.querySelector(`[data-step="${stepNumber}"]`).classList.add('active');
+
+            // Update step indicators
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+
+            for (let i = 1; i <= stepNumber; i++) {
+                if (i === stepNumber) {
+                    document.querySelector(`[data-step="${i}"]`).classList.add('active');
+                } else {
+                    document.querySelector(`[data-step="${i}"]`).classList.add('completed');
+                }
+            }
+        }
+
+        // Copy access code
+        function copyAccessCode() {
+            if (generatedAccessCode) {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(generatedAccessCode).then(() => {
+                        alert('Access code copied to clipboard!');
+                    });
+                } else {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = generatedAccessCode;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Access code copied to clipboard!');
+                }
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update access code display
+            const urlParams = new URLSearchParams(window.location.search);
+            const plan = urlParams.get('plan') || 'monthly';
+
+            if (generatedAccessCode) {
+                document.getElementById('access-code-display').textContent = generatedAccessCode;
+                document.getElementById('code-hint').textContent = generatedAccessCode;
+            }
+
+            // Auto-advance to step 3 if code already exists
+            if (generatedAccessCode) {
+                showStep(3);
+            }
+        });
+    </script>
+</body>
+</html>

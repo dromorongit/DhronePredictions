@@ -22,33 +22,7 @@ const GROUP_LINKS = {
 
 // Valid access codes (in production, store in database)
 const validCodes = new Set([
-  '7654321',
-  '2421453',
-  '2610932',
-  '0331428',
-  '2633376',
-  '5532437',
-  '3949708',
-  '8841770',
-  '4026022',
-  '7197059',
-  '0691417',
-  '5057369',
-  '5234567',
-  '5345678',
-  '4285826',
-  '7583308',
-  '4155701',
-  '1534247',
-  '8320381',
-  '2544501',
-  '1948103',
-  '9788757',
-  '5839247',
-  '5167482',
-  '5473921',
-  '5298473',
-  '5647289'
+  // All access codes cleared - new codes will be generated through payment system
 ]);
 
 console.log('🤖 Telegram Bot is running...');
