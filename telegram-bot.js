@@ -22,7 +22,10 @@ const GROUP_LINKS = {
 
 // Valid access codes (in production, store in database)
 const validCodes = new Set([
-  // All access codes cleared - new codes will be generated through payment system
+  // Monthly VVIP Access Codes (First digit 4-6)
+  '4123456', '4234567', '4345678', '4456789', '4567890',
+  '5123456', '5234567', '5345678', '5456789', '5567890',
+  '6123456', '6234567'
 ]);
 
 console.log('🤖 Telegram Bot is running...');
