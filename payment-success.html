@@ -237,6 +237,12 @@
                         <li>Send your access code: <span id="code-hint" style="font-weight: bold; color: #007bff;">XXXXXXX</span></li>
                         <li>Get instant access to your premium group! 🎉</li>
                     </ol>
+                    <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                        <p style="margin: 0; font-size: 12px;"><strong>💡 Code Format:</strong></p>
+                        <p style="margin: 5px 0 0 0; font-size: 11px;">
+                            First digit: 1-3=Daily, 4-6=Monthly, 7-9=Yearly access
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -337,6 +343,10 @@
         }
 
         // Generate access code
+        // CODE FORMAT: 7 digits where first digit determines the plan
+        // - Daily: First digit 1-3 (e.g., 2123456)
+        // - Monthly: First digit 4-6 (e.g., 5123456)
+        // - Yearly: First digit 7-9 (e.g., 8123456)
         function generateAccessCode() {
             const urlParams = new URLSearchParams(window.location.search);
             const plan = urlParams.get('plan') || 'monthly';
@@ -346,10 +356,17 @@
                 code += Math.floor(Math.random() * 10);
             }
 
-            // Ensure first digit follows plan pattern for bot compatibility
-            const firstDigit = plan === 'daily' ? '2' : plan === 'monthly' ? '5' : '8';
-            code = firstDigit + code.substring(1);
+            // Set first digit based on plan following bot's range-based logic
+            let firstDigit;
+            if (plan === 'daily') {
+                firstDigit = Math.floor(Math.random() * 3) + 1; // 1-3 for daily
+            } else if (plan === 'monthly') {
+                firstDigit = Math.floor(Math.random() * 3) + 4; // 4-6 for monthly
+            } else {
+                firstDigit = Math.floor(Math.random() * 3) + 7; // 7-9 for yearly
+            }
 
+            code = firstDigit + code.substring(1);
             return code;
         }
 
@@ -376,6 +393,7 @@
                 console.log(`🔧 ADD THIS CODE TO YOUR TELEGRAM BOT:`);
                 console.log(`📋 Code: ${code}`);
                 console.log(`🎯 Plan: ${plan}`);
+                console.log(`📊 Code Format: First digit ${code.charAt(0)} means ${plan} (Range: ${plan === 'daily' ? '1-3' : plan === 'monthly' ? '4-6' : '7-9'})`);
                 console.log(`⚡ To activate manually, add '${code}' to the validCodes Set in telegram-bot.js`);
                 console.log(`🤖 Bot will then accept this code for ${plan} access`);
 
