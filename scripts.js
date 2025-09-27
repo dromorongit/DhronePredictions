@@ -609,3 +609,35 @@ function copyCode(codeId) {
 }
 
 // Telegram link is handled in HTML with target="_blank"
+
+// Initialize all functionality when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  // Set current date for all updated-date elements
+  setUpdatedDate();
+
+  // Set yesterday's date for previously won tips sections
+  updateYesterdayDates();
+
+  // Set next day's date for upcoming picks sections
+  updateNextDayDate();
+
+  // Update footer statistics
+  updateFooterStats();
+
+  // Initialize VVIP functionality if on VVIP page
+  if (document.querySelector('.subscription-section')) {
+    initVVIPSubscription();
+  }
+
+  // Initialize won tips functionality if on pages with won tips
+  if (document.querySelector('.won-tips-section')) {
+    initWonTips();
+  }
+
+  // Add sort functionality to predictions sections
+  if (document.querySelector('.predictions-section')) {
+    addSortButton();
+  }
+
+  console.log('✅ Dhrone Predictions website loaded successfully');
+});
