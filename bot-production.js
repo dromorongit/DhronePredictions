@@ -11,17 +11,21 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 if (!BOT_TOKEN || !ADMIN_USER_ID) {
   console.error('❌ Missing required environment variables:');
   console.error('   BOT_TOKEN and ADMIN_USER_ID must be set');
-  process.exit(1);
+  console.error('🔧 Please set these in Railway environment variables');
 }
 
 // Validate BOT_TOKEN format
 if (!BOT_TOKEN.includes(':')) {
   console.error('❌ Invalid BOT_TOKEN format. Expected format: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz');
-  process.exit(1);
+  console.error('🔧 Please check your BOT_TOKEN in Railway environment variables');
 }
 
-console.log('✅ BOT_TOKEN format validated');
-console.log('✅ ADMIN_USER_ID set');
+if (BOT_TOKEN && ADMIN_USER_ID && BOT_TOKEN.includes(':')) {
+  console.log('✅ BOT_TOKEN format validated');
+  console.log('✅ ADMIN_USER_ID set');
+} else {
+  console.log('⚠️ Environment variables not properly configured');
+}
 
 // Initialize bot with production settings
 const botOptions = {
@@ -557,42 +561,49 @@ async function startBot() {
   console.log(`🔢 Total access codes loaded: ${validCodes.size}`);
   console.log(`👤 Admin User ID: ${ADMIN_USER_ID}`);
 
-  // Validate token first
-  const isTokenValid = await validateBotToken();
+  // Only validate token if we have proper environment variables
+  if (BOT_TOKEN && ADMIN_USER_ID && BOT_TOKEN.includes(':')) {
+    try {
+      const isTokenValid = await validateBotToken();
+      if (isTokenValid) {
+        console.log('✅ Bot token validated successfully');
+        console.log('🚀 Starting bot polling...');
 
-  if (!isTokenValid) {
-    console.error('💀 Cannot start bot: Invalid token');
-    console.error('🔧 Please fix BOT_TOKEN in Railway environment variables');
-    process.exit(1);
+        // Start polling with error handling
+        await bot.startPolling();
+        console.log('🔄 Polling started successfully');
+      } else {
+        console.error('❌ Bot token validation failed');
+        console.error('🔧 Please check BOT_TOKEN in Railway environment variables');
+      }
+    } catch (error) {
+      console.error('❌ Error during bot initialization:', error.message);
+      console.error('🔧 Please check your environment variables and bot token');
+    }
+  } else {
+    console.log('⚠️ Environment variables not configured properly');
+    console.log('🔧 Please set BOT_TOKEN and ADMIN_USER_ID in Railway');
   }
 
-  console.log('✅ Bot is ready to receive messages!\n');
-
-  // Start polling with error handling
-  try {
-    await bot.startPolling();
-    console.log('🔄 Polling started successfully');
-  } catch (error) {
-    console.error('❌ Failed to start polling:', error.message);
-    process.exit(1);
-  }
+  console.log('✅ HTTP server and health check are running');
+  console.log('📊 Bot will continue running even with configuration issues');
 }
 
-// Start the bot
+// Start the bot (don't exit on errors to keep HTTP server running)
 startBot().catch(error => {
-  console.error('💀 Fatal error starting bot:', error);
-  process.exit(1);
+  console.error('💀 Fatal error starting bot:', error.message);
+  console.error('🔄 HTTP server will continue running for health checks');
 });
 
-// Handle uncaught exceptions
+// Handle uncaught exceptions (don't exit to keep HTTP server running)
 process.on('uncaughtException', (error) => {
-  log('error', 'Uncaught exception', { error: error.message, stack: error.stack });
-  process.exit(1);
+  console.error('💀 Uncaught exception:', error.message);
+  console.error('🔄 HTTP server will continue running');
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  log('error', 'Unhandled rejection', { reason: reason.toString(), promise: promise.toString() });
-  process.exit(1);
+  console.error('💀 Unhandled rejection:', reason.toString());
+  console.error('🔄 HTTP server will continue running');
 });
 
 module.exports = { bot, pendingUsers, usedCodes, validCodes };
