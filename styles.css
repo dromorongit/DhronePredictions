@@ -2091,6 +2091,7 @@ footer::before {
     top: 1rem;
     right: 1rem;
     z-index: 1001;
+    color: #000000 !important;
   }
 
   .nav-toggle {
