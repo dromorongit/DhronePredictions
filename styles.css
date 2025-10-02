@@ -241,6 +241,120 @@ a:hover {
   to { transform: rotate(360deg); }
 }
 
+/* VVIP Call-to-Action Section */
+.vvip-cta-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 3rem 0;
+  margin: 2rem auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.vvip-cta-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: rotate 30s linear infinite;
+  pointer-events: none;
+}
+
+.vvip-cta-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.vvip-cta-container h2 {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.vvip-cta-container p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.vvip-benefits {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.benefit-icon {
+  font-size: 1.5rem;
+}
+
+.benefit-text {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.vvip-button {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+.vvip-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.vvip-button:hover::before {
+  left: 100%;
+}
+
+.vvip-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(255, 107, 107, 0.5);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 /* Previously Won Tips Section */
 .won-tips-section {
   max-width: 1200px;
@@ -2231,7 +2345,8 @@ footer::before {
   .subscription-section,
   .betting-codes-section,
   .contact-section,
-  .connect-section {
+  .connect-section,
+  .vvip-cta-section {
     margin: 1rem auto;
     padding: 1.5rem 1rem;
   }
@@ -2241,10 +2356,51 @@ footer::before {
   .subscription-container h2,
   .betting-codes-section .section-header h2,
   .contact-container h2,
-  .connect-card h2 {
+  .connect-card h2,
+  .vvip-cta-container h2 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
     text-align: center;
+  }
+
+  /* Mobile VVIP CTA Section */
+  .vvip-cta-section {
+    padding: 2rem 1rem;
+    margin: 1rem auto;
+    border-radius: 16px;
+  }
+
+  .vvip-cta-container {
+    padding: 0 1rem;
+  }
+
+  .vvip-cta-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .vvip-cta-container p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .vvip-benefits {
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .benefit-item {
+    padding: 0.5rem 1rem;
+  }
+
+  .benefit-text {
+    font-size: 0.9rem;
+  }
+
+  .vvip-button {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    border-radius: 25px;
   }
 
   .section-description {
@@ -2432,6 +2588,46 @@ footer::before {
 
   .footer-content {
     padding: 0 1rem;
+  }
+
+  /* Extra Small Mobile VVIP CTA */
+  .vvip-cta-section {
+    padding: 1.5rem 0.75rem;
+    margin: 0.75rem auto;
+    border-radius: 12px;
+  }
+
+  .vvip-cta-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .vvip-cta-container p {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .vvip-benefits {
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .benefit-item {
+    padding: 0.4rem 0.8rem;
+  }
+
+  .benefit-icon {
+    font-size: 1.2rem;
+  }
+
+  .benefit-text {
+    font-size: 0.8rem;
+  }
+
+  .vvip-button {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.9rem;
+    border-radius: 20px;
   }
 }
 
