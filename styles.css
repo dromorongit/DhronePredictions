@@ -2256,49 +2256,89 @@ footer::before {
     font-size: 0.85rem;
   }
 
-  /* Mobile Footer */
+  /* Mobile Footer - Redesigned Layout */
   .footer-content {
     grid-template-columns: 1fr;
     gap: 1.5rem;
     text-align: center;
     padding: 2rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .footer-stats {
     order: -1;
     text-align: center;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* Reduce font size of numbers in statistics cards */
+  .footer-stats .stat-number {
+    font-size: 1.5rem !important;
+    font-weight: 700;
+  }
+
+  .footer-stats .stat-label {
+    font-size: 0.85rem;
   }
 
   .footer-content p {
     font-size: 0.8rem;
     line-height: 1.4;
+    order: 3;
+    margin-top: 1rem;
   }
 
+  /* Social media icons horizontally under statistics */
   .social-links {
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    order: 1;
+    flex-direction: row !important;
+    gap: 1rem;
     justify-content: center;
+    margin: 1rem 0;
+    width: 100%;
+    max-width: 100%;
   }
 
   .social-links a {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+  }
+
+  /* Telegram and affiliate buttons horizontally */
+  .footer-actions {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    margin: 1rem 0;
   }
 
   .telegram-button {
-    padding: 0.75rem 1.25rem;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+    width: auto;
+    max-width: 280px;
   }
 
   .bookmaker-buttons {
-    gap: 0.5rem;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: nowrap;
+    width: 100%;
   }
 
   .bookmaker-btn {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.75rem;
-    min-width: 60px;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    min-width: 70px;
+    flex-shrink: 0;
   }
 }
 
