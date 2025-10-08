@@ -736,40 +736,32 @@ a:hover {
     min-width: 120px;
 }
 
-/* Odds Info Section */
+/* Odds Info Section - Stacked Layout */
 .odds-info {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 0.5rem;
     align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
 }
 
 .odds {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    background: rgba(40, 167, 69, 0.1);
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    border: 1px solid rgba(40, 167, 69, 0.2);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+    margin-bottom: 0.25rem;
 }
 
 .probability {
-    font-weight: 800;
-    color: var(--accent-purple);
+    font-weight: 600;
+    color: var(--text-muted);
     cursor: help;
-    font-size: 1.1rem;
-    text-shadow: 0 0 10px var(--shadow-glow);
-    transition: text-shadow 0.3s ease;
-    background: rgba(111, 66, 193, 0.1);
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    border: 1px solid rgba(111, 66, 193, 0.2);
+    font-size: 0.9rem;
+    text-shadow: none;
+    transition: color 0.3s ease;
 }
 
 .probability:hover {
-    text-shadow: 0 0 20px var(--shadow-glow);
+    color: var(--accent-purple);
 }
 
 /* Footer */
