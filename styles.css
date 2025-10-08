@@ -634,105 +634,142 @@ a:hover {
 
 /* Prediction Cards */
 .prediction-card {
-   background: var(--gradient-card);
-   border: 1px solid var(--border-color);
-   border-radius: 16px;
-   padding: 0.75rem;
-   box-shadow: 0 4px 20px var(--shadow);
-   transition: all 0.4s ease;
-   position: relative;
-   overflow: hidden;
+    background: var(--gradient-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px var(--shadow);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .prediction-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--gradient-blue-purple);
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   height: 4px;
+   background: var(--gradient-blue-purple);
 }
 
 .prediction-card::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(0, 123, 255, 0.05) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
+   content: '';
+   position: absolute;
+   top: -50%;
+   left: -50%;
+   width: 200%;
+   height: 200%;
+   background: radial-gradient(circle, rgba(0, 123, 255, 0.05) 0%, transparent 70%);
+   opacity: 0;
+   transition: opacity 0.4s ease;
+   pointer-events: none;
 }
 
 .prediction-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px var(--shadow-deep);
+   transform: translateY(-8px) scale(1.02);
+   box-shadow: 0 20px 40px var(--shadow-deep);
 }
 
 .prediction-card:hover::after {
-  opacity: 1;
+   opacity: 1;
 }
 
-.prediction-card h3 {
-  color: var(--primary-blue);
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
-  font-weight: 600;
-  position: relative;
+/* League Name Styling */
+.league-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-purple);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(111, 66, 193, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    display: inline-block;
+    border: 1px solid rgba(111, 66, 193, 0.2);
 }
 
-.prediction-card h3::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--gradient-blue-purple);
-  border-radius: 1px;
+/* Match Info Section */
+.match-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.prediction-card p {
-  margin-bottom: 0.8rem;
-  color: var(--text-muted);
-  font-size: 0.95rem;
+.teams {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    flex: 1;
 }
 
-.prediction-card .fixture {
-  font-weight: 500;
-  color: var(--text-color);
+.time {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: rgba(0, 123, 255, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 123, 255, 0.2);
 }
 
-.prediction-card .tip {
-  font-weight: 600;
-  color: var(--primary-blue);
-  background: rgba(0, 123, 255, 0.1);
-  padding: 0.3rem 0.6rem;
-  border-radius: 20px;
-  display: inline-block;
-  margin-bottom: 0.5rem;
+/* Prediction Section */
+.prediction {
+    margin-bottom: 1rem;
 }
 
-.prediction-card .odds {
-  font-weight: 700;
-  color: var(--accent-purple);
-  font-size: 1.1rem;
+.prediction-type {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+    background: rgba(0, 123, 255, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    display: inline-block;
+    border: 1px solid rgba(0, 123, 255, 0.2);
+    text-align: center;
+    min-width: 120px;
+}
+
+/* Odds Info Section */
+.odds-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.odds {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(40, 167, 69, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    border: 1px solid rgba(40, 167, 69, 0.2);
 }
 
 .probability {
-  font-weight: 800;
-  color: var(--accent-purple);
-  cursor: help;
-  font-size: 1.2rem;
-  text-shadow: 0 0 10px var(--shadow-glow);
-  transition: text-shadow 0.3s ease;
+    font-weight: 800;
+    color: var(--accent-purple);
+    cursor: help;
+    font-size: 1.1rem;
+    text-shadow: 0 0 10px var(--shadow-glow);
+    transition: text-shadow 0.3s ease;
+    background: rgba(111, 66, 193, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    border: 1px solid rgba(111, 66, 193, 0.2);
 }
 
 .probability:hover {
-  text-shadow: 0 0 20px var(--shadow-glow);
+    text-shadow: 0 0 20px var(--shadow-glow);
 }
 
 /* Footer */
