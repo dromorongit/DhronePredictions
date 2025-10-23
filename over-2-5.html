@@ -217,6 +217,74 @@
         </div>
     </footer>
 
+    <script>
+        // Dynamic prediction loading for Over 2.5
+        async function loadOver25Predictions() {
+            try {
+                const response = await fetch('/api/over25');
+                if (response.ok) {
+                    const predictions = await response.json();
+                    displayOver25Predictions(predictions);
+                } else {
+                    console.error('Failed to load predictions');
+                }
+            } catch (error) {
+                console.error('Error loading predictions:', error);
+            }
+        }
+
+        function displayOver25Predictions(predictions) {
+            const container = document.querySelector('.predictions-section');
+            if (!container) return;
+
+            // Find the existing predictions grid or create one
+            let predictionsGrid = container.querySelector('.predictions-grid');
+            if (!predictionsGrid) {
+                // Remove the "No Predictions" message and add grid
+                const noPredictionsDiv = container.querySelector('div[style*="text-align: center"]');
+                if (noPredictionsDiv) {
+                    noPredictionsDiv.remove();
+                }
+
+                predictionsGrid = document.createElement('div');
+                predictionsGrid.className = 'predictions-grid';
+                container.appendChild(predictionsGrid);
+            }
+
+            // Clear existing predictions
+            predictionsGrid.innerHTML = '';
+
+            if (predictions.length === 0) {
+                predictionsGrid.innerHTML = '<p>No predictions available at the moment.</p>';
+                return;
+            }
+
+            predictions.forEach(prediction => {
+                const statusClass = prediction.status.toLowerCase();
+                const statusColor = statusClass === 'won' ? '#28a745' : statusClass === 'lost' ? '#dc3545' : '#ffc107';
+
+                const predictionCard = document.createElement('div');
+                predictionCard.className = 'prediction-card';
+                predictionCard.innerHTML = `
+                    <div class="league-name">${prediction.match}</div>
+                    <div class="match-info">
+                        <div class="teams">${prediction.prediction}</div>
+                        <div class="time">${prediction.date}</div>
+                    </div>
+                    <div class="prediction">
+                        <span class="prediction-type" style="color: ${statusColor}">${prediction.status}</span>
+                    </div>
+                    <div class="odds-info">
+                        <span class="odds">Score: ${prediction.score || 'N/A'}</span>
+                    </div>
+                `;
+                predictionsGrid.appendChild(predictionCard);
+            });
+        }
+
+        // Load predictions when page loads
+        document.addEventListener('DOMContentLoaded', loadOver25Predictions);
+    </script>
     <script src="scripts.js"></script>
 </body>
 </html>
