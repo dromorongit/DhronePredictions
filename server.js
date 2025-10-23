@@ -21,21 +21,21 @@ app.use(express.static('.'));
 // Admin password (store in .env)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
-// Categories mapping
+// Categories mapping - matches your website pages
 const CATEGORIES = {
-  home: 'home.json',
-  banker: 'banker.json',
-  free2odds: 'free2odds.json',
-  supersingle: 'supersingle.json',
-  doublechance: 'doublechance.json',
-  over15: 'over15.json',
-  over25: 'over25.json',
-  overunder35: 'overunder35.json',
-  btts: 'btts.json',
-  overcorners: 'overcorners.json',
-  correctscores: 'correctscores.json',
-  draws: 'draws.json',
-  vvip: 'vvip.json'
+  'free-tips': 'home.json',           // index.html - Free Tips
+  'banker-tips': 'banker.json',       // banker-tips.html - Banker Tips
+  'free-2-odds': 'free2odds.json',    // free-2-odds.html - Free 2 Odds
+  'super-single': 'supersingle.json', // super-single.html - Super Single
+  'double-chance': 'doublechance.json', // double-chance.html - Double Chance
+  'over-1-5': 'over15.json',          // over-1-5.html - Over 1.5 Goals
+  'over-2-5': 'over25.json',          // over-2-5.html - Over 2.5 Goals
+  'over-under-3-5': 'overunder35.json', // over-under-3-5.html - Over/Under 3.5 Goals
+  'btts-gg': 'btts.json',             // btts-gg.html - Both Teams To Score
+  'over-corners': 'overcorners.json', // over-corners.html - Over/Under Corners
+  'correct-scores': 'correctscores.json', // correct-scores.html - Correct Scores
+  'draws': 'draws.json',              // draws.html - Draw
+  'vvip': 'vvip.json'                 // vvip.html - VVIP
 };
 
 // Helper function to get data file path
