@@ -15,21 +15,36 @@
 const fs = require('fs');
 const path = require('path');
 
-// Generate a unique 7-digit code
-function generateCode() {
-  let code = '';
-  for (let i = 0; i < 7; i++) {
+// Generate a unique 7-digit code with plan-specific prefix
+function generateCode(plan = 'monthly') {
+  let firstDigit;
+  switch (plan) {
+    case 'daily':
+      firstDigit = Math.floor(Math.random() * 4); // 0-3
+      break;
+    case 'monthly':
+      firstDigit = Math.floor(Math.random() * 3) + 4; // 4-6
+      break;
+    case 'yearly':
+      firstDigit = Math.floor(Math.random() * 3) + 7; // 7-9
+      break;
+    default:
+      firstDigit = Math.floor(Math.random() * 3) + 4; // default to monthly
+  }
+
+  let code = firstDigit.toString();
+  for (let i = 1; i < 7; i++) {
     code += Math.floor(Math.random() * 10);
   }
   return code;
 }
 
 // Generate multiple unique codes
-function generateUniqueCodes(count, existingCodes = new Set()) {
+function generateUniqueCodes(count, existingCodes = new Set(), plan = 'monthly') {
   const codes = new Set();
 
   while (codes.size < count) {
-    const code = generateCode();
+    const code = generateCode(plan);
     if (!existingCodes.has(code)) {
       codes.add(code);
     }
@@ -38,10 +53,10 @@ function generateUniqueCodes(count, existingCodes = new Set()) {
   return Array.from(codes);
 }
 
-// Load existing codes from telegram-bot.js
+// Load existing codes from bot-production.js
 function loadExistingCodes() {
   try {
-    const botFile = path.join(__dirname, 'telegram-bot.js');
+    const botFile = path.join(__dirname, 'bot-production.js');
     const content = fs.readFileSync(botFile, 'utf8');
 
     // Extract codes from the validCodes Set
@@ -62,10 +77,10 @@ function loadExistingCodes() {
   return new Set();
 }
 
-// Save codes to telegram-bot.js
+// Save codes to bot-production.js
 function saveCodesToBot(codes, plan) {
   try {
-    const botFile = path.join(__dirname, 'telegram-bot.js');
+    const botFile = path.join(__dirname, 'bot-production.js');
     let content = fs.readFileSync(botFile, 'utf8');
 
     // Load existing codes
@@ -133,7 +148,7 @@ function main() {
   console.log(`📊 Found ${existingCodes.size} existing codes`);
 
   // Generate new codes
-  const newCodes = generateUniqueCodes(count, existingCodes);
+  const newCodes = generateUniqueCodes(count, existingCodes, plan);
   console.log(`✨ Generated ${newCodes.length} new codes`);
 
   // Display codes
