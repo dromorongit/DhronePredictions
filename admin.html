@@ -242,7 +242,11 @@
         // Load categories on page load
         async function loadCategories() {
             try {
-                const response = await fetch('/api/admin/categories');
+                const response = await fetch('/api/admin/categories', {
+                    headers: {
+                        'Authorization': 'Basic ' + btoa('admin:admin123')
+                    }
+                });
                 if (response.ok) {
                     categories = await response.json();
                     renderCategoryTabs();
@@ -292,7 +296,11 @@
             container.innerHTML = '<div class="loading">Loading predictions...</div>';
 
             try {
-                const response = await fetch(`/api/admin/${category}`);
+                const response = await fetch(`/api/admin/${category}`, {
+                    headers: {
+                        'Authorization': 'Basic ' + btoa('admin:admin123')
+                    }
+                });
                 if (response.ok) {
                     const predictions = await response.json();
                     renderPredictions(predictions);
