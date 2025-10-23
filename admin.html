@@ -252,9 +252,11 @@
                     renderCategoryTabs();
                     loadCategoryData(currentCategory);
                 } else {
+                    console.error('Failed to load categories:', response.status, response.statusText);
                     showError('Failed to load categories');
                 }
             } catch (error) {
+                console.error('Error loading categories:', error);
                 showError('Error loading categories: ' + error.message);
             }
         }
@@ -305,9 +307,11 @@
                     const predictions = await response.json();
                     renderPredictions(predictions);
                 } else {
+                    console.error('Failed to load predictions:', response.status, response.statusText);
                     container.innerHTML = '<div class="error">Failed to load predictions</div>';
                 }
             } catch (error) {
+                console.error('Error loading predictions:', error);
                 container.innerHTML = `<div class="error">Error loading predictions: ${error.message}</div>`;
             }
         }
