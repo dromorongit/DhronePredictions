@@ -213,41 +213,18 @@ bot.onText(/\/status/, (msg) => {
   const userId = msg.from.id;
   const username = msg.from.username || msg.from.first_name;
 
-  const pendingUser = pendingUsers.get(userId);
+  // Check if user has active subscription first
+  const subscription = activeSubscriptions.get(userId);
 
-  if (pendingUser) {
-    bot.sendMessage(chatId,
-      `📊 *Your Access Status*
+  if (subscription) {
+    const now = new Date();
+    const isExpired = now > subscription.expiryDate;
+    const timeLeft = subscription.expiryDate - now;
+    const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
 
-👤 *User:* ${username}
-🎯 *Plan:* ${pendingUser.plan.charAt(0).toUpperCase() + pendingUser.plan.slice(1)} VVIP
-🔢 *Code:* ${pendingUser.code}
-⏰ *Validated:* ${pendingUser.timestamp.toLocaleString()}
-
-✅ *Status:* Code validated, ready to join group!
-
-🚀 Click below to join your premium group:`, {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: `🚀 Join ${pendingUser.plan.charAt(0).toUpperCase() + pendingUser.plan.slice(1)} VVIP Group`, url: GROUP_LINKS[pendingUser.plan] }]
-        ]
-      }
-    }).catch(error => {
-      log('error', 'Failed to send status message', { chatId, error: error.message });
-    });
-  } else {
-    // Check if user has active subscription
-    const subscription = activeSubscriptions.get(userId);
-    if (subscription) {
-      const now = new Date();
-      const isExpired = now > subscription.expiryDate;
-      const timeLeft = subscription.expiryDate - now;
-      const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
-
-      if (isExpired) {
-        bot.sendMessage(chatId,
-          `📊 *Your Access Status*
+    if (isExpired) {
+      bot.sendMessage(chatId,
+        `📊 *Your Access Status*
 
 👤 *User:* ${username}
 ❌ *Status:* Subscription expired
@@ -257,18 +234,18 @@ bot.onText(/\/status/, (msg) => {
 Visit our website and purchase a new subscription.
 
 🎯 Ready to get premium access again?`, {
-          parse_mode: 'Markdown',
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: '🛒 Renew VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }]
-            ]
-          }
-        }).catch(error => {
-          log('error', 'Failed to send expired status message', { chatId, error: error.message });
-        });
-      } else {
-        bot.sendMessage(chatId,
-          `📊 *Your Access Status*
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🛒 Renew VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }]
+          ]
+        }
+      }).catch(error => {
+        log('error', 'Failed to send expired status message', { chatId, error: error.message });
+      });
+    } else {
+      bot.sendMessage(chatId,
+        `📊 *Your Access Status*
 
 👤 *User:* ${username}
 🎯 *Plan:* ${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} VVIP
@@ -278,17 +255,43 @@ Visit our website and purchase a new subscription.
 ✅ *Status:* Active subscription
 
 🚀 Your premium group access is still valid!`, {
-          parse_mode: 'Markdown',
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: '🔗 Go to Group', url: GROUP_LINKS[subscription.plan] }]
-            ]
-          }
-        }).catch(error => {
-          log('error', 'Failed to send active status message', { chatId, error: error.message });
-        });
-      }
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔗 Go to Group', url: GROUP_LINKS[subscription.plan] }]
+          ]
+        }
+      }).catch(error => {
+        log('error', 'Failed to send active status message', { chatId, error: error.message });
+      });
+    }
+  } else {
+    // Check if user has pending access (code validated but hasn't joined group yet)
+    const pendingUser = pendingUsers.get(userId);
+
+    if (pendingUser) {
+      bot.sendMessage(chatId,
+        `📊 *Your Access Status*
+
+👤 *User:* ${username}
+🎯 *Plan:* ${pendingUser.plan.charAt(0).toUpperCase() + pendingUser.plan.slice(1)} VVIP
+🔢 *Code:* ${pendingUser.code}
+⏰ *Validated:* ${pendingUser.timestamp.toLocaleString()}
+
+✅ *Status:* Code validated, ready to join group!
+
+🚀 Click below to join your premium group:`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: `🚀 Join ${pendingUser.plan.charAt(0).toUpperCase() + pendingUser.plan.slice(1)} VVIP Group`, url: GROUP_LINKS[pendingUser.plan] }]
+          ]
+        }
+      }).catch(error => {
+        log('error', 'Failed to send status message', { chatId, error: error.message });
+      });
     } else {
+      // User has no subscription or pending access
       const totalCodes = validCodes.size;
       const usedCodesCount = usedCodes.size;
       const availableCodes = totalCodes - usedCodesCount;
