@@ -83,6 +83,32 @@ bot.onText(/\/help/, (msg) => {
   });
 });
 
+// Handle /getchatid command (for getting group chat IDs)
+bot.onText(/\/getchatid/, (msg) => {
+  const chatId = msg.chat.id;
+  const chatType = msg.chat.type;
+  const chatTitle = msg.chat.title || 'Private Chat';
+
+  if (chatType === 'group' || chatType === 'supergroup') {
+    bot.sendMessage(chatId,
+      `🆔 *Group Chat ID Information*\n\n` +
+      `📋 *Chat Title:* ${chatTitle}\n` +
+      `🆔 *Chat ID:* \`${chatId}\`\n` +
+      `📝 *Type:* ${chatType}\n\n` +
+      `💡 *Copy this Chat ID and add it to your Railway environment variables:*\n` +
+      `\`CHAT_ID = ${chatId}\``, {
+      parse_mode: 'Markdown'
+    });
+  } else {
+    bot.sendMessage(chatId,
+      `❌ *This command only works in groups!*\n\n` +
+      `📝 Send /getchatid in your VVIP groups to get their Chat IDs.\n` +
+      `🆔 You'll need these IDs for the Railway environment variables.`, {
+      parse_mode: 'Markdown'
+    });
+  }
+});
+
 // Handle /status command
 bot.onText(/\/status/, (msg) => {
   const chatId = msg.chat.id;

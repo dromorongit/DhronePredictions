@@ -46,6 +46,9 @@ const bot = new TelegramBot(BOT_TOKEN, botOptions);
 const pendingUsers = new Map();
 const usedCodes = new Set();
 
+// Store active subscriptions with expiry dates
+const activeSubscriptions = new Map();
+
 // Load access codes from file or environment
 let validCodes = new Set([
   '7654321',
@@ -71,6 +74,20 @@ const GROUP_LINKS = {
   daily: 'https://t.me/+ZE_XiWcVZmU2YTA0',
   monthly: 'https://t.me/+9ihp-XFoRbRhZTJk',
   yearly: 'https://t.me/+6sf0IBhU2CZmM2U0'
+};
+
+// Group chat IDs (you need to get these from your groups)
+const GROUP_CHAT_IDS = {
+  daily: process.env.DAILY_GROUP_ID || '-1000000000000', // Replace with actual group ID
+  monthly: process.env.MONTHLY_GROUP_ID || '-1000000000000', // Replace with actual group ID
+  yearly: process.env.YEARLY_GROUP_ID || '-1000000000000' // Replace with actual group ID
+};
+
+// Subscription durations in milliseconds
+const SUBSCRIPTION_DURATIONS = {
+  daily: 24 * 60 * 60 * 1000, // 24 hours
+  monthly: 30 * 24 * 60 * 60 * 1000, // 30 days
+  yearly: 365 * 24 * 60 * 60 * 1000 // 365 days
 };
 
 // Logging function
@@ -122,6 +139,36 @@ bot.onText(/\/start/, (msg) => {
   });
 });
 
+// Handle /getchatid command (for getting group chat IDs)
+bot.onText(/\/getchatid/, (msg) => {
+  const chatId = msg.chat.id;
+  const chatType = msg.chat.type;
+  const chatTitle = msg.chat.title || 'Private Chat';
+
+  if (chatType === 'group' || chatType === 'supergroup') {
+    bot.sendMessage(chatId,
+      `🆔 *Group Chat ID Information*\n\n` +
+      `📋 *Chat Title:* ${chatTitle}\n` +
+      `🆔 *Chat ID:* \`${chatId}\`\n` +
+      `📝 *Type:* ${chatType}\n\n` +
+      `💡 *Copy this Chat ID and add it to your Railway environment variables:*\n` +
+      `\`CHAT_ID = ${chatId}\``, {
+      parse_mode: 'Markdown'
+    }).catch(error => {
+      log('error', 'Failed to send chat ID message', { chatId, error: error.message });
+    });
+  } else {
+    bot.sendMessage(chatId,
+      `❌ *This command only works in groups!*\n\n` +
+      `📝 Send /getchatid in your VVIP groups to get their Chat IDs.\n` +
+      `🆔 You'll need these IDs for the Railway environment variables.`, {
+      parse_mode: 'Markdown'
+    }).catch(error => {
+      log('error', 'Failed to send chat ID error message', { chatId, error: error.message });
+    });
+  }
+});
+
 // Handle /help command
 bot.onText(/\/help/, (msg) => {
   const chatId = msg.chat.id;
@@ -133,6 +180,7 @@ bot.onText(/\/help/, (msg) => {
 • /start - Welcome message and instructions
 • /help - Show this help message
 • /status - Check your access status
+• /getchatid - Get group chat ID (admin only)
 
 📋 *How to Use:*
 1️⃣ Pay for VVIP access on our website
@@ -189,12 +237,64 @@ bot.onText(/\/status/, (msg) => {
       log('error', 'Failed to send status message', { chatId, error: error.message });
     });
   } else {
-    const totalCodes = validCodes.size;
-    const usedCodesCount = usedCodes.size;
-    const availableCodes = totalCodes - usedCodesCount;
+    // Check if user has active subscription
+    const subscription = activeSubscriptions.get(userId);
+    if (subscription) {
+      const now = new Date();
+      const isExpired = now > subscription.expiryDate;
+      const timeLeft = subscription.expiryDate - now;
+      const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
 
-    bot.sendMessage(chatId,
-      `📊 *Your Access Status*
+      if (isExpired) {
+        bot.sendMessage(chatId,
+          `📊 *Your Access Status*
+
+👤 *User:* ${username}
+❌ *Status:* Subscription expired
+⏰ *Expired:* ${subscription.expiryDate.toLocaleString()}
+
+💡 *To renew your access:*
+Visit our website and purchase a new subscription.
+
+🎯 Ready to get premium access again?`, {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🛒 Renew VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }]
+            ]
+          }
+        }).catch(error => {
+          log('error', 'Failed to send expired status message', { chatId, error: error.message });
+        });
+      } else {
+        bot.sendMessage(chatId,
+          `📊 *Your Access Status*
+
+👤 *User:* ${username}
+🎯 *Plan:* ${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} VVIP
+⏰ *Expires:* ${subscription.expiryDate.toLocaleString()}
+📅 *Days Left:* ${daysLeft}
+
+✅ *Status:* Active subscription
+
+🚀 Your premium group access is still valid!`, {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🔗 Go to Group', url: GROUP_LINKS[subscription.plan] }]
+            ]
+          }
+        }).catch(error => {
+          log('error', 'Failed to send active status message', { chatId, error: error.message });
+        });
+      }
+    } else {
+      const totalCodes = validCodes.size;
+      const usedCodesCount = usedCodes.size;
+      const availableCodes = totalCodes - usedCodesCount;
+
+      bot.sendMessage(chatId,
+        `📊 *Your Access Status*
 
 👤 *User:* ${username}
 ❌ *Status:* No active access code
@@ -211,16 +311,17 @@ bot.onText(/\/status/, (msg) => {
 4. Send it to me
 
 🎯 Ready to get premium access?`, {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '🛒 Get VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }],
-          [{ text: '❓ Need Help?', callback_data: 'help' }]
-        ]
-      }
-    }).catch(error => {
-      log('error', 'Failed to send status message', { chatId, error: error.message });
-    });
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🛒 Get VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }],
+            [{ text: '❓ Need Help?', callback_data: 'help' }]
+          ]
+        }
+      }).catch(error => {
+        log('error', 'Failed to send status message', { chatId, error: error.message });
+      });
+    }
   }
 });
 
@@ -362,6 +463,16 @@ The code "${code}" has already been used.
       username: username
     });
 
+    // Also store subscription info for expiry tracking
+    const expiryDate = new Date(Date.now() + SUBSCRIPTION_DURATIONS[plan]);
+    activeSubscriptions.set(userId, {
+      plan: plan,
+      startDate: new Date(),
+      expiryDate: expiryDate,
+      username: username,
+      code: code
+    });
+
     // Send success message with group link
     const groupLink = GROUP_LINKS[plan];
 
@@ -435,7 +546,8 @@ const server = http.createServer((req, res) => {
       uptime: process.uptime(),
       bot_status: 'running',
       pending_users: pendingUsers.size,
-      used_codes: usedCodes.size
+      used_codes: usedCodes.size,
+      active_subscriptions: activeSubscriptions.size
     }));
   } else {
     res.writeHead(404);
@@ -447,6 +559,80 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   log('info', `Health check server listening on port ${PORT}`);
 });
+
+// Automatic expiry check and user removal
+function checkExpiredSubscriptions() {
+  const now = new Date();
+  const expiredUsers = [];
+
+  for (const [userId, subscription] of activeSubscriptions) {
+    if (now > subscription.expiryDate) {
+      expiredUsers.push({ userId, subscription });
+    }
+  }
+
+  // Remove expired users from groups
+  expiredUsers.forEach(async ({ userId, subscription }) => {
+    const groupChatId = GROUP_CHAT_IDS[subscription.plan];
+
+    try {
+      // Remove user from group
+      await bot.banChatMember(groupChatId, userId);
+      await bot.unbanChatMember(groupChatId, userId); // Unban immediately
+
+      // Send notification to user
+      await bot.sendMessage(userId,
+        `⏰ *Your VVIP Subscription Has Expired!*
+
+👤 *User:* ${subscription.username}
+🎯 *Plan:* ${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} VVIP
+⏰ *Expired:* ${subscription.expiryDate.toLocaleString()}
+
+❌ *Access Removed:* You have been removed from the premium group.
+
+💡 *To renew your access:*
+Visit our website and purchase a new subscription.
+
+🎯 Ready to get premium access again?`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🛒 Renew VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }]
+          ]
+        }
+      });
+
+      // Notify admin
+      await bot.sendMessage(ADMIN_USER_ID,
+        `⏰ *VVIP Subscription Expired - User Removed*
+
+👤 *User:* ${subscription.username}
+🆔 *User ID:* ${userId}
+🎯 *Plan:* ${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} VVIP
+⏰ *Expired:* ${subscription.expiryDate.toLocaleString()}
+
+✅ *Action:* User removed from group`, {
+        parse_mode: 'Markdown'
+      });
+
+      // Clean up subscription
+      activeSubscriptions.delete(userId);
+
+      log('info', `Expired user ${subscription.username} removed from ${subscription.plan} group`, { userId });
+
+    } catch (error) {
+      log('error', `Failed to remove expired user ${subscription.username}`, { userId, error: error.message });
+    }
+  });
+
+  // Log summary
+  if (expiredUsers.length > 0) {
+    log('info', `Expiry check completed: ${expiredUsers.length} users removed`);
+  }
+}
+
+// Run expiry check every 5 minutes
+setInterval(checkExpiredSubscriptions, 5 * 60 * 1000);
 
 // Handle callback queries
 bot.on('callback_query', (query) => {
@@ -606,4 +792,4 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('🔄 HTTP server will continue running');
 });
 
-module.exports = { bot, pendingUsers, usedCodes, validCodes };
+module.exports = { bot, pendingUsers, usedCodes, validCodes, activeSubscriptions };
