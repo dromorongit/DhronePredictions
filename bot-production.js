@@ -91,7 +91,7 @@ if (process.env.ACCESS_CODES) {
 
 // Group links
 const GROUP_LINKS = {
-  daily: 'https://t.me/+ZE_XiWcVZmU2YTA0',
+  daily: 'https://t.me/+esRJpV1hEbRiMGRk',
   monthly: 'https://t.me/+9ihp-XFoRbRhZTJk',
   yearly: 'https://t.me/+6sf0IBhU2CZmM2U0'
 };
