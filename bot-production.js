@@ -98,9 +98,9 @@ const GROUP_LINKS = {
 
 // Group chat IDs (you need to get these from your groups)
 const GROUP_CHAT_IDS = {
-  daily: process.env.DAILY_GROUP_ID || '-1000000000000', // Replace with actual group ID
-  monthly: process.env.MONTHLY_GROUP_ID || '-1000000000000', // Replace with actual group ID
-  yearly: process.env.YEARLY_GROUP_ID || '-1000000000000' // Replace with actual group ID
+  daily: process.env.DAILY_GROUP_ID || '-1002919393985', // Daily VVIP Group
+  monthly: process.env.MONTHLY_GROUP_ID || '-1002773588959', // Monthly VVIP Group
+  yearly: process.env.YEARLY_GROUP_ID || '-1003091457695' // Yearly VVIP Group
 };
 
 // Subscription durations in milliseconds
@@ -496,20 +496,25 @@ The code "${code}" has already been used.
       code: code
     });
 
-    // Send success message with group link
-    const groupLink = GROUP_LINKS[plan];
-
+    // Send success message - bot will auto-add user when they join
     await bot.sendMessage(chatId,
       `✅ *Access Code Validated!*
 
 🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
 🔢 *Code:* ${code}
 
-🚀 *Click below to join your premium group:*`, {
+🚀 *The bot will automatically add you to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group!*
+
+💡 *Next Steps:*
+1. Click the group link below
+2. The bot will approve your membership instantly
+3. Enjoy premium predictions!
+
+⚠️ *Note:* Make sure you're not already in the group, or the bot may not detect your join.`, {
       parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [
-          [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: groupLink }],
+          [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: GROUP_LINKS[plan] }],
           [{ text: '🔄 Generate New Code', url: 'https://www.dhronepredicts.com' }]
         ]
       }
