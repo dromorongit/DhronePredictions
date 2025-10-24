@@ -29,7 +29,9 @@ if (BOT_TOKEN && ADMIN_USER_ID && BOT_TOKEN.includes(':')) {
 
 // Initialize bot with production settings
 const botOptions = {
-  polling: true,
+  polling: {
+    autoStart: false // Don't auto-start polling, we'll start it manually
+  },
   filepath: false // Disable file sessions for Railway
 };
 
@@ -781,11 +783,19 @@ async function startBot() {
       const isTokenValid = await validateBotToken();
       if (isTokenValid) {
         console.log('✅ Bot token validated successfully');
-        console.log('🚀 Starting bot polling...');
 
-        // Start polling with error handling
-        await bot.startPolling();
-        console.log('🔄 Polling started successfully');
+        // Add delay before starting polling to avoid conflicts
+        console.log('⏳ Waiting 5 seconds before starting polling...');
+        setTimeout(async () => {
+          try {
+            console.log('🚀 Starting bot polling...');
+            await bot.startPolling();
+            console.log('🔄 Polling started successfully');
+          } catch (pollError) {
+            console.error('❌ Error starting polling:', pollError.message);
+            console.log('💡 This might be due to multiple bot instances running');
+          }
+        }, 5000); // 5 second delay
       } else {
         console.error('❌ Bot token validation failed');
         console.error('🔧 Please check BOT_TOKEN in Railway environment variables');
