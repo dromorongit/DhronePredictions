@@ -83,18 +83,33 @@ app.get('/api/:category', async (req, res) => {
 // POST /api/add - Add new prediction
 app.post('/api/add', async (req, res) => {
   try {
-    console.log('Received request body:', req.body);
+    console.log('=== /api/add REQUEST RECEIVED ===');
     console.log('Request method:', req.method);
-    console.log('Request headers:', req.headers);
+    console.log('Request URL:', req.url);
+    console.log('Request headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+
+    // Check if request has proper content type
+    if (!req.headers['content-type'] || !req.headers['content-type'].includes('application/json')) {
+      console.log('WARNING: Missing or incorrect Content-Type header');
+    }
 
     const { category, league, match, date, time, prediction, odds, probability } = req.body;
 
+    console.log('Extracted data:', { category, league, match, date, time, prediction, odds, probability });
+
     if (!category || !match || !date || !prediction) {
+      console.log('ERROR: Missing required fields');
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
     console.log('Category received:', category);
     console.log('Available categories:', Object.keys(CATEGORIES));
+
+    if (!CATEGORIES[category]) {
+      console.log('ERROR: Invalid category:', category);
+      return res.status(400).json({ error: 'Invalid category' });
+    }
 
     const data = await readDataFile(category);
 
@@ -118,6 +133,7 @@ app.post('/api/add', async (req, res) => {
     await writeDataFile(category, data);
 
     console.log('Prediction added successfully:', newPrediction);
+    console.log('=== /api/add REQUEST COMPLETED ===');
     res.json({ success: true, prediction: newPrediction });
   } catch (error) {
     console.error('Error adding prediction:', error);
