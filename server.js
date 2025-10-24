@@ -5,7 +5,7 @@ const path = require('path');
 require('dotenv').config();
 
 // Import existing bot
-const { bot, pendingUsers, usedCodes, validCodes, activeSubscriptions } = require('./bot-production');
+const { bot, pendingUsers, usedCodes, validCodes, activeSubscriptions, startBot } = require('./bot-production');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -232,7 +232,6 @@ app.listen(PORT, () => {
   console.log(`🔐 Admin password: ${ADMIN_PASSWORD}`);
 
   // Start the bot after server is running
-  const { startBot } = require('./bot-production');
   startBot().catch(error => {
     console.error('💀 Fatal error starting bot:', error.message);
   });
