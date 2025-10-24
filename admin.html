@@ -224,6 +224,10 @@
                     <input type="date" id="addDate" required>
                 </div>
                 <div class="form-group">
+                    <label for="addTime">Time:</label>
+                    <input type="time" id="addTime" placeholder="e.g., 16:45" required>
+                </div>
+                <div class="form-group">
                     <label for="addPrediction">Prediction:</label>
                     <textarea id="addPrediction" placeholder="e.g., Over 2.5 Goals" required></textarea>
                 </div>
@@ -396,6 +400,7 @@
                             <strong>Odds:</strong> ${prediction.odds || 'N/A'} |
                             <strong>Probability:</strong> ${prediction.probability || 'N/A'} |
                             <strong>Date:</strong> ${prediction.date} |
+                            <strong>Time:</strong> ${prediction.time || 'N/A'} |
                             <strong>Score:</strong> ${prediction.score || 'N/A'} |
                             <span class="prediction-status status-${statusClass}">${prediction.status}</span>
                         </div>
@@ -445,6 +450,7 @@
             const league = document.getElementById('addLeague').value;
             const match = document.getElementById('addMatch').value;
             const date = document.getElementById('addDate').value;
+            const time = document.getElementById('addTime').value;
             const prediction = document.getElementById('addPrediction').value;
             const odds = document.getElementById('addOdds').value;
             const probability = document.getElementById('addProbability').value;
@@ -455,7 +461,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ category, league, match, date, prediction, odds, probability }),
+                    body: JSON.stringify({ category, league, match, date, time, prediction, odds, probability }),
                 });
 
                 if (response.ok) {
