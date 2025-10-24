@@ -29,9 +29,7 @@ if (BOT_TOKEN && ADMIN_USER_ID && BOT_TOKEN.includes(':')) {
 
 // Initialize bot with production settings
 const botOptions = {
-  polling: {
-    autoStart: false // Don't auto-start polling, we'll start it manually
-  },
+  polling: false, // Disable auto-polling completely
   filepath: false // Disable file sessions for Railway
 };
 
