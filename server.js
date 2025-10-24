@@ -231,10 +231,14 @@ app.listen(PORT, () => {
   console.log(`📊 Available categories: ${Object.keys(CATEGORIES).join(', ')}`);
   console.log(`🔐 Admin password: ${ADMIN_PASSWORD}`);
 
-  // Start the bot after server is running
-  startBot().catch(error => {
-    console.error('💀 Fatal error starting bot:', error.message);
-  });
+  // Start the bot after server is running (only in production)
+  if (process.env.DISABLE_BOT !== 'true') {
+    startBot().catch(error => {
+      console.error('💀 Fatal error starting bot:', error.message);
+    });
+  } else {
+    console.log('🤖 Bot disabled via DISABLE_BOT environment variable');
+  }
 });
 
 // Export for potential use in other files
