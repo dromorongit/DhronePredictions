@@ -465,14 +465,23 @@
                 });
 
                 if (response.ok) {
+                    const result = await response.json();
                     showSuccess('Prediction added successfully!');
                     document.getElementById('addForm').reset();
                     if (category === currentCategory) {
                         loadCategoryData(currentCategory);
                     }
                 } else {
-                    const error = await response.json();
-                    showError(error.error || 'Failed to add prediction');
+                    let errorMessage = 'Failed to add prediction';
+                    try {
+                        const error = await response.json();
+                        errorMessage = error.error || errorMessage;
+                    } catch (e) {
+                        // If response is not JSON, show the raw response
+                        const text = await response.text();
+                        errorMessage = `Server error: ${text.substring(0, 100)}...`;
+                    }
+                    showError(errorMessage);
                 }
             } catch (error) {
                 showError('Error adding prediction: ' + error.message);

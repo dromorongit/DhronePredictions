@@ -83,6 +83,7 @@ app.get('/api/:category', async (req, res) => {
 // POST /api/add - Add new prediction
 app.post('/api/add', async (req, res) => {
   try {
+    console.log('Received request body:', req.body);
     const { category, league, match, date, time, prediction, odds, probability } = req.body;
 
     if (!category || !match || !date || !prediction) {
@@ -110,6 +111,7 @@ app.post('/api/add', async (req, res) => {
     data.push(newPrediction);
     await writeDataFile(category, data);
 
+    console.log('Prediction added successfully:', newPrediction);
     res.json({ success: true, prediction: newPrediction });
   } catch (error) {
     console.error('Error adding prediction:', error);
