@@ -785,15 +785,18 @@ async function startBot() {
     console.log('🔧 Please set BOT_TOKEN and ADMIN_USER_ID in Railway');
   }
 
-  console.log('✅ HTTP server and health check are running');
+  console.log('✅ Bot initialization completed');
   console.log('📊 Bot will continue running even with configuration issues');
 }
 
-// Start the bot (don't exit on errors to keep HTTP server running)
-startBot().catch(error => {
-  console.error('💀 Fatal error starting bot:', error.message);
-  console.error('🔄 HTTP server will continue running for health checks');
-});
+// Only start the bot if this file is run directly (not imported)
+if (require.main === module) {
+  // Start the bot (don't exit on errors to keep HTTP server running)
+  startBot().catch(error => {
+    console.error('💀 Fatal error starting bot:', error.message);
+    console.error('🔄 HTTP server will continue running for health checks');
+  });
+}
 
 // Handle uncaught exceptions (don't exit to keep HTTP server running)
 process.on('uncaughtException', (error) => {

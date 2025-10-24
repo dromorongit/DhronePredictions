@@ -230,6 +230,12 @@ app.listen(PORT, () => {
   console.log(`🚀 Prediction Management Server running on port ${PORT}`);
   console.log(`📊 Available categories: ${Object.keys(CATEGORIES).join(', ')}`);
   console.log(`🔐 Admin password: ${ADMIN_PASSWORD}`);
+
+  // Start the bot after server is running
+  const { startBot } = require('./bot-production');
+  startBot().catch(error => {
+    console.error('💀 Fatal error starting bot:', error.message);
+  });
 });
 
 // Export for potential use in other files
