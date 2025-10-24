@@ -789,14 +789,7 @@ async function startBot() {
   console.log('📊 Bot will continue running even with configuration issues');
 }
 
-// Only start the bot if this file is run directly (not imported)
-if (require.main === module) {
-  // Start the bot (don't exit on errors to keep HTTP server running)
-  startBot().catch(error => {
-    console.error('💀 Fatal error starting bot:', error.message);
-    console.error('🔄 HTTP server will continue running for health checks');
-  });
-}
+// Bot initialization will be handled by server.js
 
 // Handle uncaught exceptions (don't exit to keep HTTP server running)
 process.on('uncaughtException', (error) => {
