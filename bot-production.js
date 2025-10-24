@@ -564,31 +564,7 @@ async function notifyAdmin(userData, username) {
   }
 }
 
-// Health check endpoint for Railway
-const http = require('http');
-
-const server = http.createServer((req, res) => {
-  if (req.url === '/health') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      bot_status: 'running',
-      pending_users: pendingUsers.size,
-      used_codes: usedCodes.size,
-      active_subscriptions: activeSubscriptions.size
-    }));
-  } else {
-    res.writeHead(404);
-    res.end('Not Found');
-  }
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  log('info', `Health check server listening on port ${PORT}`);
-});
+// Bot initialization will be handled by server.js
 
 // Automatic expiry check and user removal
 function checkExpiredSubscriptions() {
