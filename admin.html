@@ -474,12 +474,16 @@
                 } else {
                     let errorMessage = 'Failed to add prediction';
                     try {
-                        const error = await response.json();
+                        const error = await response.clone().json();
                         errorMessage = error.error || errorMessage;
                     } catch (e) {
                         // If response is not JSON, show the raw response
-                        const text = await response.text();
-                        errorMessage = `Server error: ${text.substring(0, 100)}...`;
+                        try {
+                            const text = await response.clone().text();
+                            errorMessage = `Server error: ${text.substring(0, 100)}...`;
+                        } catch (textError) {
+                            errorMessage = `Server error: Unable to read response (${response.status})`;
+                        }
                     }
                     showError(errorMessage);
                 }
