@@ -84,11 +84,17 @@ app.get('/api/:category', async (req, res) => {
 app.post('/api/add', async (req, res) => {
   try {
     console.log('Received request body:', req.body);
+    console.log('Request method:', req.method);
+    console.log('Request headers:', req.headers);
+
     const { category, league, match, date, time, prediction, odds, probability } = req.body;
 
     if (!category || !match || !date || !prediction) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
+
+    console.log('Category received:', category);
+    console.log('Available categories:', Object.keys(CATEGORIES));
 
     const data = await readDataFile(category);
 
