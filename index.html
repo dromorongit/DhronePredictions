@@ -784,7 +784,8 @@
                         <span class="prediction-type" style="color: ${statusColor}">${prediction.status}</span>
                     </div>
                     <div class="odds-info">
-                        <span class="odds">Score: ${prediction.score || 'N/A'}</span>
+                        <span class="odds">Odds: ${prediction.odds || 'N/A'}</span>
+                        <span class="probability">Prob: ${prediction.probability || 'N/A'}</span>
                     </div>
                 `;
                 predictionsGrid.appendChild(predictionCard);
