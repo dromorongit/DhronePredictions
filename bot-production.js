@@ -809,4 +809,4 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('🔄 HTTP server will continue running');
 });
 
-module.exports = { bot, pendingUsers, usedCodes, validCodes, activeSubscriptions };
+module.exports = { bot, pendingUsers, usedCodes, validCodes, activeSubscriptions, startBot };
