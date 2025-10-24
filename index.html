@@ -775,13 +775,13 @@
                 const predictionCard = document.createElement('div');
                 predictionCard.className = 'prediction-card';
                 predictionCard.innerHTML = `
-                    <div class="league-name">${prediction.match}</div>
+                    <div class="league-name">${prediction.league || 'N/A'}</div>
                     <div class="match-info">
-                        <div class="teams">${prediction.prediction}</div>
+                        <div class="teams">${prediction.match}</div>
                         <div class="time">${prediction.date}</div>
                     </div>
                     <div class="prediction">
-                        <span class="prediction-type" style="color: ${statusColor}">${prediction.status}</span>
+                        <span class="prediction-type">${prediction.prediction}</span>
                     </div>
                     <div class="odds-info">
                         <span class="odds">Odds: ${prediction.odds || 'N/A'}</span>

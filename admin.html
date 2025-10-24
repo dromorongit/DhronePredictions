@@ -212,6 +212,10 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="addLeague">League:</label>
+                    <input type="text" id="addLeague" placeholder="e.g., Premier League" required>
+                </div>
+                <div class="form-group">
                     <label for="addMatch">Match:</label>
                     <input type="text" id="addMatch" placeholder="e.g., Chelsea vs Arsenal" required>
                 </div>
@@ -365,7 +369,7 @@
 
                 item.innerHTML = `
                     <div class="prediction-info">
-                        <div class="prediction-match">${prediction.match}</div>
+                        <div class="prediction-match">${prediction.league || 'N/A'} - ${prediction.match}</div>
                         <div class="prediction-details">
                             <strong>Prediction:</strong> ${prediction.prediction} |
                             <strong>Odds:</strong> ${prediction.odds || 'N/A'} |
@@ -417,6 +421,7 @@
             e.preventDefault();
 
             const category = document.getElementById('addCategory').value;
+            const league = document.getElementById('addLeague').value;
             const match = document.getElementById('addMatch').value;
             const date = document.getElementById('addDate').value;
             const prediction = document.getElementById('addPrediction').value;
@@ -429,7 +434,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ category, match, date, prediction, odds, probability }),
+                    body: JSON.stringify({ category, league, match, date, prediction, odds, probability }),
                 });
 
                 if (response.ok) {

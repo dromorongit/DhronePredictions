@@ -83,7 +83,7 @@ app.get('/api/:category', async (req, res) => {
 // POST /api/add - Add new prediction
 app.post('/api/add', async (req, res) => {
   try {
-    const { category, match, date, prediction, odds, probability } = req.body;
+    const { category, league, match, date, prediction, odds, probability } = req.body;
 
     if (!category || !match || !date || !prediction) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -96,6 +96,7 @@ app.post('/api/add', async (req, res) => {
 
     const newPrediction = {
       id: newId,
+      league: league || '',
       match,
       date,
       prediction,
