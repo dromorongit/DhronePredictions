@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": 1,
+    "league": "Test League",
+    "match": "Test Match",
+    "date": "2025-10-24",
+    "time": "15:00",
+    "prediction": "Over 2.5 Goals",
+    "odds": "1.85",
+    "probability": "70%",
+    "score": "",
+    "status": "Pending"
+  }
+]
