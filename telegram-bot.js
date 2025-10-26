@@ -21,6 +21,13 @@ const GROUP_LINKS = {
   yearly: 'https://t.me/+6sf0IBhU2CZmM2U0'
 };
 
+// Replace with your actual group chat IDs (numeric IDs, not invite links)
+const GROUP_IDS = {
+  daily: -1002919393985,    // Daily VVIP Group
+  monthly: -1002773588959,  // Monthly VVIP Group
+  yearly: -1003091457695    // Yearly VVIP Group
+};
+
 // Valid access codes (in production, store in database)
 const validCodes = new Set([
   // Monthly VVIP Access Codes (First digit 4-6)
@@ -219,9 +226,7 @@ bot.on('new_chat_members', async (msg) => {
   const newMembers = msg.new_chat_members;
 
   // Check if this is one of our premium groups
-  const isPremiumGroup = Object.values(GROUP_LINKS).some(link =>
-    link.includes(chatId.toString())
-  );
+  const isPremiumGroup = Object.values(GROUP_IDS).includes(chatId);
 
   if (!isPremiumGroup) return;
 
@@ -231,44 +236,16 @@ bot.on('new_chat_members', async (msg) => {
     const userId = member.id;
     const username = member.username || member.first_name;
 
-    // Check if user has a valid pending request
-    if (pendingUsers.has(userId)) {
-      const userData = pendingUsers.get(userId);
-
-      // Add user to group
-      try {
-        await bot.approveChatJoinRequest(chatId, userId);
-        await bot.sendMessage(chatId,
-          `🎉 Welcome ${username} to the ${userData.plan} VVIP Group!\n\n` +
-          `📊 Enjoy exclusive premium predictions and insights!\n` +
-          `💬 Feel free to ask questions and engage with the community.`, {
-          parse_mode: 'Markdown'
-        });
-
-        // Store user as active with expiry
-        const expiry = calculateExpiry(userData.plan);
-        activeUsers.set(userId, {
-          username: username,
-          plan: userData.plan,
-          code: userData.code,
-          expiry: expiry,
-          chatId: chatId,
-          joinedAt: new Date()
-        });
-
-        // Notify admin
-        await notifyAdmin(userData, username);
-
-        // Clean up
-        pendingUsers.delete(userId);
-        usedCodes.add(userData.code);
-
-      } catch (error) {
-        console.error('Error adding user to group:', error);
-        await bot.sendMessage(chatId,
-          `⚠️ There was an issue adding ${username}. Please contact support.`
-        );
-      }
+    // Check if user is already active (auto-added users)
+    if (activeUsers.has(userId)) {
+      // User was auto-added, just welcome them
+      const userData = activeUsers.get(userId);
+      await bot.sendMessage(chatId,
+        `🎉 Welcome back ${username} to the ${userData.plan.charAt(0).toUpperCase() + userData.plan.slice(1)} VVIP Group!\n\n` +
+        `📊 Your premium access is still active!\n` +
+        `💬 Feel free to ask questions and engage with the community.`, {
+        parse_mode: 'Markdown'
+      });
     } else {
       // User joined without valid access code
       await bot.sendMessage(chatId,
@@ -325,22 +302,70 @@ async function handleAccessCode(chatId, userId, username, code) {
       username: username
     });
 
-    // Send success message with group link
+    // Send success message and automatically add user to group
+    const groupId = GROUP_IDS[plan];
     const groupLink = GROUP_LINKS[plan];
 
-    await bot.sendMessage(chatId,
-      `✅ *Access Code Validated!*\n\n` +
-      `🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP\n` +
-      `🔢 *Code:* ${code}\n\n` +
-      `🚀 *Click below to join your premium group:*`, {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: groupLink }],
-          [{ text: '🔄 Generate New Code', url: 'https://www.dhronepredicts.com' }]
-        ]
-      }
-    });
+    try {
+      // Automatically add user to the group
+      await bot.approveChatJoinRequest(groupId, userId);
+
+      // Send welcome message in the group
+      await bot.sendMessage(groupId,
+        `🎉 Welcome ${username} to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group!\n\n` +
+        `📊 Enjoy exclusive premium predictions and insights!\n` +
+        `💬 Feel free to ask questions and engage with the community.`, {
+        parse_mode: 'Markdown'
+      });
+
+      // Store user as active with expiry
+      const expiry = calculateExpiry(plan);
+      activeUsers.set(userId, {
+        username: username,
+        plan: plan,
+        code: code,
+        expiry: expiry,
+        chatId: groupId,
+        joinedAt: new Date()
+      });
+
+      // Notify admin
+      await notifyAdmin({ plan: plan, code: code }, username);
+
+      // Send confirmation message to user
+      await bot.sendMessage(chatId,
+        `✅ *Access Code Validated & Added to Group!*\n\n` +
+        `🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP\n` +
+        `🔢 *Code:* ${code}\n` +
+        `⏰ *Expires:* ${expiry.toLocaleString()}\n\n` +
+        `🚀 *You've been automatically added to your premium group!*`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔗 Visit Group', url: groupLink }],
+            [{ text: '📊 Check Status', callback_data: 'status' }]
+          ]
+        }
+      });
+
+    } catch (error) {
+      console.error('Error adding user to group:', error);
+
+      // Fallback: send link if auto-add fails
+      await bot.sendMessage(chatId,
+        `✅ *Access Code Validated!*\n\n` +
+        `🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP\n` +
+        `🔢 *Code:* ${code}\n\n` +
+        `🚀 *Click below to join your premium group:*`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: groupLink }],
+            [{ text: '🔄 Generate New Code', url: 'https://www.dhronepredicts.com' }]
+          ]
+        }
+      });
+    }
 
   } catch (error) {
     console.error('Error handling access code:', error);
@@ -476,5 +501,7 @@ console.log('✅ Telegram Bot setup complete!');
 console.log('📝 Don\'t forget to:');
 console.log('   1. Replace BOT_TOKEN with your bot token');
 console.log('   2. Replace ADMIN_USER_ID with your Telegram ID');
-console.log('   3. Update GROUP_LINKS with your actual group links');
-console.log('   4. Add your generated access codes to validCodes Set');
+console.log('   3. Update GROUP_LINKS with your actual group invite links');
+console.log('   4. Update GROUP_IDS with your actual numeric group chat IDs');
+console.log('   5. Add your generated access codes to validCodes Set');
+console.log('   6. Make sure the bot is an administrator in all groups');
