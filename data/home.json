@@ -10,5 +10,29 @@
     "probability": "70%",
     "score": "",
     "status": "Pending"
+  },
+  {
+    "id": 2,
+    "league": "Test League",
+    "match": "Test Match",
+    "date": "2025-10-26",
+    "time": "15:00",
+    "prediction": "Over 2.5 Goals",
+    "odds": "1.85",
+    "probability": "70%",
+    "score": "",
+    "status": "Pending"
+  },
+  {
+    "id": 3,
+    "league": "German Bundesliga",
+    "match": "Werder Bremen vs Union Berlin",
+    "date": "2025-10-25",
+    "time": "01:00",
+    "prediction": "Under 1.5 Goals",
+    "odds": "1.25",
+    "probability": "25%",
+    "score": "",
+    "status": "Pending"
   }
 ]
