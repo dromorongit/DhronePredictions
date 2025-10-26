@@ -38,7 +38,8 @@ function getDataFile(category) {
   if (!filename) {
     throw new Error('Invalid category');
   }
-  return path.join(__dirname, '../../data', filename);
+  // For Netlify Functions, use the repository root
+  return path.join(process.cwd(), 'data', filename);
 }
 
 // Helper function to read JSON file
@@ -210,6 +211,9 @@ app.get('/health', (req, res) => {
 
 // Export for Netlify Functions
 exports.handler = async (event, context) => {
+  console.log('Netlify Function called:', event.httpMethod, event.path);
+  console.log('Event body:', event.body);
+
   // Set up the request/response objects for Express
   const { req, res } = createMockReqRes(event);
 
@@ -219,9 +223,15 @@ exports.handler = async (event, context) => {
   // Return the response
   return new Promise((resolve) => {
     res.on('finish', () => {
+      console.log('Response:', res.statusCode, res.body);
       resolve({
         statusCode: res.statusCode,
-        headers: res.getHeaders(),
+        headers: {
+          ...res.getHeaders(),
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+        },
         body: res.body
       });
     });
