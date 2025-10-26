@@ -45,20 +45,36 @@ function getDataFile(category) {
 // Helper function to read JSON file
 async function readDataFile(category) {
   const filePath = getDataFile(category);
+  console.log('Reading file:', filePath);
   try {
     const data = await fs.readFile(filePath, 'utf8');
+    console.log('File read successfully, length:', data.length);
     return JSON.parse(data);
   } catch (error) {
+    console.log('File read error:', error.message, 'Creating new file');
     // If file doesn't exist, create it with empty array
-    await fs.writeFile(filePath, '[]');
-    return [];
+    try {
+      await fs.writeFile(filePath, '[]');
+      console.log('New file created successfully');
+      return [];
+    } catch (writeError) {
+      console.error('Failed to create file:', writeError.message);
+      throw writeError;
+    }
   }
 }
 
 // Helper function to write JSON file
 async function writeDataFile(category, data) {
   const filePath = getDataFile(category);
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+  console.log('Writing file:', filePath, 'Data length:', JSON.stringify(data).length);
+  try {
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+    console.log('File written successfully');
+  } catch (error) {
+    console.error('File write error:', error.message);
+    throw error;
+  }
 }
 
 // API Endpoints
@@ -102,9 +118,11 @@ app.post('/add', async (req, res) => {
     }
 
     const data = await readDataFile(category);
+    console.log('Current data length:', data.length);
 
     // Generate new ID
     const newId = data.length > 0 ? Math.max(...data.map(item => item.id)) + 1 : 1;
+    console.log('Generated new ID:', newId);
 
     const newPrediction = {
       id: newId,
@@ -120,6 +138,8 @@ app.post('/add', async (req, res) => {
     };
 
     data.push(newPrediction);
+    console.log('Data after push:', data.length, 'items');
+
     await writeDataFile(category, data);
 
     console.log('Prediction added successfully:', newPrediction);
@@ -127,7 +147,8 @@ app.post('/add', async (req, res) => {
     res.json({ success: true, prediction: newPrediction });
   } catch (error) {
     console.error('Error adding prediction:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
 
@@ -213,6 +234,20 @@ app.get('/health', (req, res) => {
 exports.handler = async (event, context) => {
   console.log('Netlify Function called:', event.httpMethod, event.path);
   console.log('Event body:', event.body);
+  console.log('Current working directory:', process.cwd());
+
+  // Handle preflight OPTIONS request
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+      },
+      body: ''
+    };
+  }
 
   // Set up the request/response objects for Express
   const { req, res } = createMockReqRes(event);
