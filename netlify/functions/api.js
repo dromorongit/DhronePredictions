@@ -4,19 +4,13 @@ const fs = require('fs').promises;
 const path = require('path');
 require('dotenv').config();
 
-// Import existing bot
-const { bot, pendingUsers, usedCodes, validCodes, activeSubscriptions, startBot } = require('./bot-production');
-
+// Create Express app for Netlify Functions
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve static files (website)
-app.use(express.static('.'));
 
 // Admin password (store in .env)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
@@ -44,7 +38,7 @@ function getDataFile(category) {
   if (!filename) {
     throw new Error('Invalid category');
   }
-  return path.join(__dirname, 'data', filename);
+  return path.join(__dirname, '../../data', filename);
 }
 
 // Helper function to read JSON file
@@ -69,7 +63,7 @@ async function writeDataFile(category, data) {
 // API Endpoints
 
 // GET /api/:category - Get all predictions for a category
-app.get('/api/:category', async (req, res) => {
+app.get('/:category', async (req, res) => {
   try {
     const { category } = req.params;
     const data = await readDataFile(category);
@@ -81,18 +75,13 @@ app.get('/api/:category', async (req, res) => {
 });
 
 // POST /api/add - Add new prediction
-app.post('/api/add', async (req, res) => {
+app.post('/add', async (req, res) => {
   try {
     console.log('=== /api/add REQUEST RECEIVED ===');
     console.log('Request method:', req.method);
     console.log('Request URL:', req.url);
     console.log('Request headers:', JSON.stringify(req.headers, null, 2));
     console.log('Request body:', JSON.stringify(req.body, null, 2));
-
-    // Check if request has proper content type
-    if (!req.headers['content-type'] || !req.headers['content-type'].includes('application/json')) {
-      console.log('WARNING: Missing or incorrect Content-Type header');
-    }
 
     const { category, league, match, date, time, prediction, odds, probability } = req.body;
 
@@ -142,7 +131,7 @@ app.post('/api/add', async (req, res) => {
 });
 
 // POST /api/update - Update prediction score and status
-app.post('/api/update', async (req, res) => {
+app.post('/update', async (req, res) => {
   try {
     const { category, id, score, status } = req.body;
 
@@ -194,17 +183,12 @@ function requireAuth(req, res, next) {
   next();
 }
 
-// Admin panel route
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
 // Protected admin API routes
-app.get('/api/admin/categories', requireAuth, (req, res) => {
+app.get('/admin/categories', requireAuth, (req, res) => {
   res.json(Object.keys(CATEGORIES));
 });
 
-app.get('/api/admin/:category', requireAuth, async (req, res) => {
+app.get('/admin/:category', requireAuth, async (req, res) => {
   try {
     const { category } = req.params;
     const data = await readDataFile(category);
@@ -220,40 +204,53 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    bot_status: 'running',
     predictions_categories: Object.keys(CATEGORIES).length
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Prediction Management Server running on port ${PORT}`);
-  console.log(`📊 Available categories: ${Object.keys(CATEGORIES).join(', ')}`);
-  console.log(`🔐 Admin password: ${ADMIN_PASSWORD}`);
-  console.log(`🌐 Admin panel: http://localhost:${PORT}/admin`);
+// Export for Netlify Functions
+exports.handler = async (event, context) => {
+  // Set up the request/response objects for Express
+  const { req, res } = createMockReqRes(event);
 
-  // Start the bot after server is running (only in production)
-  if (process.env.DISABLE_BOT !== 'true') {
-    console.log('🤖 Starting bot...');
-    startBot().catch(error => {
-      console.error('💀 Fatal error starting bot:', error.message);
-      console.log('💡 Bot failed to start, but server will continue running');
+  // Handle the request with Express
+  app(req, res);
+
+  // Return the response
+  return new Promise((resolve) => {
+    res.on('finish', () => {
+      resolve({
+        statusCode: res.statusCode,
+        headers: res.getHeaders(),
+        body: res.body
+      });
     });
-  } else {
-    console.log('🤖 Bot disabled via DISABLE_BOT environment variable');
-  }
-});
+  });
+};
 
-// Export for potential use in other files
-module.exports = app;
-
-// For Netlify Functions (serverless)
-if (process.env.NETLIFY) {
-  exports.handler = async (event, context) => {
-    // Handle Netlify function requests
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Server running on Netlify' })
-    };
+// Helper function to create mock req/res objects
+function createMockReqRes(event) {
+  const req = {
+    method: event.httpMethod,
+    url: event.path,
+    headers: event.headers,
+    body: event.body,
+    params: event.pathParameters || {},
+    query: event.queryStringParameters || {}
   };
+
+  let body = '';
+  const res = {
+    statusCode: 200,
+    headers: {},
+    body: '',
+    setHeader: function(name, value) { this.headers[name] = value; },
+    getHeaders: function() { return this.headers; },
+    status: function(code) { this.statusCode = code; return this; },
+    json: function(data) { this.body = JSON.stringify(data); this.end(); },
+    send: function(data) { this.body = data; this.end(); },
+    end: function() { /* Response finished */ }
+  };
+
+  return { req, res };
 }
