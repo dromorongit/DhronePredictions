@@ -817,8 +817,8 @@ Visit our website and purchase a new subscription.
   }
 }
 
-// Run expiry check every 30 seconds for testing (change to 5 * 60 * 1000 for production)
-setInterval(checkExpiredSubscriptions, 30 * 1000);
+// Run expiry check every 5 minutes
+setInterval(checkExpiredSubscriptions, 5 * 60 * 1000);
 
 // Handle callback queries
 bot.on('callback_query', (query) => {
