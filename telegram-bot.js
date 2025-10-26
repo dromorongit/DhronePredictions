@@ -314,6 +314,9 @@ async function handleAccessCode(chatId, userId, username, code) {
     // Determine which group based on code pattern (you can customize this logic)
     const plan = determinePlanFromCode(code);
 
+    // Mark code as expired immediately after validation
+    usedCodes.add(code);
+
     // Store user data for when they join the group
     pendingUsers.set(userId, {
       code: code,
@@ -338,9 +341,6 @@ async function handleAccessCode(chatId, userId, username, code) {
         ]
       }
     });
-
-    // Mark code as used
-    usedCodes.add(code);
 
   } catch (error) {
     console.error('Error handling access code:', error);
