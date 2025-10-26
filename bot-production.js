@@ -49,6 +49,9 @@ const usedCodes = new Set();
 // Store active subscriptions with expiry dates
 const activeSubscriptions = new Map();
 
+// Store user history for better status tracking
+const userHistory = new Map(); // userId -> { lastStatus: 'active'|'pending'|'none', lastCheck: Date }
+
 // Load access codes from file or environment
 let validCodes = new Set([
   '6030285',
@@ -233,10 +236,18 @@ bot.onText(/\/status/, (msg) => {
   const userId = msg.from.id;
   const username = msg.from.username || msg.from.first_name;
 
+  // Update user history
+  const history = userHistory.get(userId) || { lastStatus: 'none', lastCheck: new Date() };
+  history.lastCheck = new Date();
+  userHistory.set(userId, history);
+
   // Check if user has active subscription first
   const subscription = activeSubscriptions.get(userId);
 
   if (subscription) {
+    history.lastStatus = 'active';
+    userHistory.set(userId, history);
+
     const now = new Date();
     const isExpired = now > subscription.expiryDate;
     const timeLeft = subscription.expiryDate - now;
@@ -290,6 +301,9 @@ Visit our website and purchase a new subscription.
     const pendingUser = pendingUsers.get(userId);
 
     if (pendingUser) {
+      history.lastStatus = 'pending';
+      userHistory.set(userId, history);
+
       bot.sendMessage(chatId,
         `📊 *Your Access Status*
 
@@ -311,6 +325,9 @@ Visit our website and purchase a new subscription.
         log('error', 'Failed to send status message', { chatId, error: error.message });
       });
     } else {
+      history.lastStatus = 'none';
+      userHistory.set(userId, history);
+
       // User has no subscription or pending access
       const totalCodes = validCodes.size;
       const usedCodesCount = usedCodes.size;
@@ -484,6 +501,14 @@ The code "${code}" has already been used.
       username: username
     });
 
+    // Update user history
+    userHistory.set(userId, {
+      lastStatus: 'pending',
+      lastCheck: new Date(),
+      lastCode: code,
+      lastPlan: plan
+    });
+
     // Also store subscription info for expiry tracking
     const expiryDate = new Date(Date.now() + SUBSCRIPTION_DURATIONS[plan]);
     activeSubscriptions.set(userId, {
@@ -494,29 +519,65 @@ The code "${code}" has already been used.
       code: code
     });
 
-    // Send success message - bot will auto-add user when they join
-    await bot.sendMessage(chatId,
-      `✅ *Access Code Validated!*
+    // Try to automatically add user to group
+    const groupId = GROUP_CHAT_IDS[plan];
+
+    try {
+      // Automatically add user to the group
+      await bot.approveChatJoinRequest(groupId, userId);
+
+      // Send welcome message in the group
+      await bot.sendMessage(groupId,
+        `🎉 Welcome ${username} to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group!
+
+📊 Enjoy exclusive premium predictions and insights!
+💬 Feel free to ask questions and engage with the community.`, {
+        parse_mode: 'Markdown'
+      });
+
+      // Send confirmation message to user
+      await bot.sendMessage(chatId,
+        `✅ *Access Code Validated & Added to Group!*
+
+🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
+🔢 *Code:* ${code}
+⏰ *Expires:* ${new Date(Date.now() + SUBSCRIPTION_DURATIONS[plan]).toLocaleString()}
+
+🚀 *You've been automatically added to your premium group!*
+Check your group membership and enjoy premium predictions!`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔗 Visit Group', url: GROUP_LINKS[plan] }],
+            [{ text: '📊 Check Status', callback_data: 'status' }]
+          ]
+        }
+      });
+
+      // Notify admin
+      await notifyAdmin({ plan: plan, code: code }, username);
+
+    } catch (error) {
+      log('error', 'Error adding user to group automatically', { username, plan, error: error.message });
+
+      // Fallback: send link if auto-add fails
+      await bot.sendMessage(chatId,
+        `✅ *Access Code Validated!*
 
 🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
 🔢 *Code:* ${code}
 
-🚀 *The bot will automatically add you to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group!*
-
-💡 *Next Steps:*
-1. Click the group link below
-2. The bot will approve your membership instantly
-3. Enjoy premium predictions!
-
-⚠️ *Note:* Make sure you're not already in the group, or the bot may not detect your join.`, {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: GROUP_LINKS[plan] }],
-          [{ text: '🔄 Generate New Code', url: 'https://www.dhronepredicts.com' }]
-        ]
-      }
-    });
+🚀 *Click below to join your premium group:*
+The bot will approve your membership when you join.`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: GROUP_LINKS[plan] }],
+            [{ text: '🔄 Generate New Code', url: 'https://www.dhronepredicts.com' }]
+          ]
+        }
+      });
+    }
 
     // Mark code as used
     usedCodes.add(code);
