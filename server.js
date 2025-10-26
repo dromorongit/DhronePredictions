@@ -238,6 +238,7 @@ app.listen(PORT, () => {
     startBot().catch(error => {
       console.error('💀 Fatal error starting bot:', error.message);
       console.log('💡 Bot failed to start, but server will continue running');
+      console.log('💡 To disable bot for Railway, set DISABLE_BOT=true in environment variables');
     });
   } else {
     console.log('🤖 Bot disabled via DISABLE_BOT environment variable');
