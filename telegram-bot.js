@@ -11,6 +11,7 @@ const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
 // Store pending users (in production, use a database)
 const pendingUsers = new Map();
+const activeUsers = new Map(); // Track active users with expiry
 const usedCodes = new Set();
 
 // Replace with your actual group chat IDs
@@ -117,8 +118,30 @@ bot.onText(/\/status/, (msg) => {
 
   // Check if user has pending access
   const pendingUser = pendingUsers.get(userId);
+  const activeUser = activeUsers.get(userId);
 
-  if (pendingUser) {
+  if (activeUser) {
+    // User has active access
+    const timeLeft = calculateTimeLeft(activeUser.expiry);
+    bot.sendMessage(chatId,
+      `📊 *Your Access Status*\n\n` +
+      `👤 *User:* ${username}\n` +
+      `🎯 *Plan:* ${activeUser.plan.charAt(0).toUpperCase() + activeUser.plan.slice(1)} VVIP\n` +
+      `🔢 *Code:* ${activeUser.code}\n` +
+      `⏰ *Time Left:* ${timeLeft}\n` +
+      `📅 *Expires:* ${activeUser.expiry.toLocaleString()}\n` +
+      `📅 *Joined:* ${activeUser.joinedAt.toLocaleString()}\n\n` +
+      `✅ *Status:* Active premium access!\n\n` +
+      `💡 Enjoy your premium predictions and insights.`, {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔗 Visit Group', url: GROUP_LINKS[activeUser.plan] }],
+          [{ text: '🔄 Extend Access', url: 'https://www.dhronepredicts.com/vvip' }]
+        ]
+      }
+    });
+  } else if (pendingUser) {
     // User has validated code but hasn't joined group yet
     bot.sendMessage(chatId,
       `📊 *Your Access Status*\n\n` +
@@ -220,6 +243,17 @@ bot.on('new_chat_members', async (msg) => {
           `📊 Enjoy exclusive premium predictions and insights!\n` +
           `💬 Feel free to ask questions and engage with the community.`, {
           parse_mode: 'Markdown'
+        });
+
+        // Store user as active with expiry
+        const expiry = calculateExpiry(userData.plan);
+        activeUsers.set(userId, {
+          username: username,
+          plan: userData.plan,
+          code: userData.code,
+          expiry: expiry,
+          chatId: chatId,
+          joinedAt: new Date()
         });
 
         // Notify admin
@@ -327,6 +361,84 @@ function determinePlanFromCode(code) {
   return 'yearly';
 }
 
+// Calculate expiry date based on plan
+function calculateExpiry(plan) {
+  const now = new Date();
+  switch (plan) {
+    case 'daily':
+      return new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
+    case 'monthly':
+      return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days
+    case 'yearly':
+      return new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000); // 365 days
+    default:
+      return new Date(now.getTime() + 24 * 60 * 60 * 1000); // Default to 24 hours
+  }
+}
+
+// Calculate time left until expiry
+function calculateTimeLeft(expiryDate) {
+  const now = new Date();
+  const timeLeft = expiryDate - now;
+
+  if (timeLeft <= 0) return 'Expired';
+
+  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
+}
+
+// Check and remove expired users
+async function checkExpiredUsers() {
+  const now = new Date();
+  const expiredUsers = [];
+
+  for (const [userId, userData] of activeUsers) {
+    if (userData.expiry <= now) {
+      expiredUsers.push(userId);
+    }
+  }
+
+  for (const userId of expiredUsers) {
+    const userData = activeUsers.get(userId);
+    const groupLink = GROUP_LINKS[userData.plan];
+
+    // Extract chat ID from group link (this is a simplification; in reality, you'd need actual chat IDs)
+    // For now, we'll assume we have the chat IDs stored or can get them
+    // This part needs to be adjusted based on how you store group chat IDs
+
+    try {
+      // Remove user from group
+      await bot.banChatMember(userData.chatId, userId);
+      await bot.unbanChatMember(userData.chatId, userId); // Allow rejoining if they get new access
+
+      // Notify user
+      await bot.sendMessage(userId,
+        `⏰ *Your VVIP Access Has Expired!*\n\n` +
+        `🎯 *Plan:* ${userData.plan.charAt(0).toUpperCase() + userData.plan.slice(1)} VVIP\n` +
+        `📅 *Expired:* ${userData.expiry.toLocaleString()}\n\n` +
+        `💡 To continue getting premium predictions, renew your subscription on our website.`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔄 Renew Access', url: 'https://www.dhronepredicts.com/vvip' }]
+          ]
+        }
+      });
+
+      console.log(`Removed expired user ${userData.username} (${userId}) from ${userData.plan} group`);
+    } catch (error) {
+      console.error(`Error removing expired user ${userId}:`, error);
+    }
+
+    activeUsers.delete(userId);
+  }
+}
+
 // Notify admin about new user
 async function notifyAdmin(userData, username) {
   try {
@@ -347,6 +459,9 @@ async function notifyAdmin(userData, username) {
 bot.on('callback_query', (query) => {
   // Handle any callback queries if needed
 });
+
+// Periodic check for expired users (every 5 minutes)
+setInterval(checkExpiredUsers, 5 * 60 * 1000);
 
 // Error handling
 bot.on('polling_error', (error) => {
