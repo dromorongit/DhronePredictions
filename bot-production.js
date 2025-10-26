@@ -42,15 +42,117 @@ if (NODE_ENV === 'production') {
 
 const bot = new TelegramBot(BOT_TOKEN, botOptions);
 
-// Store pending users (in production, use Redis or database)
+// Data persistence files
+const DATA_DIR = path.join(__dirname, 'data');
+const PENDING_USERS_FILE = path.join(DATA_DIR, 'pendingUsers.json');
+const USED_CODES_FILE = path.join(DATA_DIR, 'usedCodes.json');
+const ACTIVE_SUBSCRIPTIONS_FILE = path.join(DATA_DIR, 'activeSubscriptions.json');
+const USER_HISTORY_FILE = path.join(DATA_DIR, 'userHistory.json');
+
+// Ensure data directory exists
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+// Store pending users (persisted to JSON)
 const pendingUsers = new Map();
 const usedCodes = new Set();
 
-// Store active subscriptions with expiry dates
+// Store active subscriptions with expiry dates (persisted to JSON)
 const activeSubscriptions = new Map();
 
-// Store user history for better status tracking
+// Store user history for better status tracking (persisted to JSON)
 const userHistory = new Map(); // userId -> { lastStatus: 'active'|'pending'|'none', lastCheck: Date }
+
+// Load data from JSON files
+function loadData() {
+  try {
+    // Load pendingUsers
+    if (fs.existsSync(PENDING_USERS_FILE)) {
+      const data = JSON.parse(fs.readFileSync(PENDING_USERS_FILE, 'utf8'));
+      for (const [key, value] of Object.entries(data)) {
+        pendingUsers.set(key, { ...value, timestamp: new Date(value.timestamp) });
+      }
+      console.log(`✅ Loaded ${pendingUsers.size} pending users`);
+    }
+
+    // Load usedCodes
+    if (fs.existsSync(USED_CODES_FILE)) {
+      const data = JSON.parse(fs.readFileSync(USED_CODES_FILE, 'utf8'));
+      data.forEach(code => usedCodes.add(code));
+      console.log(`✅ Loaded ${usedCodes.size} used codes`);
+    }
+
+    // Load activeSubscriptions
+    if (fs.existsSync(ACTIVE_SUBSCRIPTIONS_FILE)) {
+      const data = JSON.parse(fs.readFileSync(ACTIVE_SUBSCRIPTIONS_FILE, 'utf8'));
+      for (const [key, value] of Object.entries(data)) {
+        activeSubscriptions.set(key, {
+          ...value,
+          startDate: new Date(value.startDate),
+          expiryDate: new Date(value.expiryDate)
+        });
+      }
+      console.log(`✅ Loaded ${activeSubscriptions.size} active subscriptions`);
+    }
+
+    // Load userHistory
+    if (fs.existsSync(USER_HISTORY_FILE)) {
+      const data = JSON.parse(fs.readFileSync(USER_HISTORY_FILE, 'utf8'));
+      for (const [key, value] of Object.entries(data)) {
+        userHistory.set(key, { ...value, lastCheck: new Date(value.lastCheck) });
+      }
+      console.log(`✅ Loaded ${userHistory.size} user history entries`);
+    }
+
+    console.log('✅ All persistent data loaded successfully');
+  } catch (error) {
+    console.error('❌ Error loading persistent data:', error.message);
+  }
+}
+
+// Save data to JSON files
+function saveData() {
+  try {
+    // Save pendingUsers
+    const pendingData = Object.fromEntries(
+      Array.from(pendingUsers.entries()).map(([key, value]) => [
+        key,
+        { ...value, timestamp: value.timestamp.toISOString() }
+      ])
+    );
+    fs.writeFileSync(PENDING_USERS_FILE, JSON.stringify(pendingData, null, 2));
+
+    // Save usedCodes
+    fs.writeFileSync(USED_CODES_FILE, JSON.stringify(Array.from(usedCodes), null, 2));
+
+    // Save activeSubscriptions
+    const subscriptionsData = Object.fromEntries(
+      Array.from(activeSubscriptions.entries()).map(([key, value]) => [
+        key,
+        {
+          ...value,
+          startDate: value.startDate.toISOString(),
+          expiryDate: value.expiryDate.toISOString()
+        }
+      ])
+    );
+    fs.writeFileSync(ACTIVE_SUBSCRIPTIONS_FILE, JSON.stringify(subscriptionsData, null, 2));
+
+    // Save userHistory
+    const historyData = Object.fromEntries(
+      Array.from(userHistory.entries()).map(([key, value]) => [
+        key,
+        { ...value, lastCheck: value.lastCheck.toISOString() }
+      ])
+    );
+    fs.writeFileSync(USER_HISTORY_FILE, JSON.stringify(historyData, null, 2));
+
+    console.log('💾 Persistent data saved successfully');
+  } catch (error) {
+    console.error('❌ Error saving persistent data:', error.message);
+  }
+}
 
 // Load access codes from file or environment
 let validCodes = new Set([
@@ -240,6 +342,7 @@ bot.onText(/\/status/, (msg) => {
   const history = userHistory.get(userId) || { lastStatus: 'none', lastCheck: new Date() };
   history.lastCheck = new Date();
   userHistory.set(userId, history);
+  saveData();
 
   // Check if user has active subscription first
   const subscription = activeSubscriptions.get(userId);
@@ -247,6 +350,7 @@ bot.onText(/\/status/, (msg) => {
   if (subscription) {
     history.lastStatus = 'active';
     userHistory.set(userId, history);
+    saveData();
 
     const now = new Date();
     const isExpired = now > subscription.expiryDate;
@@ -303,6 +407,7 @@ Visit our website and purchase a new subscription.
     if (pendingUser) {
       history.lastStatus = 'pending';
       userHistory.set(userId, history);
+      saveData();
 
       bot.sendMessage(chatId,
         `📊 *Your Access Status*
@@ -327,6 +432,7 @@ Visit our website and purchase a new subscription.
     } else {
       history.lastStatus = 'none';
       userHistory.set(userId, history);
+      saveData();
 
       // User has no subscription or pending access
       const totalCodes = validCodes.size;
@@ -429,6 +535,7 @@ bot.on('new_chat_members', async (msg) => {
         // Clean up
         pendingUsers.delete(userId);
         usedCodes.add(userData.code);
+        saveData();
 
         log('info', `User ${username} successfully added to ${userData.plan} group`);
 
@@ -519,6 +626,8 @@ The code "${code}" has already been used.
       code: code
     });
 
+    saveData();
+
     // Try to automatically add user to group
     const groupId = GROUP_CHAT_IDS[plan];
 
@@ -581,6 +690,7 @@ The bot will approve your membership when you join.`, {
 
     // Mark code as used
     usedCodes.add(code);
+    saveData();
 
     log('info', `Access code validated for ${username}`, { code, plan, userId });
 
@@ -680,6 +790,7 @@ Visit our website and purchase a new subscription.
 
       // Clean up subscription
       activeSubscriptions.delete(userId);
+      saveData();
 
       log('info', `Expired user ${subscription.username} removed from ${subscription.plan} group`, { userId });
 
@@ -809,6 +920,9 @@ async function startBot() {
   console.log(`📅 Environment: ${NODE_ENV}`);
   console.log(`🔢 Total access codes loaded: ${validCodes.size}`);
   console.log(`👤 Admin User ID: ${ADMIN_USER_ID}`);
+
+  // Load persistent data
+  loadData();
 
   // Only validate token if we have proper environment variables
   if (BOT_TOKEN && ADMIN_USER_ID && BOT_TOKEN.includes(':')) {
