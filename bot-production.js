@@ -633,7 +633,7 @@ The code "${code}" has already been used.
 
     try {
       // Automatically add user to the group
-      await bot.approveChatJoinRequest(groupId, userId);
+      await bot.approveChatJoinRequest(groupId, userId, { hide_author: false });
 
       // Send welcome message in the group
       await bot.sendMessage(groupId,
@@ -749,9 +749,17 @@ function checkExpiredSubscriptions() {
     const groupChatId = GROUP_CHAT_IDS[subscription.plan];
 
     try {
-      // Remove user from group
-      await bot.banChatMember(groupChatId, userId);
-      await bot.unbanChatMember(groupChatId, userId); // Unban immediately
+      // Check if user is still in the group before trying to remove
+      const chatMember = await bot.getChatMember(groupChatId, userId);
+      if (chatMember.status !== 'left' && chatMember.status !== 'kicked') {
+        // Remove user from group
+        await bot.banChatMember(groupChatId, userId);
+        await bot.unbanChatMember(groupChatId, userId); // Unban immediately
+
+        log('info', `Successfully removed expired user ${subscription.username} from ${subscription.plan} group`, { userId });
+      } else {
+        log('info', `Expired user ${subscription.username} already left ${subscription.plan} group`, { userId });
+      }
 
       // Send notification to user
       await bot.sendMessage(userId,
@@ -773,6 +781,8 @@ Visit our website and purchase a new subscription.
             [{ text: '🛒 Renew VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }]
           ]
         }
+      }).catch(error => {
+        log('warn', `Could not send expiry notification to ${subscription.username}`, { userId, error: error.message });
       });
 
       // Notify admin
@@ -786,13 +796,15 @@ Visit our website and purchase a new subscription.
 
 ✅ *Action:* User removed from group`, {
         parse_mode: 'Markdown'
+      }).catch(error => {
+        log('warn', `Could not send admin notification for expired user ${subscription.username}`, { userId, error: error.message });
       });
 
       // Clean up subscription
       activeSubscriptions.delete(userId);
       saveData();
 
-      log('info', `Expired user ${subscription.username} removed from ${subscription.plan} group`, { userId });
+      log('info', `Expired user ${subscription.username} processed and removed from ${subscription.plan} group`, { userId });
 
     } catch (error) {
       log('error', `Failed to remove expired user ${subscription.username}`, { userId, error: error.message });
@@ -801,7 +813,7 @@ Visit our website and purchase a new subscription.
 
   // Log summary
   if (expiredUsers.length > 0) {
-    log('info', `Expiry check completed: ${expiredUsers.length} users removed`);
+    log('info', `Expiry check completed: ${expiredUsers.length} users processed`);
   }
 }
 
