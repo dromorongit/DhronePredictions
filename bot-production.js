@@ -381,10 +381,8 @@ bot.on('new_chat_members', async (msg) => {
   const chatId = msg.chat.id;
   const newMembers = msg.new_chat_members;
 
-  // Check if this is one of our premium groups
-  const isPremiumGroup = Object.values(GROUP_LINKS).some(link =>
-    link.includes(chatId.toString())
-  );
+  // Check if this is one of our premium groups using GROUP_CHAT_IDS
+  const isPremiumGroup = Object.values(GROUP_CHAT_IDS).includes(chatId);
 
   if (!isPremiumGroup) return;
 
@@ -401,7 +399,7 @@ bot.on('new_chat_members', async (msg) => {
       try {
         await bot.approveChatJoinRequest(chatId, userId);
         await bot.sendMessage(chatId,
-          `🎉 Welcome ${username} to the ${userData.plan} VVIP Group!
+          `🎉 Welcome ${username} to the ${userData.plan.charAt(0).toUpperCase() + userData.plan.slice(1)} VVIP Group!
 
 📊 Enjoy exclusive premium predictions and insights!
 💬 Feel free to ask questions and engage with the community.`, {
