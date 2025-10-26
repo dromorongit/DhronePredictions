@@ -247,20 +247,47 @@ bot.on('new_chat_members', async (msg) => {
         parse_mode: 'Markdown'
       });
     } else {
-      // User joined without valid access code
-      await bot.sendMessage(chatId,
-        `🚫 @${username}, you need a valid access code to join this group.\n\n` +
-        `💡 Get your code from our website: https://www.dhronepredicts.com\n` +
-        `🤖 Then message me (@${bot.username}) with your code.`, {
-        parse_mode: 'Markdown'
-      });
+      // Check if user has pending access (they might have been added manually)
+      const pendingUser = pendingUsers.get(userId);
+      if (pendingUser) {
+        // Convert pending to active
+        const expiry = calculateExpiry(pendingUser.plan);
+        activeUsers.set(userId, {
+          username: username,
+          plan: pendingUser.plan,
+          code: pendingUser.code,
+          expiry: expiry,
+          chatId: chatId,
+          joinedAt: new Date()
+        });
+        pendingUsers.delete(userId);
 
-      // Remove user from group
-      try {
-        await bot.banChatMember(chatId, userId);
-        await bot.unbanChatMember(chatId, userId); // Unban immediately to allow rejoining
-      } catch (error) {
-        console.error('Error removing user:', error);
+        // Welcome the user
+        await bot.sendMessage(chatId,
+          `🎉 Welcome ${username} to the ${pendingUser.plan.charAt(0).toUpperCase() + pendingUser.plan.slice(1)} VVIP Group!\n\n` +
+          `📊 Enjoy exclusive premium predictions and insights!\n` +
+          `💬 Feel free to ask questions and engage with the community.`, {
+          parse_mode: 'Markdown'
+        });
+
+        // Notify admin
+        await notifyAdmin(pendingUser, username);
+      } else {
+        // User joined without valid access code
+        await bot.sendMessage(chatId,
+          `🚫 @${username}, you need a valid access code to join this group.\n\n` +
+          `💡 Get your code from our website: https://www.dhronepredicts.com\n` +
+          `🤖 Then message me (@${bot.username}) with your code.`, {
+          parse_mode: 'Markdown'
+        });
+
+        // Remove user from group
+        try {
+          await bot.banChatMember(chatId, userId);
+          await bot.unbanChatMember(chatId, userId); // Unban immediately to allow rejoining
+        } catch (error) {
+          console.error('Error removing user:', error);
+        }
       }
     }
   }
@@ -482,7 +509,89 @@ async function notifyAdmin(userData, username) {
 
 // Handle callback queries (for inline buttons)
 bot.on('callback_query', (query) => {
-  // Handle any callback queries if needed
+  const chatId = query.message.chat.id;
+  const userId = query.from.id;
+  const data = query.data;
+
+  if (data === 'status') {
+    // Trigger status command
+    const mockMsg = {
+      chat: { id: chatId },
+      from: { id: userId, username: query.from.username, first_name: query.from.first_name }
+    };
+    // Call the status handler directly
+    const activeUser = activeUsers.get(userId);
+    const pendingUser = pendingUsers.get(userId);
+    const username = query.from.username || query.from.first_name;
+
+    if (activeUser) {
+      const timeLeft = calculateTimeLeft(activeUser.expiry);
+      bot.sendMessage(chatId,
+        `📊 *Your Access Status*\n\n` +
+        `👤 *User:* ${username}\n` +
+        `🎯 *Plan:* ${activeUser.plan.charAt(0).toUpperCase() + activeUser.plan.slice(1)} VVIP\n` +
+        `🔢 *Code:* ${activeUser.code}\n` +
+        `⏰ *Time Left:* ${timeLeft}\n` +
+        `📅 *Expires:* ${activeUser.expiry.toLocaleString()}\n` +
+        `📅 *Joined:* ${activeUser.joinedAt.toLocaleString()}\n\n` +
+        `✅ *Status:* Active premium access!\n\n` +
+        `💡 Enjoy your premium predictions and insights.`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔗 Visit Group', url: GROUP_LINKS[activeUser.plan] }],
+            [{ text: '🔄 Extend Access', url: 'https://www.dhronepredicts.com/vvip' }]
+          ]
+        }
+      });
+    } else if (pendingUser) {
+      bot.sendMessage(chatId,
+        `📊 *Your Access Status*\n\n` +
+        `👤 *User:* ${username}\n` +
+        `🎯 *Plan:* ${pendingUser.plan.charAt(0).toUpperCase() + pendingUser.plan.slice(1)} VVIP\n` +
+        `🔢 *Code:* ${pendingUser.code}\n` +
+        `⏰ *Validated:* ${pendingUser.timestamp.toLocaleString()}\n\n` +
+        `✅ *Status:* Code validated, ready to join group!\n\n` +
+        `🚀 Click below to join your premium group:`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: `🚀 Join ${pendingUser.plan.charAt(0).toUpperCase() + pendingUser.plan.slice(1)} VVIP Group`, url: GROUP_LINKS[pendingUser.plan] }]
+          ]
+        }
+      });
+    } else {
+      const totalCodes = validCodes.size;
+      const usedCodesCount = usedCodes.size;
+      const availableCodes = totalCodes - usedCodesCount;
+
+      bot.sendMessage(chatId,
+        `📊 *Your Access Status*\n\n` +
+        `👤 *User:* ${username}\n` +
+        `❌ *Status:* No active access code\n\n` +
+        `📈 *System Stats:*\n` +
+        `• Total codes available: ${totalCodes}\n` +
+        `• Codes used: ${usedCodesCount}\n` +
+        `• Codes remaining: ${availableCodes}\n\n` +
+        `💡 *To get access:*\n` +
+        `1. Visit our website\n` +
+        `2. Purchase a VVIP subscription\n` +
+        `3. Get your 7-digit access code\n` +
+        `4. Send it to me\n\n` +
+        `🎯 Ready to get premium access?`, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🛒 Get VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }],
+            [{ text: '❓ Need Help?', callback_data: 'help' }]
+          ]
+        }
+      });
+    }
+  }
+
+  // Answer the callback query
+  bot.answerCallbackQuery(query.id);
 });
 
 // Periodic check for expired users (every 5 minutes)
@@ -491,10 +600,23 @@ setInterval(checkExpiredUsers, 5 * 60 * 1000);
 // Error handling
 bot.on('polling_error', (error) => {
   console.error('Polling error:', error);
+  // Don't exit on polling errors, just log them
 });
 
 bot.on('error', (error) => {
   console.error('Bot error:', error);
+  // Don't exit on errors, keep the bot running
+});
+
+// Keep the bot alive
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // Don't exit, just log
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Don't exit, just log
 });
 
 console.log('✅ Telegram Bot setup complete!');

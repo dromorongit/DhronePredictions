@@ -4,6 +4,11 @@ const fs = require('fs').promises;
 const path = require('path');
 require('dotenv').config();
 
+// Netlify Functions don't have persistent file storage
+// We'll use a simple in-memory store for demo purposes
+// In production, you'd use a database
+let dataStore = {};
+
 // Create Express app for Netlify Functions
 const app = express();
 
@@ -42,48 +47,32 @@ function getDataFile(category) {
   return path.join(process.cwd(), 'data', filename);
 }
 
-// Helper function to read JSON file
-async function readDataFile(category) {
-  const filePath = getDataFile(category);
-  console.log('Reading file:', filePath);
-  try {
-    const data = await fs.readFile(filePath, 'utf8');
-    console.log('File read successfully, length:', data.length);
-    return JSON.parse(data);
-  } catch (error) {
-    console.log('File read error:', error.message, 'Creating new file');
-    // If file doesn't exist, create it with empty array
-    try {
-      await fs.writeFile(filePath, '[]');
-      console.log('New file created successfully');
-      return [];
-    } catch (writeError) {
-      console.error('Failed to create file:', writeError.message);
-      throw writeError;
-    }
+// Helper function to read data (using in-memory store for Netlify)
+function readDataFile(category) {
+  console.log('Reading data for category:', category);
+  if (!dataStore[category]) {
+    console.log('Category not found, initializing empty array');
+    dataStore[category] = [];
   }
+  console.log('Data read successfully, length:', dataStore[category].length);
+  return dataStore[category];
 }
 
-// Helper function to write JSON file
-async function writeDataFile(category, data) {
-  const filePath = getDataFile(category);
-  console.log('Writing file:', filePath, 'Data length:', JSON.stringify(data).length);
-  try {
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
-    console.log('File written successfully');
-  } catch (error) {
-    console.error('File write error:', error.message);
-    throw error;
-  }
+// Helper function to write data (using in-memory store for Netlify)
+function writeDataFile(category, data) {
+  console.log('Writing data for category:', category, 'Data length:', data.length);
+  dataStore[category] = data;
+  console.log('Data written successfully');
 }
 
 // API Endpoints
 
 // GET /api/:category - Get all predictions for a category
-app.get('/:category', async (req, res) => {
+app.get('/:category', (req, res) => {
   try {
     const { category } = req.params;
-    const data = await readDataFile(category);
+    console.log('GET request for category:', category);
+    const data = readDataFile(category);
     res.json(data);
   } catch (error) {
     console.error('Error reading data:', error);
@@ -92,7 +81,7 @@ app.get('/:category', async (req, res) => {
 });
 
 // POST /api/add - Add new prediction
-app.post('/add', async (req, res) => {
+app.post('/add', (req, res) => {
   try {
     console.log('=== /api/add REQUEST RECEIVED ===');
     console.log('Request method:', req.method);
@@ -117,7 +106,7 @@ app.post('/add', async (req, res) => {
       return res.status(400).json({ error: 'Invalid category' });
     }
 
-    const data = await readDataFile(category);
+    const data = readDataFile(category);
     console.log('Current data length:', data.length);
 
     // Generate new ID
@@ -140,7 +129,7 @@ app.post('/add', async (req, res) => {
     data.push(newPrediction);
     console.log('Data after push:', data.length, 'items');
 
-    await writeDataFile(category, data);
+    writeDataFile(category, data);
 
     console.log('Prediction added successfully:', newPrediction);
     console.log('=== /api/add REQUEST COMPLETED ===');
@@ -153,7 +142,7 @@ app.post('/add', async (req, res) => {
 });
 
 // POST /api/update - Update prediction score and status
-app.post('/update', async (req, res) => {
+app.post('/update', (req, res) => {
   try {
     const { category, id, score, status } = req.body;
 
@@ -161,7 +150,7 @@ app.post('/update', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const data = await readDataFile(category);
+    const data = readDataFile(category);
     const predictionIndex = data.findIndex(item => item.id == id);
 
     if (predictionIndex === -1) {
@@ -176,7 +165,7 @@ app.post('/update', async (req, res) => {
       data[predictionIndex].status = status;
     }
 
-    await writeDataFile(category, data);
+    writeDataFile(category, data);
 
     res.json({ success: true, prediction: data[predictionIndex] });
   } catch (error) {
@@ -210,10 +199,10 @@ app.get('/admin/categories', requireAuth, (req, res) => {
   res.json(Object.keys(CATEGORIES));
 });
 
-app.get('/admin/:category', requireAuth, async (req, res) => {
+app.get('/admin/:category', requireAuth, (req, res) => {
   try {
     const { category } = req.params;
-    const data = await readDataFile(category);
+    const data = readDataFile(category);
     res.json(data);
   } catch (error) {
     console.error('Error reading admin data:', error);
