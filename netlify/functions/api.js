@@ -45,7 +45,6 @@ function writeDataFile(category, data) {
 exports.handler = async (event, context) => {
   console.log('Netlify Function called:', event.httpMethod, event.path);
   console.log('Event body:', event.body);
-  console.log('Current working directory:', process.cwd());
 
   // Handle preflight OPTIONS request
   if (event.httpMethod === 'OPTIONS') {
