@@ -166,6 +166,12 @@ exports.handler = async (event, context) => {
       const { category, league, match, date, time, prediction, odds, probability } = body;
 
       console.log('Extracted data:', { category, league, match, date, time, prediction, odds, probability });
+      console.log('Field checks:', {
+        category: !!category,
+        match: !!match,
+        date: !!date,
+        prediction: !!prediction
+      });
 
       if (!category || !match || !date || !prediction) {
         console.log('ERROR: Missing required fields');
@@ -175,7 +181,10 @@ exports.handler = async (event, context) => {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ error: 'Missing required fields' })
+          body: JSON.stringify({
+            error: 'Missing required fields',
+            received: { category, league, match, date, time, prediction, odds, probability }
+          })
         };
       }
 
