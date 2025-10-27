@@ -123,16 +123,25 @@ exports.handler = async (event, context) => {
 
             // Parse JavaScript object notation manually
             const obj = {};
+            console.log('Parsing body:', cleanBody);
+
             // Split by comma but be careful with commas inside values
             const pairs = cleanBody.split(/,(?=\w+:)/);
+            console.log('Pairs after split:', pairs);
 
             for (const pair of pairs) {
+              console.log('Processing pair:', pair);
               // Find the first colon to separate key from value
               const colonIndex = pair.indexOf(':');
-              if (colonIndex === -1) continue;
+              if (colonIndex === -1) {
+                console.log('No colon found in pair:', pair);
+                continue;
+              }
 
               const key = pair.substring(0, colonIndex).trim();
               let value = pair.substring(colonIndex + 1).trim();
+
+              console.log('Key:', key, 'Value:', value);
 
               // Remove quotes from value if present
               if (value.startsWith('"') && value.endsWith('"')) {
@@ -142,7 +151,10 @@ exports.handler = async (event, context) => {
               }
 
               obj[key] = value;
+              console.log('Added to obj:', key, '=', value);
             }
+
+            console.log('Final parsed object:', obj);
 
             body = obj;
           } else {
