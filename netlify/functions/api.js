@@ -119,37 +119,16 @@ exports.handler = async (event, context) => {
 
           // Handle malformed JSON that starts and ends with single quotes (JavaScript object notation)
           if (cleanBody.startsWith("'") && cleanBody.endsWith("'")) {
-            cleanBody = cleanBody.slice(1, -1);
+            console.log('Detected JavaScript object notation, using regex parser');
 
-            // Parse JavaScript object notation manually
+            // Use regex to extract key-value pairs
             const obj = {};
-            console.log('Parsing body:', cleanBody);
+            const regex = /(\w+):([^,]+(?:,|$))/g;
+            let match;
 
-            // Simple split by comma - this should work for our format
-            const pairs = cleanBody.split(',');
-            console.log('Pairs after split:', pairs);
-
-            for (let i = 0; i < pairs.length; i++) {
-              let pair = pairs[i].trim();
-              console.log('Processing pair:', pair);
-
-              // Handle the last pair that might have extra characters
-              if (i === pairs.length - 1) {
-                pair = pair.replace(/[}\s]*$/, ''); // Remove trailing braces and spaces
-                console.log('Cleaned last pair:', pair);
-              }
-
-              // Find the first colon to separate key from value
-              const colonIndex = pair.indexOf(':');
-              if (colonIndex === -1) {
-                console.log('No colon found in pair:', pair);
-                continue;
-              }
-
-              const key = pair.substring(0, colonIndex).trim();
-              let value = pair.substring(colonIndex + 1).trim();
-
-              console.log('Key:', key, 'Value:', value);
+            while ((match = regex.exec(cleanBody)) !== null) {
+              const key = match[1];
+              let value = match[2].replace(/,$/, '').trim(); // Remove trailing comma and trim
 
               // Remove quotes from value if present
               if (value.startsWith('"') && value.endsWith('"')) {
@@ -158,12 +137,14 @@ exports.handler = async (event, context) => {
                 value = value.slice(1, -1);
               }
 
+              // Clean up any trailing braces or extra characters
+              value = value.replace(/[}\s]*$/, '');
+
               obj[key] = value;
-              console.log('Added to obj:', key, '=', value);
+              console.log('Parsed:', key, '=', value);
             }
 
             console.log('Final parsed object:', obj);
-
             body = obj;
           } else {
             // Try normal JSON parsing
