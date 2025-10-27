@@ -14,8 +14,8 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Admin password (store in .env)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
@@ -261,6 +261,44 @@ exports.handler = async (event, context) => {
     });
   });
 };
+
+// Helper function to create mock req/res objects
+function createMockReqRes(event) {
+  let body = event.body;
+
+  // Parse JSON body if it's a string
+  if (typeof body === 'string' && body.trim()) {
+    try {
+      body = JSON.parse(body);
+    } catch (e) {
+      // If not JSON, keep as string
+    }
+  }
+
+  const req = {
+    method: event.httpMethod,
+    url: event.path,
+    headers: event.headers,
+    body: body,
+    params: event.pathParameters || {},
+    query: event.queryStringParameters || {}
+  };
+
+  let body = '';
+  const res = {
+    statusCode: 200,
+    headers: {},
+    body: '',
+    setHeader: function(name, value) { this.headers[name] = value; },
+    getHeaders: function() { return this.headers; },
+    status: function(code) { this.statusCode = code; return this; },
+    json: function(data) { this.body = JSON.stringify(data); this.end(); },
+    send: function(data) { this.body = data; this.end(); },
+    end: function() { /* Response finished */ }
+  };
+
+  return { req, res };
+}
 
 // Helper function to create mock req/res objects
 function createMockReqRes(event) {
