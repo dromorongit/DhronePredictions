@@ -14,7 +14,7 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '10mb', strict: false }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Admin password (store in .env)
@@ -238,41 +238,28 @@ exports.handler = async (event, context) => {
     };
   }
 
-  try {
-    // Set up the request/response objects for Express
-    const { req, res } = createMockReqRes(event);
+  // Set up the request/response objects for Express
+  const { req, res } = createMockReqRes(event);
 
-    // Handle the request with Express
-    app(req, res);
+  // Handle the request with Express
+  app(req, res);
 
-    // Return the response
-    return new Promise((resolve) => {
-      res.on('finish', () => {
-        console.log('Response:', res.statusCode, res.body);
-        resolve({
-          statusCode: res.statusCode,
-          headers: {
-            ...res.getHeaders(),
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
-          },
-          body: res.body
-        });
+  // Return the response
+  return new Promise((resolve) => {
+    res.on('finish', () => {
+      console.log('Response:', res.statusCode, res.body);
+      resolve({
+        statusCode: res.statusCode,
+        headers: {
+          ...res.getHeaders(),
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+        },
+        body: res.body
       });
     });
-  } catch (error) {
-    console.error('Handler error:', error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
-      },
-      body: JSON.stringify({ error: 'Internal server error', details: error.message })
-    };
-  }
+  });
 };
 
 // Helper function to create mock req/res objects
