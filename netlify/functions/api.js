@@ -117,24 +117,35 @@ exports.handler = async (event, context) => {
         if (typeof event.body === 'string') {
           let cleanBody = event.body.trim();
 
-          // Handle malformed JSON that starts and ends with single quotes
+          // Handle malformed JSON that starts and ends with single quotes (JavaScript object notation)
           if (cleanBody.startsWith("'") && cleanBody.endsWith("'")) {
             cleanBody = cleanBody.slice(1, -1);
-            // Convert JavaScript object notation to JSON
-            // Replace unquoted keys with quoted keys
-            cleanBody = cleanBody.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":');
-            // Add quotes around string values that aren't already quoted
-            cleanBody = cleanBody.replace(/:\s*([^",\[\]{}\s][^,]*?)([,}])/g, ':"$1"$2');
-          }
 
-          // Remove extra quotes if present
-          if (cleanBody.startsWith('"') && cleanBody.endsWith('"')) {
-            cleanBody = cleanBody.slice(1, -1);
-          }
+            // Parse JavaScript object notation manually
+            const obj = {};
+            const pairs = cleanBody.split(',');
 
-          // Unescape if needed
-          cleanBody = cleanBody.replace(/\\"/g, '"');
-          body = JSON.parse(cleanBody);
+            for (const pair of pairs) {
+              const [key, ...valueParts] = pair.split(':');
+              const cleanKey = key.trim();
+              const cleanValue = valueParts.join(':').trim();
+
+              // Remove quotes from value if present
+              let finalValue = cleanValue;
+              if (finalValue.startsWith('"') && finalValue.endsWith('"')) {
+                finalValue = finalValue.slice(1, -1);
+              } else if (finalValue.startsWith("'") && finalValue.endsWith("'")) {
+                finalValue = finalValue.slice(1, -1);
+              }
+
+              obj[cleanKey] = finalValue;
+            }
+
+            body = obj;
+          } else {
+            // Try normal JSON parsing
+            body = JSON.parse(cleanBody);
+          }
         } else {
           body = event.body;
         }
