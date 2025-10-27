@@ -1,7 +1,38 @@
-// Netlify Functions don't have persistent file storage
-// We'll use a simple in-memory store for demo purposes
-// In production, you'd use a database
+// Use a shared data file for persistence across function calls
+const fs = require('fs').promises;
+const path = require('path');
+
 let dataStore = {};
+let dataLoaded = false;
+
+// Load data from file on first access
+async function loadData() {
+  if (dataLoaded) return;
+
+  try {
+    const dataPath = path.join(process.cwd(), 'data', 'predictions.json');
+    const data = await fs.readFile(dataPath, 'utf8');
+    dataStore = JSON.parse(data);
+    console.log('Data loaded from file, categories:', Object.keys(dataStore));
+  } catch (error) {
+    console.log('No existing data file, starting with empty store');
+    dataStore = {};
+  }
+
+  dataLoaded = true;
+}
+
+// Save data to file
+async function saveData() {
+  try {
+    const dataPath = path.join(process.cwd(), 'data', 'predictions.json');
+    await fs.mkdir(path.dirname(dataPath), { recursive: true });
+    await fs.writeFile(dataPath, JSON.stringify(dataStore, null, 2));
+    console.log('Data saved to file');
+  } catch (error) {
+    console.error('Error saving data:', error);
+  }
+}
 
 // Force redeploy trigger: v1.2
 
@@ -25,8 +56,9 @@ const CATEGORIES = {
   'vvip': 'vvip.json'                 // vvip.html - VVIP
 };
 
-// Helper function to read data (using in-memory store for Netlify)
-function readDataFile(category) {
+// Helper function to read data
+async function readDataFile(category) {
+  await loadData();
   console.log('Reading data for category:', category);
   if (!dataStore[category]) {
     console.log('Category not found, initializing empty array');
@@ -36,10 +68,12 @@ function readDataFile(category) {
   return dataStore[category];
 }
 
-// Helper function to write data (using in-memory store for Netlify)
-function writeDataFile(category, data) {
+// Helper function to write data
+async function writeDataFile(category, data) {
+  await loadData();
   console.log('Writing data for category:', category, 'Data length:', data.length);
   dataStore[category] = data;
+  await saveData();
   console.log('Data written successfully');
 }
 
@@ -178,7 +212,7 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const data = readDataFile(category);
+    const data = await readDataFile(category);
     console.log('Current data length:', data.length);
 
     // Generate new ID
@@ -201,7 +235,7 @@ exports.handler = async (event, context) => {
     data.push(newPrediction);
     console.log('Data after push:', data.length, 'items');
 
-    writeDataFile(category, data);
+    await writeDataFile(category, data);
 
     console.log('Prediction added successfully:', newPrediction);
     console.log('=== /api/add REQUEST COMPLETED ===');
