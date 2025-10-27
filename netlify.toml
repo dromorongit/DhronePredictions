@@ -2,9 +2,6 @@
   publish = "."
   functions = "netlify/functions"
 
-[functions]
-  directory = "netlify/functions"
-
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api"
@@ -19,6 +16,7 @@
   NODE_VERSION = "18"
 
 [functions]
+  directory = "netlify/functions"
   node_bundler = "esbuild"
 
 [[functions]]
