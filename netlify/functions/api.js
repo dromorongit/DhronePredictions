@@ -287,6 +287,75 @@ exports.handler = async (event, context) => {
     }
   }
 
+  // Handle POST /delete
+  if (method === 'POST' && path === '/delete') {
+    try {
+      let body;
+      try {
+        body = JSON.parse(event.body);
+      } catch (e) {
+        return {
+          statusCode: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Invalid JSON body' })
+        };
+      }
+
+      const { category, id } = body;
+
+      if (!category || !id) {
+        return {
+          statusCode: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Missing required fields' })
+        };
+      }
+
+      const data = readDataFile(category);
+      const predictionIndex = data.findIndex(item => item.id == id);
+
+      if (predictionIndex === -1) {
+        return {
+          statusCode: 404,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Prediction not found' })
+        };
+      }
+
+      // Remove the prediction
+      const deletedPrediction = data.splice(predictionIndex, 1)[0];
+      writeDataFile(category, data);
+
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ success: true, prediction: deletedPrediction })
+      };
+    } catch (error) {
+      console.error('Error deleting prediction:', error);
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'Internal server error' })
+      };
+    }
+  }
+
   // Handle GET /admin/categories
   if (method === 'GET' && path === '/admin/categories') {
     const authHeader = event.headers.authorization || event.headers.Authorization;
