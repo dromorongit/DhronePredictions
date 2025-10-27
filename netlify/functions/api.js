@@ -3,7 +3,7 @@
 // In production, you'd use a database
 let dataStore = {};
 
-// Force redeploy trigger: v1.1
+// Force redeploy trigger: v1.2
 
 // Admin password (store in .env)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
