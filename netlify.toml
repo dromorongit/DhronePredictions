@@ -3,9 +3,40 @@
   functions = "netlify/functions"
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
+  from = "/api/add"
+  to = "/.netlify/functions/api"
   status = 200
+  query = { action = "add" }
+
+[[redirects]]
+  from = "/api/update"
+  to = "/.netlify/functions/api"
+  status = 200
+  query = { action = "update" }
+
+[[redirects]]
+  from = "/api/delete"
+  to = "/.netlify/functions/api"
+  status = 200
+  query = { action = "delete" }
+
+[[redirects]]
+  from = "/api/admin/categories"
+  to = "/.netlify/functions/api"
+  status = 200
+  query = { action = "admin-categories" }
+
+[[redirects]]
+  from = "/api/admin/*"
+  to = "/.netlify/functions/api"
+  status = 200
+  query = { action = "admin-category", category = ":splat" }
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+  query = { action = "get", category = ":splat" }
 
 [[redirects]]
   from = "/admin"

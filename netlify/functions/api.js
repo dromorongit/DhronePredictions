@@ -46,6 +46,7 @@ function writeDataFile(category, data) {
 // Export for Netlify Functions
 exports.handler = async (event, context) => {
   console.log('Netlify Function called:', event.httpMethod, event.path);
+  console.log('Query params:', event.queryStringParameters);
   console.log('Event body:', event.body);
 
   // Handle preflight OPTIONS request
@@ -61,23 +62,15 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Direct route handling for Netlify Functions
-  let path = event.path;
-
-  // Handle both direct function calls and redirects
-  if (path.includes('/.netlify/functions/api')) {
-    path = path.replace('/.netlify/functions/api', '');
-  }
-
+  // Get action from query parameters
+  const action = event.queryStringParameters?.action;
+  const category = event.queryStringParameters?.category;
   const method = event.httpMethod;
 
-  console.log('Original path:', event.path);
-  console.log('Cleaned path:', path);
-  console.log('Routing:', method, path);
+  console.log('Action:', action, 'Category:', category, 'Method:', method);
 
-  // Handle GET /:category
-  if (method === 'GET' && path.startsWith('/')) {
-    const category = path.substring(1);
+  // Handle GET category data
+  if (method === 'GET' && action === 'get' && category) {
     console.log('GET request for category:', category);
     try {
       const data = readDataFile(category);
@@ -103,7 +96,7 @@ exports.handler = async (event, context) => {
   }
 
   // Handle POST /add
-  if (method === 'POST' && path === '/add') {
+  if (method === 'POST' && action === 'add') {
     try {
       console.log('=== /api/add REQUEST RECEIVED ===');
       console.log('Request method:', method);
@@ -257,7 +250,7 @@ exports.handler = async (event, context) => {
   }
 
   // Handle POST /update
-  if (method === 'POST' && path === '/update') {
+  if (method === 'POST' && action === 'update') {
     try {
       let body;
       try {
@@ -332,7 +325,7 @@ exports.handler = async (event, context) => {
   }
 
   // Handle POST /delete
-  if (method === 'POST' && path === '/delete') {
+  if (method === 'POST' && action === 'delete') {
     try {
       let body;
       try {
@@ -401,7 +394,7 @@ exports.handler = async (event, context) => {
   }
 
   // Handle GET /admin/categories
-  if (method === 'GET' && path === '/admin/categories') {
+  if (method === 'GET' && action === 'admin-categories') {
     const authHeader = event.headers.authorization || event.headers.Authorization;
     if (!authHeader || !authHeader.startsWith('Basic ')) {
       return {
@@ -439,7 +432,7 @@ exports.handler = async (event, context) => {
   }
 
   // Handle GET /admin/:category
-  if (method === 'GET' && path.startsWith('/admin/')) {
+  if (method === 'GET' && action === 'admin-category' && category) {
     const authHeader = event.headers.authorization || event.headers.Authorization;
     if (!authHeader || !authHeader.startsWith('Basic ')) {
       return {
@@ -466,7 +459,6 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const category = path.replace('/admin/', '');
     try {
       const data = readDataFile(category);
       return {
