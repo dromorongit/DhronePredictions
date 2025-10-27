@@ -62,7 +62,13 @@ exports.handler = async (event, context) => {
   }
 
   // Direct route handling for Netlify Functions
-  const path = event.path.replace('/.netlify/functions/api', '');
+  let path = event.path;
+
+  // Handle both direct function calls and redirects
+  if (path.includes('/.netlify/functions/api')) {
+    path = path.replace('/.netlify/functions/api', '');
+  }
+
   const method = event.httpMethod;
 
   console.log('Original path:', event.path);
