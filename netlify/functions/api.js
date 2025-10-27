@@ -65,6 +65,8 @@ exports.handler = async (event, context) => {
   const path = event.path.replace('/.netlify/functions/api', '');
   const method = event.httpMethod;
 
+  console.log('Original path:', event.path);
+  console.log('Cleaned path:', path);
   console.log('Routing:', method, path);
 
   // Handle GET /:category
