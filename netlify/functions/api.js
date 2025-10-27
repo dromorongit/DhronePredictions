@@ -14,7 +14,7 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json({ limit: '10mb', strict: false }));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Admin password (store in .env)
@@ -238,28 +238,332 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Set up the request/response objects for Express
-  const { req, res } = createMockReqRes(event);
+  // Direct route handling for Netlify Functions
+  const path = event.path.replace('/.netlify/functions/api', '');
+  const method = event.httpMethod;
 
-  // Handle the request with Express
-  app(req, res);
+  console.log('Routing:', method, path);
 
-  // Return the response
-  return new Promise((resolve) => {
-    res.on('finish', () => {
-      console.log('Response:', res.statusCode, res.body);
-      resolve({
-        statusCode: res.statusCode,
+  // Handle GET /:category
+  if (method === 'GET' && path.startsWith('/')) {
+    const category = path.substring(1);
+    console.log('GET request for category:', category);
+    try {
+      const data = readDataFile(category);
+      return {
+        statusCode: 200,
         headers: {
-          ...res.getHeaders(),
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+          'Content-Type': 'application/json'
         },
-        body: res.body
-      });
-    });
-  });
+        body: JSON.stringify(data)
+      };
+    } catch (error) {
+      console.error('Error reading data:', error);
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'Internal server error' })
+      };
+    }
+  }
+
+  // Handle POST /add
+  if (method === 'POST' && path === '/add') {
+    try {
+      console.log('=== /api/add REQUEST RECEIVED ===');
+      console.log('Request method:', method);
+      console.log('Request URL:', path);
+      console.log('Request body:', event.body);
+
+      let body;
+      try {
+        body = JSON.parse(event.body);
+      } catch (e) {
+        console.log('Failed to parse JSON body');
+        return {
+          statusCode: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Invalid JSON body' })
+        };
+      }
+
+      const { category, league, match, date, time, prediction, odds, probability } = body;
+
+      console.log('Extracted data:', { category, league, match, date, time, prediction, odds, probability });
+
+      if (!category || !match || !date || !prediction) {
+        console.log('ERROR: Missing required fields');
+        return {
+          statusCode: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Missing required fields' })
+        };
+      }
+
+      console.log('Category received:', category);
+      console.log('Available categories:', Object.keys(CATEGORIES));
+
+      if (!CATEGORIES[category]) {
+        console.log('ERROR: Invalid category:', category);
+        return {
+          statusCode: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Invalid category' })
+        };
+      }
+
+      const data = readDataFile(category);
+      console.log('Current data length:', data.length);
+
+      // Generate new ID
+      const newId = data.length > 0 ? Math.max(...data.map(item => item.id)) + 1 : 1;
+      console.log('Generated new ID:', newId);
+
+      const newPrediction = {
+        id: newId,
+        league: league || '',
+        match,
+        date,
+        time: time || '',
+        prediction,
+        odds: odds || '',
+        probability: probability || '',
+        score: '',
+        status: 'Pending'
+      };
+
+      data.push(newPrediction);
+      console.log('Data after push:', data.length, 'items');
+
+      writeDataFile(category, data);
+
+      console.log('Prediction added successfully:', newPrediction);
+      console.log('=== /api/add REQUEST COMPLETED ===');
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ success: true, prediction: newPrediction })
+      };
+    } catch (error) {
+      console.error('Error adding prediction:', error);
+      console.error('Error stack:', error.stack);
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'Internal server error', details: error.message })
+      };
+    }
+  }
+
+  // Handle POST /update
+  if (method === 'POST' && path === '/update') {
+    try {
+      let body;
+      try {
+        body = JSON.parse(event.body);
+      } catch (e) {
+        return {
+          statusCode: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Invalid JSON body' })
+        };
+      }
+
+      const { category, id, score, status } = body;
+
+      if (!category || !id) {
+        return {
+          statusCode: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Missing required fields' })
+        };
+      }
+
+      const data = readDataFile(category);
+      const predictionIndex = data.findIndex(item => item.id == id);
+
+      if (predictionIndex === -1) {
+        return {
+          statusCode: 404,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Prediction not found' })
+        };
+      }
+
+      // Update fields
+      if (score !== undefined) {
+        data[predictionIndex].score = score;
+      }
+      if (status !== undefined) {
+        data[predictionIndex].status = status;
+      }
+
+      writeDataFile(category, data);
+
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ success: true, prediction: data[predictionIndex] })
+      };
+    } catch (error) {
+      console.error('Error updating prediction:', error);
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'Internal server error' })
+      };
+    }
+  }
+
+  // Handle GET /admin/categories
+  if (method === 'GET' && path === '/admin/categories') {
+    const authHeader = event.headers.authorization || event.headers.Authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      return {
+        statusCode: 401,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'WWW-Authenticate': 'Basic realm="Admin Area"'
+        },
+        body: JSON.stringify({ error: 'Authentication required' })
+      };
+    }
+
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [username, password] = credentials.split(':');
+
+    if (password !== ADMIN_PASSWORD) {
+      return {
+        statusCode: 401,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({ error: 'Invalid credentials' })
+      };
+    }
+
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(Object.keys(CATEGORIES))
+    };
+  }
+
+  // Handle GET /admin/:category
+  if (method === 'GET' && path.startsWith('/admin/')) {
+    const authHeader = event.headers.authorization || event.headers.Authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      return {
+        statusCode: 401,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'WWW-Authenticate': 'Basic realm="Admin Area"'
+        },
+        body: JSON.stringify({ error: 'Authentication required' })
+      };
+    }
+
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [username, password] = credentials.split(':');
+
+    if (password !== ADMIN_PASSWORD) {
+      return {
+        statusCode: 401,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({ error: 'Invalid credentials' })
+      };
+    }
+
+    const category = path.replace('/admin/', '');
+    try {
+      const data = readDataFile(category);
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      };
+    } catch (error) {
+      console.error('Error reading admin data:', error);
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'Internal server error' })
+      };
+    }
+  }
+
+  // Handle GET /health
+  if (method === 'GET' && path === '/health') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        predictions_categories: Object.keys(CATEGORIES).length
+      })
+    };
+  }
+
+  // Route not found
+  return {
+    statusCode: 404,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ error: 'Route not found' })
+  };
 };
 
 // Helper function to create mock req/res objects
