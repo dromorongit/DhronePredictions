@@ -18,7 +18,3 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-
-[[functions]]
-  function = "api"
-  external_node_modules = []
