@@ -1,21 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const fs = require('fs').promises;
-const path = require('path');
 require('dotenv').config();
 
 // Netlify Functions don't have persistent file storage
 // We'll use a simple in-memory store for demo purposes
 // In production, you'd use a database
 let dataStore = {};
-
-// Create Express app for Netlify Functions
-const app = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Admin password (store in .env)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
