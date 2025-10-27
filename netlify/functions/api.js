@@ -125,8 +125,8 @@ exports.handler = async (event, context) => {
             const obj = {};
             console.log('Parsing body:', cleanBody);
 
-            // Split by comma but be careful with commas inside values
-            const pairs = cleanBody.split(/,(?=\w+:)/);
+            // Simple split by comma - this should work for our format
+            const pairs = cleanBody.split(',');
             console.log('Pairs after split:', pairs);
 
             for (const pair of pairs) {
