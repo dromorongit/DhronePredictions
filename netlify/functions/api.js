@@ -115,11 +115,23 @@ exports.handler = async (event, context) => {
       try {
         // Handle both string and object bodies
         if (typeof event.body === 'string') {
-          // Clean the body string - remove any extra quotes or escaping
           let cleanBody = event.body.trim();
+
+          // Handle malformed JSON that starts and ends with single quotes
+          if (cleanBody.startsWith("'") && cleanBody.endsWith("'")) {
+            cleanBody = cleanBody.slice(1, -1);
+            // Convert JavaScript object notation to JSON
+            // Replace unquoted keys with quoted keys
+            cleanBody = cleanBody.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":');
+            // Add quotes around string values that aren't already quoted
+            cleanBody = cleanBody.replace(/:\s*([^",\[\]{}\s][^,]*?)([,}])/g, ':"$1"$2');
+          }
+
+          // Remove extra quotes if present
           if (cleanBody.startsWith('"') && cleanBody.endsWith('"')) {
             cleanBody = cleanBody.slice(1, -1);
           }
+
           // Unescape if needed
           cleanBody = cleanBody.replace(/\\"/g, '"');
           body = JSON.parse(cleanBody);
