@@ -123,22 +123,25 @@ exports.handler = async (event, context) => {
 
             // Parse JavaScript object notation manually
             const obj = {};
-            const pairs = cleanBody.split(',');
+            // Split by comma but be careful with commas inside values
+            const pairs = cleanBody.split(/,(?=\w+:)/);
 
             for (const pair of pairs) {
-              const [key, ...valueParts] = pair.split(':');
-              const cleanKey = key.trim();
-              const cleanValue = valueParts.join(':').trim();
+              // Find the first colon to separate key from value
+              const colonIndex = pair.indexOf(':');
+              if (colonIndex === -1) continue;
+
+              const key = pair.substring(0, colonIndex).trim();
+              let value = pair.substring(colonIndex + 1).trim();
 
               // Remove quotes from value if present
-              let finalValue = cleanValue;
-              if (finalValue.startsWith('"') && finalValue.endsWith('"')) {
-                finalValue = finalValue.slice(1, -1);
-              } else if (finalValue.startsWith("'") && finalValue.endsWith("'")) {
-                finalValue = finalValue.slice(1, -1);
+              if (value.startsWith('"') && value.endsWith('"')) {
+                value = value.slice(1, -1);
+              } else if (value.startsWith("'") && value.endsWith("'")) {
+                value = value.slice(1, -1);
               }
 
-              obj[cleanKey] = finalValue;
+              obj[key] = value;
             }
 
             body = obj;
