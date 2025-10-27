@@ -101,19 +101,26 @@ exports.handler = async (event, context) => {
       console.log('Request method:', method);
       console.log('Request URL:', path);
       console.log('Request body:', event.body);
+      console.log('Request body type:', typeof event.body);
 
       let body;
       try {
-        body = JSON.parse(event.body);
+        // Handle both string and object bodies
+        if (typeof event.body === 'string') {
+          body = JSON.parse(event.body);
+        } else {
+          body = event.body;
+        }
+        console.log('Parsed body:', body);
       } catch (e) {
-        console.log('Failed to parse JSON body');
+        console.log('Failed to parse JSON body:', e.message);
         return {
           statusCode: 400,
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ error: 'Invalid JSON body' })
+          body: JSON.stringify({ error: 'Invalid JSON body', details: e.message })
         };
       }
 
