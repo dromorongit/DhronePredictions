@@ -238,28 +238,41 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // Set up the request/response objects for Express
-  const { req, res } = createMockReqRes(event);
+  try {
+    // Set up the request/response objects for Express
+    const { req, res } = createMockReqRes(event);
 
-  // Handle the request with Express
-  app(req, res);
+    // Handle the request with Express
+    app(req, res);
 
-  // Return the response
-  return new Promise((resolve) => {
-    res.on('finish', () => {
-      console.log('Response:', res.statusCode, res.body);
-      resolve({
-        statusCode: res.statusCode,
-        headers: {
-          ...res.getHeaders(),
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
-        },
-        body: res.body
+    // Return the response
+    return new Promise((resolve) => {
+      res.on('finish', () => {
+        console.log('Response:', res.statusCode, res.body);
+        resolve({
+          statusCode: res.statusCode,
+          headers: {
+            ...res.getHeaders(),
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+          },
+          body: res.body
+        });
       });
     });
-  });
+  } catch (error) {
+    console.error('Handler error:', error);
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+      },
+      body: JSON.stringify({ error: 'Internal server error', details: error.message })
+    };
+  }
 };
 
 // Helper function to create mock req/res objects
@@ -284,7 +297,7 @@ function createMockReqRes(event) {
     query: event.queryStringParameters || {}
   };
 
-  let body = '';
+  let responseBody = '';
   const res = {
     statusCode: 200,
     headers: {},
