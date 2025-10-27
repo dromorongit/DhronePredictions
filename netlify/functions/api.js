@@ -107,20 +107,28 @@ exports.handler = async (event, context) => {
       try {
         // Handle both string and object bodies
         if (typeof event.body === 'string') {
-          body = JSON.parse(event.body);
+          // Clean the body string - remove any extra quotes or escaping
+          let cleanBody = event.body.trim();
+          if (cleanBody.startsWith('"') && cleanBody.endsWith('"')) {
+            cleanBody = cleanBody.slice(1, -1);
+          }
+          // Unescape if needed
+          cleanBody = cleanBody.replace(/\\"/g, '"');
+          body = JSON.parse(cleanBody);
         } else {
           body = event.body;
         }
         console.log('Parsed body:', body);
       } catch (e) {
         console.log('Failed to parse JSON body:', e.message);
+        console.log('Raw body received:', event.body);
         return {
           statusCode: 400,
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ error: 'Invalid JSON body', details: e.message })
+          body: JSON.stringify({ error: 'Invalid JSON body', details: e.message, rawBody: event.body })
         };
       }
 
