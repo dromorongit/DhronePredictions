@@ -129,8 +129,16 @@ exports.handler = async (event, context) => {
             const pairs = cleanBody.split(',');
             console.log('Pairs after split:', pairs);
 
-            for (const pair of pairs) {
+            for (let i = 0; i < pairs.length; i++) {
+              let pair = pairs[i].trim();
               console.log('Processing pair:', pair);
+
+              // Handle the last pair that might have extra characters
+              if (i === pairs.length - 1) {
+                pair = pair.replace(/[}\s]*$/, ''); // Remove trailing braces and spaces
+                console.log('Cleaned last pair:', pair);
+              }
+
               // Find the first colon to separate key from value
               const colonIndex = pair.indexOf(':');
               if (colonIndex === -1) {
