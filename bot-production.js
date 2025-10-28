@@ -767,7 +767,7 @@ async function notifyAdmin(userData, username) {
 // Initialize bot independently if run directly
 
 // Automatic expiry check and user removal
-function checkExpiredSubscriptions() {
+async function checkExpiredSubscriptions() {
   const now = new Date();
   const expiredUsers = [];
 
@@ -777,26 +777,44 @@ function checkExpiredSubscriptions() {
     }
   }
 
-  // Remove expired users from groups
-  expiredUsers.forEach(async ({ userId, subscription }) => {
+  // Process expired users sequentially to avoid rate limits
+  for (const { userId, subscription } of expiredUsers) {
     const groupChatId = GROUP_CHAT_IDS[subscription.plan];
 
     try {
-      // Check if user is still in the group before trying to remove
-      const chatMember = await bot.getChatMember(groupChatId, userId);
-      if (chatMember.status !== 'left' && chatMember.status !== 'kicked') {
-        // Remove user from group
-        await bot.banChatMember(groupChatId, userId);
-        await bot.unbanChatMember(groupChatId, userId); // Unban immediately
+      log('info', `Processing expired subscription for user ${subscription.username}`, { userId, plan: subscription.plan });
 
-        log('info', `Successfully removed expired user ${subscription.username} from ${subscription.plan} group`, { userId });
+      // Check if user is still in the group before trying to remove
+      let chatMember;
+      try {
+        chatMember = await bot.getChatMember(groupChatId, userId);
+      } catch (error) {
+        // If we can't get chat member, assume user is not in group or group doesn't exist
+        log('warn', `Could not check membership for ${subscription.username}, assuming not in group`, { userId, error: error.message });
+        chatMember = { status: 'left' }; // Treat as left
+      }
+
+      if (chatMember.status !== 'left' && chatMember.status !== 'kicked' && chatMember.status !== 'banned') {
+        // Remove user from group
+        try {
+          await bot.banChatMember(groupChatId, userId, { revoke_messages: false });
+          // Wait a moment before unbanning to ensure ban takes effect
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          await bot.unbanChatMember(groupChatId, userId);
+
+          log('info', `Successfully removed expired user ${subscription.username} from ${subscription.plan} group`, { userId });
+        } catch (banError) {
+          log('error', `Failed to ban/unban expired user ${subscription.username}`, { userId, error: banError.message });
+          // Continue with notifications even if removal failed
+        }
       } else {
         log('info', `Expired user ${subscription.username} already left ${subscription.plan} group`, { userId });
       }
 
-      // Send notification to user
-      await bot.sendMessage(userId,
-        `⏰ *Your VVIP Subscription Has Expired!*
+      // Send notification to user (always try this)
+      try {
+        await bot.sendMessage(userId,
+          `⏰ *Your VVIP Subscription Has Expired!*
 
 👤 *User:* ${subscription.username}
 🎯 *Plan:* ${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} VVIP
@@ -808,19 +826,22 @@ function checkExpiredSubscriptions() {
 Visit our website and purchase a new subscription.
 
 🎯 Ready to get premium access again?`, {
-        parse_mode: 'Markdown',
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: '🛒 Renew VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }]
-          ]
-        }
-      }).catch(error => {
-        log('warn', `Could not send expiry notification to ${subscription.username}`, { userId, error: error.message });
-      });
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🛒 Renew VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }]
+            ]
+          }
+        });
+        log('info', `Expiry notification sent to ${subscription.username}`, { userId });
+      } catch (notifyError) {
+        log('warn', `Could not send expiry notification to ${subscription.username}`, { userId, error: notifyError.message });
+      }
 
       // Notify admin
-      await bot.sendMessage(ADMIN_USER_ID,
-        `⏰ *VVIP Subscription Expired - User Removed*
+      try {
+        await bot.sendMessage(ADMIN_USER_ID,
+          `⏰ *VVIP Subscription Expired - User Removed*
 
 👤 *User:* ${subscription.username}
 🆔 *User ID:* ${userId}
@@ -828,10 +849,12 @@ Visit our website and purchase a new subscription.
 ⏰ *Expired:* ${subscription.expiryDate.toLocaleString()}
 
 ✅ *Action:* User removed from group`, {
-        parse_mode: 'Markdown'
-      }).catch(error => {
-        log('warn', `Could not send admin notification for expired user ${subscription.username}`, { userId, error: error.message });
-      });
+          parse_mode: 'Markdown'
+        });
+        log('info', `Admin notified about expired user ${subscription.username}`, { userId });
+      } catch (adminError) {
+        log('warn', `Could not send admin notification for expired user ${subscription.username}`, { userId, error: adminError.message });
+      }
 
       // Clean up subscription
       activeSubscriptions.delete(userId);
@@ -839,10 +862,13 @@ Visit our website and purchase a new subscription.
 
       log('info', `Expired user ${subscription.username} processed and removed from ${subscription.plan} group`, { userId });
 
+      // Add small delay between processing users to avoid rate limits
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
     } catch (error) {
-      log('error', `Failed to remove expired user ${subscription.username}`, { userId, error: error.message });
+      log('error', `Failed to process expired user ${subscription.username}`, { userId, error: error.message });
     }
-  });
+  }
 
   // Log summary
   if (expiredUsers.length > 0) {
@@ -851,7 +877,18 @@ Visit our website and purchase a new subscription.
 }
 
 // Run expiry check every 5 minutes
-setInterval(checkExpiredSubscriptions, 5 * 60 * 1000);
+setInterval(() => {
+  checkExpiredSubscriptions().catch(error => {
+    log('error', 'Error during expiry check', { error: error.message });
+  });
+}, 5 * 60 * 1000);
+
+// Also run expiry check on startup (after a short delay to allow bot to initialize)
+setTimeout(() => {
+  checkExpiredSubscriptions().catch(error => {
+    log('error', 'Error during startup expiry check', { error: error.message });
+  });
+}, 30000); // 30 seconds after startup
 
 // Handle callback queries
 bot.on('callback_query', (query) => {
