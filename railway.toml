@@ -2,7 +2,7 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "node server.js"
+startCommand = "node bot-production.js"
 restartPolicyType = "ALWAYS"
 restartPolicyMaxRetries = 10
 healthcheckPath = "/health"
