@@ -4,7 +4,7 @@ const path = require('path');
 
 // Load configuration from environment variables (Railway-friendly)
 const BOT_TOKEN = process.env.BOT_TOKEN || '8284449243:AAGIVO5aVfo1LAcQ29wXxHJoY3Pq4QqVOZ0';
-const ADMIN_USER_ID = process.env.ADMIN_USER_ID || '5872136698';
+const ADMIN_USER_ID = process.env.ADMIN_USER_ID || '83222398921';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Validate required environment variables
