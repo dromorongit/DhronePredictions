@@ -327,6 +327,50 @@ bot.onText(/\/getchatid/, (msg) => {
   }
 });
 
+// Handle /checkbotadmin command (for checking bot admin status)
+bot.onText(/\/checkbotadmin/, (msg) => {
+  const chatId = msg.chat.id;
+  const chatType = msg.chat.type;
+  const chatTitle = msg.chat.title || 'Private Chat';
+
+  if (chatType === 'group' || chatType === 'supergroup') {
+    // Check if bot is admin in this group
+    bot.getChatMember(chatId, bot.botInfo?.id || 0).then(member => {
+      const isAdmin = ['administrator', 'creator'].includes(member.status);
+      const canInvite = member.can_invite_users;
+      const canRestrict = member.can_restrict_members;
+
+      bot.sendMessage(chatId,
+        `🤖 *Bot Admin Status Check*\n\n` +
+        `📋 *Group:* ${chatTitle}\n` +
+        `🆔 *Chat ID:* \`${chatId}\`\n\n` +
+        `👑 *Bot is Admin:* ${isAdmin ? '✅ YES' : '❌ NO'}\n` +
+        `👥 *Can Invite Users:* ${canInvite ? '✅ YES' : '❌ NO'}\n` +
+        `🚫 *Can Restrict Members:* ${canRestrict ? '✅ YES' : '❌ NO'}\n\n` +
+        `${!isAdmin ? '⚠️ *WARNING:* Bot needs admin rights to add users automatically!' : '✅ *Bot has required permissions for auto-addition!*'}`, {
+        parse_mode: 'Markdown'
+      }).catch(error => {
+        log('error', 'Failed to send bot admin check message', { chatId, error: error.message });
+      });
+    }).catch(error => {
+      bot.sendMessage(chatId,
+        `❌ *Could not check bot status in this group*\n\n` +
+        `Make sure the bot is added to the group and try again.`, {
+        parse_mode: 'Markdown'
+      }).catch(() => {});
+      log('error', 'Failed to check bot member status', { chatId, error: error.message });
+    });
+  } else {
+    bot.sendMessage(chatId,
+      `❌ *This command only works in groups!*\n\n` +
+      `📝 Send /checkbotadmin in your VVIP groups to check bot permissions.`, {
+      parse_mode: 'Markdown'
+    }).catch(error => {
+      log('error', 'Failed to send bot admin check error message', { chatId, error: error.message });
+    });
+  }
+});
+
 // Handle /help command
 bot.onText(/\/help/, (msg) => {
   const chatId = msg.chat.id;
@@ -339,12 +383,13 @@ bot.onText(/\/help/, (msg) => {
 • /help - Show this help message
 • /status - Check your access status
 • /getchatid - Get group chat ID (admin only)
+• /checkbotadmin - Check bot permissions in group (admin only)
 
 📋 *How to Use:*
 1️⃣ Pay for VVIP access on our website
 2️⃣ Get your unique 7-digit access code
 3️⃣ Send the code to me (e.g., 1234567)
-4️⃣ I'll validate it and give you group access
+4️⃣ I'll automatically add you to the appropriate VVIP group
 
 🎯 *Subscription Plans:*
 • Daily VVIP - ₵50 (24 hours)
@@ -661,42 +706,105 @@ The code "${code}" has already been used.
 
     saveData();
 
-    // Try to automatically add user to group
+    // Directly add user to the appropriate group
     const groupId = GROUP_CHAT_IDS[plan];
 
     try {
-      // First, try to create an invite link for the user
-      let inviteLink;
+      // Method 1: Try to add user directly using unbanChatMember (most reliable for private groups)
       try {
-        const invite = await bot.createChatInviteLink(groupId, {
-          member_limit: 1, // Only this user can use it
-          expire_date: Math.floor(Date.now() / 1000) + 86400, // Expires in 24 hours
-          name: `VVIP Access for ${username}`
-        });
-        inviteLink = invite.invite_link;
-        log('info', `Created invite link for ${username}`, { plan, inviteLink });
-      } catch (linkError) {
-        log('warn', `Could not create invite link for ${username}, using public link`, { error: linkError.message });
-        inviteLink = GROUP_LINKS[plan];
-      }
+        // First unban to ensure clean state, then try to add
+        await bot.unbanChatMember(groupId, userId, { only_if_banned: true });
+        log('info', `Cleaned ban status for ${username}`, { plan });
 
-      // Try to automatically add user to the group
-      try {
+        // Try to add user directly to the group
         await bot.approveChatJoinRequest(groupId, userId, { hide_author: false });
         log('info', `Successfully approved join request for ${username}`, { plan });
 
-        // Send welcome message in the group
-        await bot.sendMessage(groupId,
-          `🎉 Welcome ${username} to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group!
+      } catch (directAddError) {
+        log('warn', `Direct approval failed for ${username}, trying alternative method`, { error: directAddError.message });
+
+        // Method 2: Try to unban and add via member management
+        try {
+          await bot.unbanChatMember(groupId, userId);
+          // Wait a moment for unban to take effect
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Try to add as a regular member
+          await bot.approveChatJoinRequest(groupId, userId, { hide_author: false });
+          log('info', `Successfully added ${username} via unban method`, { plan });
+
+        } catch (unbanError) {
+          log('error', `All direct addition methods failed for ${username}`, { error: unbanError.message });
+
+          // Method 3: Send invite link as last resort
+          try {
+            const invite = await bot.createChatInviteLink(groupId, {
+              member_limit: 1,
+              expire_date: Math.floor(Date.now() / 1000) + 3600, // 1 hour expiry
+              name: `VVIP Access for ${username}`
+            });
+
+            await bot.sendMessage(chatId,
+              `✅ *Access Code Validated!*
+
+🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
+🔢 *Code:* ${code}
+⏰ *Expires:* ${new Date(Date.now() + SUBSCRIPTION_DURATIONS[plan]).toLocaleString()}
+
+🚀 *Click below to join your premium group:*
+Your personal invite link (expires in 1 hour):`, {
+              parse_mode: 'Markdown',
+              reply_markup: {
+                inline_keyboard: [
+                  [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: invite.invite_link }],
+                  [{ text: '📊 Check Status', callback_data: 'status' }]
+                ]
+              }
+            });
+
+            await notifyAdmin({ plan: plan, code: code, method: 'invite_link' }, username);
+            return; // Exit here since we're using invite link
+
+          } catch (inviteError) {
+            log('error', `Even invite link failed for ${username}`, { error: inviteError.message });
+
+            // Ultimate fallback: public group link
+            await bot.sendMessage(chatId,
+              `✅ *Access Code Validated!*
+
+🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
+🔢 *Code:* ${code}
+
+🚀 *Click below to join your premium group:*
+Please join using the public group link:`, {
+              parse_mode: 'Markdown',
+              reply_markup: {
+                inline_keyboard: [
+                  [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: GROUP_LINKS[plan] }],
+                  [{ text: '📞 Contact Support', url: 'https://www.dhronepredicts.com/contact' }]
+                ]
+              }
+            });
+
+            await notifyAdmin({ plan: plan, code: code, method: 'public_link', error: 'all_methods_failed' }, username);
+            return; // Exit here
+          }
+        }
+      }
+
+      // If we reach here, direct addition was successful
+      // Send welcome message in the group
+      await bot.sendMessage(groupId,
+        `🎉 Welcome ${username} to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group!
 
 📊 Enjoy exclusive premium predictions and insights!
 💬 Feel free to ask questions and engage with the community.`, {
-          parse_mode: 'Markdown'
-        });
+        parse_mode: 'Markdown'
+      });
 
-        // Send confirmation message to user
-        await bot.sendMessage(chatId,
-          `✅ *Access Code Validated & Added to Group!*
+      // Send confirmation message to user
+      await bot.sendMessage(chatId,
+        `✅ *Access Code Validated & Added to Group!*
 
 🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
 🔢 *Code:* ${code}
@@ -704,64 +812,40 @@ The code "${code}" has already been used.
 
 🚀 *You've been automatically added to your premium group!*
 Check your group membership and enjoy premium predictions!`, {
-          parse_mode: 'Markdown',
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: '🔗 Visit Group', url: inviteLink }],
-              [{ text: '📊 Check Status', callback_data: 'status' }]
-            ]
-          }
-        });
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🔗 Visit Group', url: GROUP_LINKS[plan] }],
+            [{ text: '📊 Check Status', callback_data: 'status' }]
+          ]
+        }
+      });
 
-        // Notify admin
-        await notifyAdmin({ plan: plan, code: code }, username);
-
-      } catch (approveError) {
-        log('warn', `Could not auto-approve ${username}, sending invite link instead`, { error: approveError.message });
-
-        // Send invite link instead
-        await bot.sendMessage(chatId,
-          `✅ *Access Code Validated!*
-
-🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
-🔢 *Code:* ${code}
-⏰ *Expires:* ${new Date(Date.now() + SUBSCRIPTION_DURATIONS[plan]).toLocaleString()}
-
-🚀 *Click below to join your premium group:*
-Your personal invite link (expires in 24 hours):`, {
-          parse_mode: 'Markdown',
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: inviteLink }],
-              [{ text: '📊 Check Status', callback_data: 'status' }]
-            ]
-          }
-        });
-
-        // Notify admin about manual join needed
-        await notifyAdmin({ plan: plan, code: code, manual_join: true }, username);
-      }
+      // Notify admin
+      await notifyAdmin({ plan: plan, code: code, method: 'direct_add' }, username);
 
     } catch (error) {
-      log('error', 'Error in group addition process', { username, plan, error: error.message });
+      log('error', 'Critical error in group addition process', { username, plan, error: error.message });
 
-      // Ultimate fallback: send public link
+      // Send error message to user
       await bot.sendMessage(chatId,
         `✅ *Access Code Validated!*
 
 🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
 🔢 *Code:* ${code}
 
-🚀 *Click below to join your premium group:*
-The bot will approve your membership when you join.`, {
+⚠️ *There was an issue adding you to the group automatically.*
+Please try joining manually or contact support.`, {
         parse_mode: 'Markdown',
         reply_markup: {
           inline_keyboard: [
             [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: GROUP_LINKS[plan] }],
-            [{ text: '🔄 Generate New Code', url: 'https://www.dhronepredicts.com' }]
+            [{ text: '📞 Contact Support', url: 'https://www.dhronepredicts.com/contact' }]
           ]
         }
       });
+
+      await notifyAdmin({ plan: plan, code: code, method: 'error', error: error.message }, username);
     }
 
     // Mark code as used
@@ -800,14 +884,18 @@ async function notifyAdmin(userData, username) {
 🔢 *Code:* ${userData.code}
 ⏰ *Time:* ${new Date().toLocaleString()}`;
 
-    if (userData.manual_join) {
-      message += `\n\n⚠️ *Manual Join Required:* User needs to click invite link`;
-    } else {
-      message += `\n\n✅ *Auto-Added:* User was automatically added to group`;
+    if (userData.method === 'direct_add') {
+      message += `\n\n✅ *Direct Addition:* User was automatically added to group`;
+    } else if (userData.method === 'invite_link') {
+      message += `\n\n🔗 *Invite Link Sent:* User received personal invite link`;
+    } else if (userData.method === 'public_link') {
+      message += `\n\n🌐 *Public Link Sent:* User received public group link`;
+    } else if (userData.method === 'error') {
+      message += `\n\n❌ *Error:* ${userData.error}`;
     }
 
     await bot.sendMessage(ADMIN_USER_ID, message, { parse_mode: 'Markdown' });
-    log('info', `Admin notified about new member: ${username}`, { plan: userData.plan, manual_join: userData.manual_join });
+    log('info', `Admin notified about new member: ${username}`, { plan: userData.plan, method: userData.method });
   } catch (error) {
     log('error', 'Error notifying admin', { username, error: error.message });
   }
