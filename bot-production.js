@@ -1,4 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
+const express = require('express');
 const fs = require('fs');
 const path = require('path');
 
@@ -41,6 +42,37 @@ if (NODE_ENV === 'production') {
 }
 
 const bot = new TelegramBot(BOT_TOKEN, botOptions);
+
+// Create Express server for Railway health checks
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Health check endpoint for Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    bot: {
+      polling: bot.isPolling(),
+      uptime: process.uptime()
+    }
+  });
+});
+
+// Basic root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Dhrone Predictions Bot is running',
+    status: 'active',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Start HTTP server
+app.listen(PORT, () => {
+  console.log(`🌐 HTTP server listening on port ${PORT}`);
+  console.log(`🔗 Health check available at: http://localhost:${PORT}/health`);
+});
 
 // Data persistence files
 const DATA_DIR = path.join(__dirname, 'data');
@@ -963,17 +995,25 @@ async function startBot() {
   console.log('📊 Bot will continue running even with configuration issues');
 }
 
-// Initialize bot independently if run directly
+// Initialize bot when module is loaded
+startBot();
 
 // Handle uncaught exceptions (don't exit to keep HTTP server running)
 process.on('uncaughtException', (error) => {
   console.error('💀 Uncaught exception:', error.message);
   console.error('🔄 Bot will attempt to continue running');
+  // Don't exit process - keep the HTTP server running
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('💀 Unhandled rejection:', reason.toString());
   console.error('🔄 Bot will attempt to continue running');
+  // Don't exit process - keep the HTTP server running
 });
 
-module.exports = { bot, pendingUsers, usedCodes, validCodes, activeSubscriptions, startBot };
+// Keep-alive mechanism for Railway
+setInterval(() => {
+  console.log(`🔄 Bot keep-alive check - Uptime: ${Math.floor(process.uptime())}s`);
+}, 300000); // Log every 5 minutes
+
+module.exports = { bot, pendingUsers, usedCodes, validCodes, activeSubscriptions, startBot, app };
