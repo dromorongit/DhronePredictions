@@ -732,7 +732,7 @@ async function notifyAdmin(userData, username) {
   }
 }
 
-// Bot initialization will be handled by server.js
+// Initialize bot independently if run directly
 
 // Automatic expiry check and user removal
 function checkExpiredSubscriptions() {
@@ -963,17 +963,17 @@ async function startBot() {
   console.log('📊 Bot will continue running even with configuration issues');
 }
 
-// Bot initialization will be handled by server.js
+// Initialize bot independently if run directly
 
 // Handle uncaught exceptions (don't exit to keep HTTP server running)
 process.on('uncaughtException', (error) => {
   console.error('💀 Uncaught exception:', error.message);
-  console.error('🔄 HTTP server will continue running');
+  console.error('🔄 Bot will attempt to continue running');
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('💀 Unhandled rejection:', reason.toString());
-  console.error('🔄 HTTP server will continue running');
+  console.error('🔄 Bot will attempt to continue running');
 });
 
 module.exports = { bot, pendingUsers, usedCodes, validCodes, activeSubscriptions, startBot };
