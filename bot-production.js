@@ -188,11 +188,11 @@ let validCodes = new Set([
   '2487276'
 ]);
 
-// Load additional codes from environment variable
-if (process.env.ACCESS_CODES) {
-  const envCodes = process.env.ACCESS_CODES.split(',').map(code => code.trim());
-  envCodes.forEach(code => validCodes.add(code));
-}
+// Load additional codes from environment variable (disabled for now)
+// if (process.env.ACCESS_CODES) {
+//   const envCodes = process.env.ACCESS_CODES.split(',').map(code => code.trim());
+//   envCodes.forEach(code => validCodes.add(code));
+// }
 
 // Group links
 const GROUP_LINKS = {
