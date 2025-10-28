@@ -612,7 +612,11 @@ bot.on('new_chat_members', async (msg) => {
 
         // Clean up
         pendingUsers.delete(userId);
-        usedCodes.add(userData.code);
+        // Only mark code as used if it wasn't already marked during validation
+        if (!usedCodes.has(userData.code)) {
+          usedCodes.add(userData.code);
+          log('info', `Code ${userData.code} marked as used after successful group join`, { username });
+        }
         saveData();
 
         log('info', `User ${username} successfully added to ${userData.plan} group`);
@@ -848,9 +852,16 @@ Please try joining manually or contact support.`, {
       await notifyAdmin({ plan: plan, code: code, method: 'error', error: error.message }, username);
     }
 
-    // Mark code as used
-    usedCodes.add(code);
-    saveData();
+    // Mark code as used (only if direct addition was successful)
+    if (userData.method === 'direct_add') {
+      usedCodes.add(code);
+      saveData();
+      log('info', `Code ${code} marked as used for successful direct addition`, { username });
+    } else {
+      log('warn', `Code ${code} NOT marked as used due to addition method: ${userData.method}`, { username });
+      // For non-direct methods, mark as used after user actually joins via link
+      // This will be handled in the new_chat_members event
+    }
 
     log('info', `Access code validated for ${username}`, { code, plan, userId });
 
