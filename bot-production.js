@@ -56,7 +56,8 @@ if (!fs.existsSync(DATA_DIR)) {
 
 // Store pending users (persisted to JSON)
 const pendingUsers = new Map();
-const usedCodes = new Set();
+// Initialize usedCodes with known used codes
+const usedCodes = new Set(['1697057', '3944692']);
 
 // Store active subscriptions with expiry dates (persisted to JSON)
 const activeSubscriptions = new Map();
