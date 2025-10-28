@@ -665,21 +665,38 @@ The code "${code}" has already been used.
     const groupId = GROUP_CHAT_IDS[plan];
 
     try {
-      // Automatically add user to the group
-      await bot.approveChatJoinRequest(groupId, userId, { hide_author: false });
+      // First, try to create an invite link for the user
+      let inviteLink;
+      try {
+        const invite = await bot.createChatInviteLink(groupId, {
+          member_limit: 1, // Only this user can use it
+          expire_date: Math.floor(Date.now() / 1000) + 86400, // Expires in 24 hours
+          name: `VVIP Access for ${username}`
+        });
+        inviteLink = invite.invite_link;
+        log('info', `Created invite link for ${username}`, { plan, inviteLink });
+      } catch (linkError) {
+        log('warn', `Could not create invite link for ${username}, using public link`, { error: linkError.message });
+        inviteLink = GROUP_LINKS[plan];
+      }
 
-      // Send welcome message in the group
-      await bot.sendMessage(groupId,
-        `🎉 Welcome ${username} to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group!
+      // Try to automatically add user to the group
+      try {
+        await bot.approveChatJoinRequest(groupId, userId, { hide_author: false });
+        log('info', `Successfully approved join request for ${username}`, { plan });
+
+        // Send welcome message in the group
+        await bot.sendMessage(groupId,
+          `🎉 Welcome ${username} to the ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group!
 
 📊 Enjoy exclusive premium predictions and insights!
 💬 Feel free to ask questions and engage with the community.`, {
-        parse_mode: 'Markdown'
-      });
+          parse_mode: 'Markdown'
+        });
 
-      // Send confirmation message to user
-      await bot.sendMessage(chatId,
-        `✅ *Access Code Validated & Added to Group!*
+        // Send confirmation message to user
+        await bot.sendMessage(chatId,
+          `✅ *Access Code Validated & Added to Group!*
 
 🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
 🔢 *Code:* ${code}
@@ -687,22 +704,48 @@ The code "${code}" has already been used.
 
 🚀 *You've been automatically added to your premium group!*
 Check your group membership and enjoy premium predictions!`, {
-        parse_mode: 'Markdown',
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: '🔗 Visit Group', url: GROUP_LINKS[plan] }],
-            [{ text: '📊 Check Status', callback_data: 'status' }]
-          ]
-        }
-      });
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🔗 Visit Group', url: inviteLink }],
+              [{ text: '📊 Check Status', callback_data: 'status' }]
+            ]
+          }
+        });
 
-      // Notify admin
-      await notifyAdmin({ plan: plan, code: code }, username);
+        // Notify admin
+        await notifyAdmin({ plan: plan, code: code }, username);
+
+      } catch (approveError) {
+        log('warn', `Could not auto-approve ${username}, sending invite link instead`, { error: approveError.message });
+
+        // Send invite link instead
+        await bot.sendMessage(chatId,
+          `✅ *Access Code Validated!*
+
+🎯 *Plan:* ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP
+🔢 *Code:* ${code}
+⏰ *Expires:* ${new Date(Date.now() + SUBSCRIPTION_DURATIONS[plan]).toLocaleString()}
+
+🚀 *Click below to join your premium group:*
+Your personal invite link (expires in 24 hours):`, {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: `🚀 Join ${plan.charAt(0).toUpperCase() + plan.slice(1)} VVIP Group`, url: inviteLink }],
+              [{ text: '📊 Check Status', callback_data: 'status' }]
+            ]
+          }
+        });
+
+        // Notify admin about manual join needed
+        await notifyAdmin({ plan: plan, code: code, manual_join: true }, username);
+      }
 
     } catch (error) {
-      log('error', 'Error adding user to group automatically', { username, plan, error: error.message });
+      log('error', 'Error in group addition process', { username, plan, error: error.message });
 
-      // Fallback: send link if auto-add fails
+      // Ultimate fallback: send public link
       await bot.sendMessage(chatId,
         `✅ *Access Code Validated!*
 
@@ -749,7 +792,7 @@ function determinePlanFromCode(code) {
 // Notify admin about new user
 async function notifyAdmin(userData, username) {
   try {
-    const message =
+    let message =
       `🎉 *New VVIP Member Added!*
 
 👤 *User:* ${username}
@@ -757,8 +800,14 @@ async function notifyAdmin(userData, username) {
 🔢 *Code:* ${userData.code}
 ⏰ *Time:* ${new Date().toLocaleString()}`;
 
+    if (userData.manual_join) {
+      message += `\n\n⚠️ *Manual Join Required:* User needs to click invite link`;
+    } else {
+      message += `\n\n✅ *Auto-Added:* User was automatically added to group`;
+    }
+
     await bot.sendMessage(ADMIN_USER_ID, message, { parse_mode: 'Markdown' });
-    log('info', `Admin notified about new member: ${username}`, { plan: userData.plan });
+    log('info', `Admin notified about new member: ${username}`, { plan: userData.plan, manual_join: userData.manual_join });
   } catch (error) {
     log('error', 'Error notifying admin', { username, error: error.message });
   }
@@ -912,6 +961,16 @@ bot.on('polling_error', (error) => {
   console.error(`🚨 POLLING ERROR #${pollingRetryCount}:`, error.message);
   console.error('Error code:', error.code);
   console.error('Error response:', error.response?.body);
+
+  // Handle multiple instance conflict specifically
+  if (error.code === 'ETELEGRAM' && error.message.includes('409') && error.message.includes('terminated by other getUpdates request')) {
+    console.error('🚨 MULTIPLE BOT INSTANCES DETECTED!');
+    console.error('💡 This means another instance of the bot is running');
+    console.error('🔧 Solution: Stop the other bot instance or check Railway deployment');
+    console.error('🔄 Stopping this instance to prevent conflicts...');
+    bot.stopPolling();
+    return;
+  }
 
   // Provide specific error messages
   if (error.code === 'EFATAL') {
