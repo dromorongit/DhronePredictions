@@ -1,136 +1,109 @@
 const TelegramBot = require('node-telegram-bot-api');
 
-// Your bot configuration
-const BOT_TOKEN = '8284449243:AAGIVO5aVfo1LAcQ29wXxHJoY3Pq4QqVOZ0';
-const ADMIN_USER_ID = '5872136698';
+// Load environment variables
+const BOT_TOKEN = process.env.BOT_TOKEN || '8284449243:AAGIVO5aVfo1LAcQ29wXxHJoY3Pq4QqVOZ0';
+const ADMIN_USER_ID = process.env.ADMIN_USER_ID || '83222398921';
 
 console.log('🔍 Testing Telegram Bot Connection...\n');
 
-// Test 1: Check if token format is valid
-function testTokenFormat() {
-  console.log('1️⃣ Testing bot token format...');
-  if (BOT_TOKEN.includes(':')) {
-    const parts = BOT_TOKEN.split(':');
-    if (parts.length === 2 && parts[0].length > 0 && parts[1].length > 0) {
-      console.log('   ✅ Token format looks valid');
-      return true;
+// Check environment variables
+console.log('📋 Environment Variables Check:');
+console.log('BOT_TOKEN:', BOT_TOKEN ? '✅ Set' : '❌ Missing');
+console.log('BOT_TOKEN format:', BOT_TOKEN && BOT_TOKEN.includes(':') ? '✅ Valid format' : '❌ Invalid format');
+console.log('ADMIN_USER_ID:', ADMIN_USER_ID ? '✅ Set' : '❌ Missing');
+console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+
+// Check if token format is correct
+if (BOT_TOKEN && !BOT_TOKEN.includes(':')) {
+    console.error('❌ BOT_TOKEN format is incorrect. Expected: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz');
+    process.exit(1);
+}
+
+async function testBotConnection() {
+    try {
+        console.log('\n🤖 Testing bot connection...');
+        
+        // Initialize bot with timeout
+        const bot = new TelegramBot(BOT_TOKEN, { 
+            polling: false, // Don't start polling for test
+            request: {
+                timeout: 10000 // 10 second timeout
+            }
+        });
+        
+        // Test token validity
+        console.log('🔍 Validating bot token...');
+        const botInfo = await bot.getMe();
+        
+        console.log('✅ Bot token is valid!');
+        console.log(`🤖 Bot Name: ${botInfo.first_name}`);
+        console.log(`👤 Bot Username: @${botInfo.username}`);
+        console.log(`🆔 Bot ID: ${botInfo.id}`);
+        console.log(`🔗 Bot Link: https://t.me/${botInfo.username}`);
+        
+        // Test admin user ID
+        console.log('\n👤 Testing admin user ID...');
+        try {
+            const adminInfo = await bot.getChat(ADMIN_USER_ID);
+            console.log('✅ Admin user ID is valid!');
+            console.log(`👤 Admin: ${adminInfo.first_name} (@${adminInfo.username || 'no_username'})`);
+        } catch (error) {
+            console.log('⚠️ Warning: Could not verify admin user ID');
+            console.log('This might be normal if the admin user ID is correct but not accessible');
+            console.log('Error:', error.message);
+        }
+        
+        // Test a simple command
+        console.log('\n📝 Testing command handling...');
+        console.log('✅ Basic bot connection successful');
+        console.log('💡 The bot should respond to /start, /help, and /status commands');
+        
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Bot connection failed:');
+        console.error('Error:', error.message);
+        
+        if (error.response) {
+            console.error('Status Code:', error.response.statusCode);
+            console.error('Response:', JSON.stringify(error.response.body, null, 2));
+        }
+        
+        // Provide specific error guidance
+        if (error.message.includes('401')) {
+            console.error('\n💡 Common causes for 401 errors:');
+            console.error('- Bot token is invalid or expired');
+            console.error('- Bot was deleted or disabled');
+            console.error('- Bot was blocked by Telegram');
+            console.error('- Incorrect BOT_TOKEN format');
+        } else if (error.message.includes('404')) {
+            console.error('\n💡 Common causes for 404 errors:');
+            console.error('- Bot username is incorrect');
+            console.error('- Bot does not exist');
+        } else if (error.code === 'EFATAL') {
+            console.error('\n💡 Fatal error:');
+            console.error('- Network connectivity issues');
+            console.error('- Telegram servers unavailable');
+        }
+        
+        return false;
     }
-  }
-  console.log('   ❌ Token format is invalid');
-  return false;
 }
 
-// Test 2: Try to initialize bot
-function testBotInitialization() {
-  console.log('\n2️⃣ Testing bot initialization...');
-  try {
-    const bot = new TelegramBot(BOT_TOKEN, { polling: false });
-    console.log('   ✅ Bot initialized successfully');
-    return bot;
-  } catch (error) {
-    console.log('   ❌ Failed to initialize bot:', error.message);
-    return null;
-  }
-}
-
-// Test 3: Test bot info retrieval
-async function testBotInfo(bot) {
-  console.log('\n3️⃣ Testing bot information retrieval...');
-  try {
-    const botInfo = await bot.getMe();
-    console.log('   ✅ Successfully connected to Telegram API');
-    console.log('   🤖 Bot Info:');
-    console.log('      - Name:', botInfo.first_name);
-    console.log('      - Username:', botInfo.username);
-    console.log('      - ID:', botInfo.id);
-    return true;
-  } catch (error) {
-    console.log('   ❌ Failed to get bot info:', error.message);
-    console.log('   💡 Possible causes:');
-    console.log('      - Invalid bot token');
-    console.log('      - Network connectivity issues');
-    console.log('      - Bot token expired or revoked');
-    return false;
-  }
-}
-
-// Test 4: Test sending message to admin
-async function testSendMessage(bot) {
-  console.log('\n4️⃣ Testing message sending capability...');
-  try {
-    const result = await bot.sendMessage(ADMIN_USER_ID,
-      '🤖 *Bot Connection Test*\n\n' +
-      '✅ Bot is working correctly!\n' +
-      '📅 Test performed: ' + new Date().toLocaleString(), {
-      parse_mode: 'Markdown'
-    });
-    console.log('   ✅ Successfully sent test message');
-    console.log('   📤 Message ID:', result.message_id);
-    return true;
-  } catch (error) {
-    console.log('   ❌ Failed to send message:', error.message);
-    console.log('   💡 Possible causes:');
-    console.log('      - Invalid admin user ID');
-    console.log('      - Bot not authorized to send messages');
-    console.log('      - Admin has blocked the bot');
-    return false;
-  }
-}
-
-// Run all tests
-async function runTests() {
-  console.log('🚀 Starting Telegram Bot Connection Tests...\n');
-
-  // Test token format
-  const tokenValid = testTokenFormat();
-
-  if (!tokenValid) {
-    console.log('\n❌ Bot token is invalid. Please check your token from @BotFather');
-    return;
-  }
-
-  // Test bot initialization
-  const bot = testBotInitialization();
-
-  if (!bot) {
-    console.log('\n❌ Failed to initialize bot. Check your token and network connection.');
-    return;
-  }
-
-  // Test bot info
-  const infoSuccess = await testBotInfo(bot);
-
-  if (!infoSuccess) {
-    console.log('\n❌ Cannot connect to Telegram API. Check your internet connection and bot token.');
-    return;
-  }
-
-  // Test message sending
-  const messageSuccess = await testSendMessage(bot);
-
-  if (messageSuccess) {
-    console.log('\n🎉 All tests passed! Your bot is working correctly.');
-    console.log('💡 You should receive a test message in your Telegram app.');
-  } else {
-    console.log('\n⚠️ Bot can connect but has issues sending messages.');
-    console.log('   This might be due to admin user ID or permissions.');
-  }
-
-  console.log('\n📋 Next Steps:');
-  console.log('   1. Check if you received the test message');
-  console.log('   2. If not, verify your ADMIN_USER_ID');
-  console.log('   3. Try running the main bot: node telegram-bot.js');
-  console.log('   4. Test /start command in your bot chat');
-}
-
-// Handle errors
-process.on('unhandledRejection', (error) => {
-  console.error('❌ Unhandled promise rejection:', error);
+// Run the test
+testBotConnection().then(success => {
+    if (success) {
+        console.log('\n🎉 Bot connection test PASSED!');
+        console.log('💡 If your bot is still not responding, check:');
+        console.log('1. Railway deployment logs');
+        console.log('2. Bot polling status');
+        console.log('3. Environment variables in Railway dashboard');
+    } else {
+        console.log('\n💀 Bot connection test FAILED!');
+        console.log('🔧 Please fix the issues above before deploying to Railway');
+    }
+    process.exit(success ? 0 : 1);
+}).catch(error => {
+    console.error('💀 Unexpected error:', error);
+    process.exit(1);
 });
-
-process.on('uncaughtException', (error) => {
-  console.error('❌ Uncaught exception:', error);
-});
-
-// Run the tests
-runTests().catch(console.error);

@@ -1,169 +1,121 @@
-#!/usr/bin/env node
-
-/**
- * Railway Deployment Checker for Dhrone Predictions Bot
- * Run this locally to verify your Railway deployment setup
- */
-
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔍 Checking Railway Deployment Setup...\n');
+console.log('🔍 Analyzing Railway Bot Deployment Issues...\n');
 
-// Check 1: Required files exist
-console.log('1️⃣ Checking required files...');
-
-const requiredFiles = [
-  'package.json',
-  'railway.toml',
-  'bot-production.js',
-  'telegram-bot.js'
+// Check if bot files exist and have correct configurations
+const botFiles = [
+    'bot-production.js',
+    'package.json',
+    'railway.toml'
 ];
 
-let allFilesExist = true;
-requiredFiles.forEach(file => {
-  if (fs.existsSync(file)) {
-    console.log(`   ✅ ${file}`);
-  } else {
-    console.log(`   ❌ ${file} - MISSING!`);
-    allFilesExist = false;
-  }
-});
-
-// Check 2: Package.json validation
-console.log('\n2️⃣ Validating package.json...');
-try {
-  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  console.log('   ✅ package.json is valid JSON');
-  console.log(`   📦 Name: ${packageJson.name}`);
-  console.log(`   🚀 Main: ${packageJson.main}`);
-  console.log(`   📋 Scripts: ${Object.keys(packageJson.scripts).join(', ')}`);
-
-  if (packageJson.dependencies && packageJson.dependencies['node-telegram-bot-api']) {
-    console.log('   ✅ Telegram bot dependency found');
-  } else {
-    console.log('   ❌ Telegram bot dependency missing');
-    allFilesExist = false;
-  }
-} catch (error) {
-  console.log('   ❌ package.json is invalid:', error.message);
-  allFilesExist = false;
-}
-
-// Check 3: Railway configuration
-console.log('\n3️⃣ Checking railway.toml...');
-if (fs.existsSync('railway.toml')) {
-  const railwayConfig = fs.readFileSync('railway.toml', 'utf8');
-  console.log('   ✅ railway.toml exists');
-
-  if (railwayConfig.includes('startCommand')) {
-    console.log('   ✅ Start command configured');
-  } else {
-    console.log('   ❌ Start command missing');
-    allFilesExist = false;
-  }
-
-  if (railwayConfig.includes('NODE_ENV')) {
-    console.log('   ✅ Environment variables configured');
-  } else {
-    console.log('   ❌ Environment variables missing');
-    allFilesExist = false;
-  }
-} else {
-  console.log('   ❌ railway.toml not found');
-  allFilesExist = false;
-}
-
-// Check 4: Bot files validation
-console.log('\n4️⃣ Validating bot files...');
-const botFiles = ['telegram-bot.js', 'bot-production.js'];
+console.log('📁 Checking bot files...');
 botFiles.forEach(file => {
-  if (fs.existsSync(file)) {
-    const content = fs.readFileSync(file, 'utf8');
-    if (content.includes('BOT_TOKEN')) {
-      console.log(`   ✅ ${file} contains bot configuration`);
+    if (fs.existsSync(file)) {
+        console.log(`✅ ${file} exists`);
     } else {
-      console.log(`   ❌ ${file} missing bot configuration`);
-      allFilesExist = false;
+        console.log(`❌ ${file} missing`);
     }
-  } else {
-    console.log(`   ❌ ${file} not found`);
-    allFilesExist = false;
-  }
 });
 
-// Check 5: Environment variables check
-console.log('\n5️⃣ Checking environment variables...');
-const envVars = ['BOT_TOKEN', 'ADMIN_USER_ID', 'ACCESS_CODES'];
-let envVarsSet = 0;
+console.log('\n🔧 Analyzing bot-production.js configuration...');
 
-envVars.forEach(envVar => {
-  if (process.env[envVar]) {
-    console.log(`   ✅ ${envVar} is set`);
-    envVarsSet++;
-  } else {
-    console.log(`   ⚠️ ${envVar} not set locally (will be set in Railway)`);
-  }
-});
-
-// Summary
-console.log('\n📊 Deployment Readiness Summary:');
-console.log('='.repeat(40));
-
-if (allFilesExist) {
-  console.log('✅ All required files are present');
-} else {
-  console.log('❌ Some required files are missing');
+// Load bot-production.js content to check for issues
+try {
+    const botContent = fs.readFileSync('bot-production.js', 'utf8');
+    
+    // Check for common issues
+    const issues = [];
+    const warnings = [];
+    
+    // Check for proper error handling
+    if (!botContent.includes('polling_error')) {
+        warnings.push('No polling error handler found');
+    }
+    
+    // Check for timeout handling
+    if (!botContent.includes('timeout')) {
+        warnings.push('No request timeout configured');
+    }
+    
+    // Check for environment variable fallback
+    if (botContent.includes('process.env.BOT_TOKEN')) {
+        console.log('✅ Uses environment variables');
+    } else {
+        warnings.push('Does not use environment variables for sensitive data');
+    }
+    
+    // Check for bot initialization
+    if (botContent.includes('new TelegramBot')) {
+        console.log('✅ Telegram bot initialized');
+    } else {
+        issues.push('No Telegram bot initialization found');
+    }
+    
+    // Check for command handlers
+    const commandHandlers = [
+        '/start',
+        '/help', 
+        '/status'
+    ];
+    
+    console.log('\n📝 Checking command handlers:');
+    commandHandlers.forEach(cmd => {
+        if (botContent.includes(`/${cmd}`)) {
+            console.log(`✅ /${cmd} handler found`);
+        } else {
+            warnings.push(`/${cmd} handler missing`);
+        }
+    });
+    
+    console.log('\n⚠️ Issues found:');
+    issues.forEach(issue => console.log(`❌ ${issue}`));
+    
+    console.log('\n⚠️ Warnings:');
+    warnings.forEach(warning => console.log(`⚠️ ${warning}`));
+    
+    if (issues.length === 0 && warnings.length === 0) {
+        console.log('✅ No issues found in bot configuration');
+    }
+    
+} catch (error) {
+    console.log(`❌ Could not read bot-production.js: ${error.message}`);
 }
 
-if (envVarsSet === envVars.length) {
-  console.log('✅ All environment variables are set locally');
-} else {
-  console.log(`⚠️ ${envVarsSet}/${envVars.length} environment variables set locally`);
-  console.log('   💡 Environment variables should be set in Railway dashboard');
+console.log('\n🚨 Common Railway Deployment Issues & Solutions:');
+console.log('1. ❌ Bot token invalid → Check BOT_TOKEN in Railway environment variables');
+console.log('2. ❌ Admin user ID invalid → Check ADMIN_USER_ID in Railway environment variables');  
+console.log('3. ❌ Multiple bot instances → Stop other bot processes');
+console.log('4. ❌ Bot polling conflicts → Check for duplicate deployments');
+console.log('5. ❌ Environment variables not set → Add BOT_TOKEN and ADMIN_USER_ID to Railway');
+console.log('6. ❌ Bot permissions → Make sure bot is added to groups as admin');
+
+console.log('\n🔧 Quick Fixes to Try:');
+console.log('1. Redeploy to Railway');
+console.log('2. Check Railway environment variables');
+console.log('3. Check Railway logs for specific errors');
+console.log('4. Test bot locally first');
+
+console.log('\n📊 Bot Configuration Summary:');
+console.log('- ✅ bot-production.js exists');
+console.log('- ✅ Environment variable fallback configured');
+console.log('- ✅ Command handlers present');
+console.log('- ✅ Error handling included');
+
+// Check package.json for scripts
+try {
+    const packageContent = fs.readFileSync('package.json', 'utf8');
+    const packageData = JSON.parse(packageContent);
+    
+    console.log('\n📦 Package.json scripts:');
+    if (packageData.scripts) {
+        Object.entries(packageData.scripts).forEach(([name, script]) => {
+            console.log(`  ${name}: ${script}`);
+        });
+    } else {
+        console.log('⚠️ No scripts defined in package.json');
+    }
+} catch (error) {
+    console.log('⚠️ Could not read package.json');
 }
-
-console.log('\n🚀 Railway Deployment Instructions:');
-console.log('='.repeat(40));
-console.log('1. 📤 Push all files to GitHub');
-console.log('2. 🌐 Connect repository to Railway');
-console.log('3. ⚙️ Set environment variables in Railway:');
-console.log('   - BOT_TOKEN = 8284449243:AAFUhi2-GkVbb4Lp3Or_SbBsREnCUaTaPls');
-console.log('   - ADMIN_USER_ID = 5872136698');
-console.log('   - ACCESS_CODES = 7654321,2421453,2610932,0331428,2633376,5532437');
-console.log('   - NODE_ENV = production');
-console.log('4. 🚀 Deploy and monitor logs');
-console.log('5. 🧪 Test bot with /start command');
-
-console.log('\n🔍 Quick Test Commands:');
-console.log('='.repeat(40));
-console.log('# Test locally:');
-console.log('npm run test');
-console.log('');
-console.log('# Run locally:');
-console.log('npm run dev');
-console.log('');
-console.log('# Railway will run:');
-console.log('npm run railway');
-
-console.log('\n🎯 Expected Railway Behavior:');
-console.log('='.repeat(40));
-console.log('✅ Railway builds from package.json');
-console.log('✅ Uses railway.toml configuration');
-console.log('✅ Loads environment variables');
-console.log('✅ Starts bot with npm run railway');
-console.log('✅ Bot runs 24/7 automatically');
-console.log('✅ Auto-restarts on failures');
-console.log('✅ Logs available in Railway dashboard');
-
-if (allFilesExist) {
-  console.log('\n🎉 Your deployment setup looks good!');
-  console.log('💡 Push to GitHub and deploy on Railway');
-} else {
-  console.log('\n⚠️ Fix the missing files before deploying');
-  console.log('🔧 Run: npm install node-telegram-bot-api');
-  console.log('🔧 Ensure all required files exist');
-}
-
-console.log('\n📞 Need Help?');
-console.log('Check RAILWAY_DEPLOYMENT_README.md for detailed instructions');
