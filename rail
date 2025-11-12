@@ -1,0 +1,256 @@
+@echo off
+REM Railway Deployment Script for Dhrone Predictions Bot (Windows Version)
+REM This script sets up environment variables and deploys the bot properly
+
+setlocal enabledelayedexpansion
+
+echo 🚀 Dhrone Predictions Bot - Railway Deployment Script
+echo ==============================================
+
+REM Check if we're in the right directory
+if not exist "bot-production.js" (
+    echo ❌ bot-production.js not found!
+    echo Please run this script from the project root directory
+    pause
+    exit /b 1
+)
+
+echo ✅ Project directory verified
+
+REM Check if railway CLI is installed
+echo [STEP] Checking Railway CLI...
+railway --version >nul 2>&1
+if !errorlevel! neq 0 (
+    echo [WARNING] Railway CLI not found
+    echo [INFO] Installing Railway CLI...
+    npm install -g @railway/cli
+    if !errorlevel! neq 0 (
+        echo ❌ Failed to install Railway CLI
+        echo Please install manually: npm install -g @railway/cli
+        pause
+        exit /b 1
+    )
+    echo ✅ Railway CLI installed successfully
+) else (
+    echo ✅ Railway CLI is already installed
+)
+
+REM Login to Railway (if not already logged in)
+echo [STEP] Checking Railway authentication...
+railway whoami >nul 2>&1
+if !errorlevel! neq 0 (
+    echo [INFO] Logging into Railway...
+    railway login
+    if !errorlevel! neq 0 (
+        echo ❌ Failed to login to Railway
+        echo Please login manually and run this script again
+        pause
+        exit /b 1
+    )
+    echo ✅ Successfully logged into Railway
+) else (
+    echo ✅ Already logged into Railway
+)
+
+REM Set environment variables
+echo [STEP] Setting up environment variables...
+
+REM Required environment variables
+echo [INFO] Setting BOT_TOKEN...
+railway variables set "BOT_TOKEN=8284449243:AAGIVO5aVfo1LAcQ29wXxHJoY3Pq4QqVOZ0"
+if !errorlevel! equ 0 (
+    echo ✅ BOT_TOKEN set successfully
+) else (
+    echo ❌ Failed to set BOT_TOKEN
+)
+
+echo [INFO] Setting ADMIN_USER_ID...
+railway variables set "ADMIN_USER_ID=83222398921"
+if !errorlevel! equ 0 (
+    echo ✅ ADMIN_USER_ID set successfully
+) else (
+    echo ❌ Failed to set ADMIN_USER_ID
+)
+
+echo [INFO] Setting NODE_ENV...
+railway variables set "NODE_ENV=production"
+if !errorlevel! equ 0 (
+    echo ✅ NODE_ENV set successfully
+) else (
+    echo ❌ Failed to set NODE_ENV
+)
+
+echo [INFO] Setting PORT...
+railway variables set "PORT=3000"
+if !errorlevel! equ 0 (
+    echo ✅ PORT set successfully
+) else (
+    echo ❌ Failed to set PORT
+)
+
+REM Optional environment variables
+echo [INFO] Setting optional environment variables...
+
+echo [INFO] Setting DAILY_GROUP_ID...
+railway variables set "DAILY_GROUP_ID=-1002919393985"
+if !errorlevel! equ 0 (
+    echo ✅ DAILY_GROUP_ID set successfully
+) else (
+    echo ⚠️ Failed to set DAILY_GROUP_ID (this is optional)
+)
+
+echo [INFO] Setting MONTHLY_GROUP_ID...
+railway variables set "MONTHLY_GROUP_ID=-1002773588959"
+if !errorlevel! equ 0 (
+    echo ✅ MONTHLY_GROUP_ID set successfully
+) else (
+    echo ⚠️ Failed to set MONTHLY_GROUP_ID (this is optional)
+)
+
+echo [INFO] Setting YEARLY_GROUP_ID...
+railway variables set "YEARLY_GROUP_ID=-1003091457695"
+if !errorlevel! equ 0 (
+    echo ✅ YEARLY_GROUP_ID set successfully
+) else (
+    echo ⚠️ Failed to set YEARLY_GROUP_ID (this is optional)
+)
+
+REM Verify environment variables
+echo [STEP] Verifying environment variables...
+railway variables list
+
+REM Deploy to Railway
+echo [STEP] Deploying bot to Railway...
+
+REM Check current Railway project
+echo [INFO] Checking current Railway project...
+railway status --json > project-info.json 2>&1
+if !errorlevel! neq 0 (
+    echo ❌ No Railway project found
+    echo Please run 'railway link' to link to your project first
+    del project-info.json 2>nul
+    pause
+    exit /b 1
+)
+
+REM Extract project ID from JSON (basic parsing)
+for /f "tokens=2 delims=:" %%i in ('findstr "projectId" project-info.json') do (
+    set "project_id=%%i"
+    goto :found_project
+)
+:found_project
+if defined project_id (
+    REM Remove quotes and commas
+    set "project_id=!project_id:"=!"
+    set "project_id=!project_id:,=!"
+    set "project_id=!project_id: =!"
+    echo ✅ Connected to Railway project: !project_id!
+) else (
+    echo ⚠️ Could not determine project ID
+)
+
+del project-info.json 2>nul
+
+REM Deploy using Railway CLI
+echo [STEP] Starting deployment...
+railway up
+
+if !errorlevel! equ 0 (
+    echo ✅ Deployment initiated successfully!
+) else (
+    echo ❌ Deployment failed
+    echo Please check Railway dashboard for error details
+    pause
+    exit /b 1
+)
+
+REM Wait for deployment to complete
+echo [INFO] Waiting for deployment to complete...
+timeout /t 10 /nobreak >nul
+
+REM Check deployment status
+echo [STEP] Checking deployment status...
+railway status
+
+REM Get deployment information
+echo [STEP] Getting deployment information...
+railway status --json > deployment-status.json 2>&1
+if !errorlevel! equ 0 (
+    echo ✅ Deployment status retrieved
+    
+    REM Extract URL if available (basic parsing)
+    for /f "tokens=2 delims=:" %%i in ('findstr "url" deployment-status.json') do (
+        set "deployment_url=%%i"
+        goto :found_url
+    )
+    :found_url
+    if defined deployment_url (
+        REM Remove quotes and commas
+        set "deployment_url=!deployment_url:"=!"
+        set "deployment_url=!deployment_url:,=!"
+        set "deployment_url=!deployment_url: =!"
+        echo 🌐 Bot deployment URL: https://!deployment_url!
+        echo 📊 Health check: https://!deployment_url!/health
+    )
+    
+    del deployment-status.json 2>nul
+) else (
+    echo ⚠️ Could not retrieve deployment status automatically
+    del deployment-status.json 2>nul
+)
+
+REM Final instructions
+echo.
+echo 🎉 Deployment Complete!
+echo ======================
+echo.
+echo ✅ Your bot has been deployed to Railway!
+echo Next steps:
+echo.
+echo 1. 🌐 Check Railway Dashboard: https://railway.app/dashboard
+echo 2. 📊 Monitor logs in Railway dashboard for:
+echo    ✅ 'Bot token validated successfully'
+echo    ✅ 'Bot polling enabled automatically'
+echo    ✅ 'Bot is now ready to receive messages!'
+echo.
+echo 3. 🤖 Test your bot on Telegram:
+echo    - Message: @dhronepredictionsbot
+echo    - Send: /start
+echo    - Should receive welcome message immediately
+echo.
+echo 4. 🔍 If bot doesn't respond:
+echo    - Check Railway logs for errors
+echo    - Verify environment variables are set correctly
+echo    - Ensure bot token is valid
+echo.
+echo 📋 Environment Variables Set:
+echo    ✅ BOT_TOKEN
+echo    ✅ ADMIN_USER_ID
+echo    ✅ NODE_ENV
+echo    ✅ PORT
+echo.
+
+echo [INFO] Deployment script completed successfully! 🚀
+
+REM Save deployment info to file
+echo Railway Deployment Information > deployment-info.txt
+echo ============================= >> deployment-info.txt
+echo Deployment Time: %date% %time% >> deployment-info.txt
+echo Environment: Production >> deployment-info.txt
+echo. >> deployment-info.txt
+echo Next Steps: >> deployment-info.txt
+echo 1. Check Railway dashboard for deployment status >> deployment-info.txt
+echo 2. Monitor logs for successful bot initialization >> deployment-info.txt
+echo 3. Test bot on Telegram with /start command >> deployment-info.txt
+echo 4. Monitor bot health at /health endpoint >> deployment-info.txt
+echo. >> deployment-info.txt
+echo If issues occur: >> deployment-info.txt
+echo 1. Check Railway logs for error messages >> deployment-info.txt
+echo 2. Verify all environment variables are set >> deployment-info.txt
+echo 3. Ensure BOT_TOKEN is valid and bot is active >> deployment-info.txt
+echo 4. Check for multiple bot instance conflicts >> deployment-info.txt
+
+echo [INFO] Deployment info saved to deployment-info.txt
+echo [INFO] Check this file for deployment details and troubleshooting info
+
+pause

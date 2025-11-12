@@ -8,27 +8,51 @@ const BOT_TOKEN = process.env.BOT_TOKEN || '8284449243:AAGIVO5aVfo1LAcQ29wXxHJoY
 const ADMIN_USER_ID = process.env.ADMIN_USER_ID || '83222398921';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-// Validate required environment variables
-if (!BOT_TOKEN || !ADMIN_USER_ID) {
-  console.error('❌ Missing required environment variables:');
-  console.error('   BOT_TOKEN and ADMIN_USER_ID must be set');
-  console.error('🔧 Please set these in Railway environment variables');
-}
+// Enhanced configuration validation
+let configValid = true;
+const configErrors = [];
 
 // Validate BOT_TOKEN format
-if (!BOT_TOKEN.includes(':')) {
-  console.error('❌ Invalid BOT_TOKEN format. Expected format: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz');
-  console.error('🔧 Please check your BOT_TOKEN in Railway environment variables');
+if (!BOT_TOKEN) {
+  configErrors.push('BOT_TOKEN is missing');
+  configValid = false;
+} else if (!BOT_TOKEN.includes(':')) {
+  configErrors.push('BOT_TOKEN format is invalid. Expected format: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz');
+  configValid = false;
 }
 
-if (BOT_TOKEN && ADMIN_USER_ID && BOT_TOKEN.includes(':')) {
+// Validate ADMIN_USER_ID
+if (!ADMIN_USER_ID) {
+  configErrors.push('ADMIN_USER_ID is missing');
+  configValid = false;
+} else if (!/^\d+$/.test(ADMIN_USER_ID)) {
+  configErrors.push('ADMIN_USER_ID must be a numeric user ID');
+  configValid = false;
+}
+
+// Display configuration status
+console.log('🔧 Configuration Check:');
+if (configValid) {
   console.log('✅ BOT_TOKEN format validated');
-  console.log('✅ ADMIN_USER_ID set');
+  console.log('✅ ADMIN_USER_ID validated');
+  console.log('✅ All required configuration is valid');
 } else {
-  console.log('⚠️ Environment variables not properly configured');
+  console.error('❌ Configuration errors found:');
+  configErrors.forEach(error => console.error(`   - ${error}`));
+  console.error('🔧 Please fix these in Railway environment variables before deploying');
+}
+
+// Only proceed with bot initialization if config is valid
+if (!configValid) {
+  console.error('🚨 Cannot start bot due to configuration errors');
+  console.error('📋 Please set proper environment variables in Railway dashboard');
+  // Don't exit process - let the HTTP server still run for health checks
 }
 
 // Initialize bot with production settings
+let bot = null;
+let botInitialized = false;
+
 const botOptions = {
   polling: true, // Enable polling for Railway
   filepath: false // Disable file sessions for Railway
@@ -41,22 +65,52 @@ if (NODE_ENV === 'production') {
   };
 }
 
-const bot = new TelegramBot(BOT_TOKEN, botOptions);
+// Only initialize bot if configuration is valid
+if (configValid) {
+  try {
+    bot = new TelegramBot(BOT_TOKEN, botOptions);
+    botInitialized = true;
+    console.log('✅ Telegram bot instance created successfully');
+  } catch (error) {
+    console.error('❌ Failed to create bot instance:', error.message);
+    console.error('🔧 Please check your BOT_TOKEN and try again');
+  }
+} else {
+  console.error('❌ Skipping bot initialization due to configuration errors');
+}
 
 // Create Express server for Railway health checks
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Health check endpoint for Railway
+// Enhanced health check endpoint for Railway
 app.get('/health', (req, res) => {
-  res.status(200).json({
+  const healthData = {
     status: 'healthy',
     timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: NODE_ENV,
+    config: {
+      botTokenValid: !!BOT_TOKEN,
+      botTokenFormat: BOT_TOKEN && BOT_TOKEN.includes(':') ? 'valid' : 'invalid',
+      adminUserIdValid: !!ADMIN_USER_ID,
+      configurationValid: configValid
+    },
     bot: {
-      polling: bot.isPolling(),
-      uptime: process.uptime()
+      initialized: botInitialized,
+      polling: bot && bot.isPolling ? bot.isPolling() : false,
+      state: currentPollingState,
+      retryCount: pollingRetryCount
+    },
+    data: {
+      pendingUsers: pendingUsers.size,
+      usedCodes: usedCodes.size,
+      activeSubscriptions: activeSubscriptions.size,
+      validCodes: validCodes.size
     }
-  });
+  };
+
+  res.status(200).json(healthData);
 });
 
 // Basic root endpoint
@@ -268,16 +322,18 @@ function log(level, message, data = null) {
   }
 }
 
-// Handle /start command
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  const userId = msg.from.id;
-  const username = msg.from.username || msg.from.first_name;
+// Set up command handlers only if bot is initialized
+if (bot && botInitialized) {
+  // Handle /start command
+  bot.onText(/\/start/, (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+    const username = msg.from.username || msg.from.first_name;
 
-  log('info', `User ${username} (${userId}) sent /start`);
+    log('info', `User ${username} (${userId}) sent /start`);
 
-  bot.sendMessage(chatId,
-    `👋 *Welcome to Dhrone Predictions VVIP Access Bot!*
+    bot.sendMessage(chatId,
+      `👋 *Welcome to Dhrone Predictions VVIP Access Bot!*
 
 🎯 *To join our premium Telegram groups:*
 
@@ -286,16 +342,383 @@ bot.onText(/\/start/, (msg) => {
 3️⃣ I'll validate it and add you to the appropriate group
 
 💡 *Send your access code now:*`, {
-    parse_mode: 'Markdown',
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '🔗 Visit Website', url: 'https://www.dhronepredicts.com' }]
-      ]
-    }
-  }).catch(error => {
-    log('error', 'Failed to send welcome message', { chatId, error: error.message });
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔗 Visit Website', url: 'https://www.dhronepredicts.com' }]
+        ]
+      }
+    }).catch(error => {
+      log('error', 'Failed to send welcome message', { chatId, error: error.message });
+    });
   });
-});
+
+  // Handle /getchatid command (for getting group chat IDs)
+  bot.onText(/\/getchatid/, (msg) => {
+    const chatId = msg.chat.id;
+    const chatType = msg.chat.type;
+    const chatTitle = msg.chat.title || 'Private Chat';
+
+    if (chatType === 'group' || chatType === 'supergroup') {
+      bot.sendMessage(chatId,
+        `🆔 *Group Chat ID Information*\n\n` +
+        `📋 *Chat Title:* ${chatTitle}\n` +
+        `🆔 *Chat ID:* \`${chatId}\`\n` +
+        `📝 *Type:* ${chatType}\n\n` +
+        `💡 *Copy this Chat ID and add it to your Railway environment variables:*\n` +
+        `\`CHAT_ID = ${chatId}\``, {
+        parse_mode: 'Markdown'
+      }).catch(error => {
+        log('error', 'Failed to send chat ID message', { chatId, error: error.message });
+      });
+    } else {
+      bot.sendMessage(chatId,
+        `❌ *This command only works in groups!*\n\n` +
+        `📝 Send /getchatid in your VVIP groups to get their Chat IDs.\n` +
+        `🆔 You'll need these IDs for the Railway environment variables.`, {
+        parse_mode: 'Markdown'
+      }).catch(error => {
+        log('error', 'Failed to send chat ID error message', { chatId, error: error.message });
+      });
+    }
+  });
+
+  // Handle /checkbotadmin command (for checking bot admin status)
+  bot.onText(/\/checkbotadmin/, (msg) => {
+    const chatId = msg.chat.id;
+    const chatType = msg.chat.type;
+    const chatTitle = msg.chat.title || 'Private Chat';
+
+    if (chatType === 'group' || chatType === 'supergroup') {
+      // Check if bot is admin in this group
+      bot.getChatMember(chatId, bot.botInfo?.id || 0).then(member => {
+        const isAdmin = ['administrator', 'creator'].includes(member.status);
+        const canInvite = member.can_invite_users;
+        const canRestrict = member.can_restrict_members;
+
+        bot.sendMessage(chatId,
+          `🤖 *Bot Admin Status Check*\n\n` +
+          `📋 *Group:* ${chatTitle}\n` +
+          `🆔 *Chat ID:* \`${chatId}\`\n\n` +
+          `👑 *Bot is Admin:* ${isAdmin ? '✅ YES' : '❌ NO'}\n` +
+          `👥 *Can Invite Users:* ${canInvite ? '✅ YES' : '❌ NO'}\n` +
+          `🚫 *Can Restrict Members:* ${canRestrict ? '✅ YES' : '❌ NO'}\n\n` +
+          `${!isAdmin ? '⚠️ *WARNING:* Bot needs admin rights to add users automatically!' : '✅ *Bot has required permissions for auto-addition!'}`, {
+          parse_mode: 'Markdown'
+        }).catch(error => {
+          log('error', 'Failed to send bot admin check message', { chatId, error: error.message });
+        });
+      }).catch(error => {
+        bot.sendMessage(chatId,
+          `❌ *Could not check bot status in this group*\n\n` +
+          `Make sure the bot is added to the group and try again.`, {
+          parse_mode: 'Markdown'
+        }).catch(() => {});
+        log('error', 'Failed to check bot member status', { chatId, error: error.message });
+      });
+    } else {
+      bot.sendMessage(chatId,
+        `❌ *This command only works in groups!*\n\n` +
+        `📝 Send /checkbotadmin in your VVIP groups to check bot permissions.`, {
+        parse_mode: 'Markdown'
+      }).catch(error => {
+        log('error', 'Failed to send bot admin check error message', { chatId, error: error.message });
+      });
+    }
+  });
+
+  // Handle /help command
+  bot.onText(/\/help/, (msg) => {
+    const chatId = msg.chat.id;
+
+    bot.sendMessage(chatId,
+      `🆘 *Dhrone Predictions VVIP Access Bot - Help*
+
+🤖 *Available Commands:*
+• /start - Welcome message and instructions
+• /help - Show this help message
+• /status - Check your access status
+• /getchatid - Get group chat ID (admin only)
+• /checkbotadmin - Check bot permissions in group (admin only)
+
+📋 *How to Use:*
+1️⃣ Pay for VVIP access on our website
+2️⃣ Get your unique 7-digit access code
+3️⃣ Send the code to me (e.g., 1234567)
+4️⃣ I'll automatically add you to the appropriate VVIP group
+
+🎯 *Subscription Plans:*
+• Daily VVIP - ₵50 (24 hours)
+• Monthly VVIP - ₵350 (30 days)
+• Yearly VVIP - ₵1750 (365 days)
+
+❓ *Need Help?*
+Contact our support team or visit our website.`, {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🔗 Visit Website', url: 'https://www.dhronepredicts.com' }],
+          [{ text: '📞 Contact Support', url: 'https://www.dhronepredicts.com/contact' }]
+        ]
+      }
+    }).catch(error => {
+      log('error', 'Failed to send help message', { chatId, error: error.message });
+    });
+  });
+
+  // Handle /status command
+  bot.onText(/\/status/, (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+    const username = msg.from.username || msg.from.first_name;
+
+    // Update user history
+    const history = userHistory.get(userId) || { lastStatus: 'none', lastCheck: new Date() };
+    history.lastCheck = new Date();
+    userHistory.set(userId, history);
+    saveData();
+
+    // Check if user has active subscription first
+    const subscription = activeSubscriptions.get(userId);
+
+    if (subscription) {
+      history.lastStatus = 'active';
+      userHistory.set(userId, history);
+      saveData();
+
+      const now = new Date();
+      const isExpired = now > subscription.expiryDate;
+      const timeLeft = subscription.expiryDate - now;
+      const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
+
+      if (isExpired) {
+        bot.sendMessage(chatId,
+          `📊 *Your Access Status*
+
+👤 *User:* ${username}
+❌ *Status:* Subscription expired
+⏰ *Expired:* ${subscription.expiryDate.toLocaleString()}
+
+💡 *To renew your access:*
+Visit our website and purchase a new subscription.
+
+🎯 Ready to get premium access again?`, {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🛒 Renew VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }]
+            ]
+          }
+        }).catch(error => {
+          log('error', 'Failed to send expired status message', { chatId, error: error.message });
+        });
+      } else {
+        bot.sendMessage(chatId,
+          `📊 *Your Access Status*
+
+👤 *User:* ${username}
+🎯 *Plan:* ${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} VVIP
+⏰ *Expires:* ${subscription.expiryDate.toLocaleString()}
+📅 *Days Left:* ${daysLeft}
+
+✅ *Status:* Active subscription
+
+🚀 Your premium group access is still valid!`, {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🔗 Go to Group', url: GROUP_LINKS[subscription.plan] }]
+            ]
+          }
+        }).catch(error => {
+          log('error', 'Failed to send active status message', { chatId, error: error.message });
+        });
+      }
+    } else {
+      // Check if user has pending access (code validated but hasn't joined group yet)
+      const pendingUser = pendingUsers.get(userId);
+
+      if (pendingUser) {
+        history.lastStatus = 'pending';
+        userHistory.set(userId, history);
+        saveData();
+
+        bot.sendMessage(chatId,
+          `📊 *Your Access Status*
+
+👤 *User:* ${username}
+🎯 *Plan:* ${pendingUser.plan.charAt(0).toUpperCase() + pendingUser.plan.slice(1)} VVIP
+🔢 *Code:* ${pendingUser.code}
+⏰ *Validated:* ${pendingUser.timestamp.toLocaleString()}
+
+✅ *Status:* Code validated, ready to join group!
+
+🚀 Click below to join your premium group:`, {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: `🚀 Join ${pendingUser.plan.charAt(0).toUpperCase() + pendingUser.plan.slice(1)} VVIP Group`, url: GROUP_LINKS[pendingUser.plan] }]
+            ]
+          }
+        }).catch(error => {
+          log('error', 'Failed to send status message', { chatId, error: error.message });
+        });
+      } else {
+        history.lastStatus = 'none';
+        userHistory.set(userId, history);
+        saveData();
+
+        // User has no subscription or pending access
+        const totalCodes = validCodes.size;
+        const usedCodesCount = usedCodes.size;
+        const availableCodes = totalCodes - usedCodesCount;
+
+        bot.sendMessage(chatId,
+          `📊 *Your Access Status*
+
+👤 *User:* ${username}
+❌ *Status:* No active access code
+
+📈 *System Stats:*
+• Total codes available: ${totalCodes}
+• Codes used: ${usedCodesCount}
+• Codes remaining: ${availableCodes}
+
+💡 *To get access:*
+1. Visit our website
+2. Purchase a VVIP subscription
+3. Get your 7-digit access code
+4. Send it to me
+
+🎯 Ready to get premium access?`, {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🛒 Get VVIP Access', url: 'https://www.dhronepredicts.com/vvip' }],
+              [{ text: '❓ Need Help?', callback_data: 'help' }]
+            ]
+          }
+        }).catch(error => {
+          log('error', 'Failed to send status message', { chatId, error: error.message });
+        });
+      }
+    }
+  });
+
+  // Handle access code messages
+  bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+    const username = msg.from.username || msg.from.first_name;
+    const text = msg.text;
+
+    // Skip if it's a command or not a private chat
+    if (text && text.startsWith('/')) return;
+    if (msg.chat.type !== 'private') return;
+
+    // Check if message is a 7-digit code
+    if (/^\d{7}$/.test(text)) {
+      await handleAccessCode(chatId, userId, username, text);
+    } else if (text && text.length > 0) {
+      bot.sendMessage(chatId,
+        `❌ *Invalid format!*
+
+Please send your *7-digit access code* (e.g., 1234567)
+
+💡 Get your code from our website after payment.`, {
+        parse_mode: 'Markdown'
+      }).catch(error => {
+        log('error', 'Failed to send invalid format message', { chatId, error: error.message });
+      });
+    }
+  });
+
+  // Handle new chat members (when users join groups)
+  bot.on('new_chat_members', async (msg) => {
+    const chatId = msg.chat.id;
+    const newMembers = msg.new_chat_members;
+
+    // Check if this is one of our premium groups using GROUP_CHAT_IDS
+    const isPremiumGroup = Object.values(GROUP_CHAT_IDS).includes(chatId);
+
+    if (!isPremiumGroup) return;
+
+    for (const member of newMembers) {
+      if (member.is_bot) continue; // Skip bots
+
+      const userId = member.id;
+      const username = member.username || member.first_name;
+
+      // Check if user has a valid pending request
+      if (pendingUsers.has(userId)) {
+        const userData = pendingUsers.get(userId);
+
+        try {
+          await bot.approveChatJoinRequest(chatId, userId);
+          await bot.sendMessage(chatId,
+            `🎉 Welcome ${username} to the ${userData.plan.charAt(0).toUpperCase() + userData.plan.slice(1)} VVIP Group!
+
+📊 Enjoy exclusive premium predictions and insights!
+💬 Feel free to ask questions and engage with the community.`, {
+            parse_mode: 'Markdown'
+          });
+
+          // Notify admin
+          await notifyAdmin(userData, username);
+
+          // Clean up
+          pendingUsers.delete(userId);
+          // Only mark code as used if it wasn't already marked during validation
+          if (!usedCodes.has(userData.code)) {
+            usedCodes.add(userData.code);
+            log('info', `Code ${userData.code} marked as used after successful group join`, { username });
+          }
+          saveData();
+
+          log('info', `User ${username} successfully added to ${userData.plan} group`);
+
+        } catch (error) {
+          log('error', 'Error adding user to group', { username, plan: userData.plan, error: error.message });
+          await bot.sendMessage(chatId,
+            `⚠️ There was an issue adding ${username}. Please contact support.`
+          ).catch(() => {});
+        }
+      } else {
+        // User joined without valid access code
+        await bot.sendMessage(chatId,
+          `🚫 @${username}, you need a valid access code to join this group.
+
+💡 Get your code from our website: https://www.dhronepredicts.com
+🤖 Then message me (@${bot.username}) with your code.`, {
+          parse_mode: 'Markdown'
+        });
+
+        // Remove user from group
+        try {
+          await bot.banChatMember(chatId, userId);
+          await bot.unbanChatMember(chatId, userId);
+          log('info', `Unauthorized user ${username} removed from group`);
+        } catch (error) {
+          log('error', 'Error removing unauthorized user', { username, error: error.message });
+        }
+      }
+    }
+  });
+
+  // Handle callback queries
+  bot.on('callback_query', (query) => {
+    const chatId = query.message.chat.id;
+    const userId = query.from.id;
+
+    if (query.data === 'help') {
+      // Show help message
+      bot.answerCallbackQuery(query.id);
+      bot.sendMessage(chatId, 'Need help? Visit our website: https://www.dhronepredicts.com/contact');
+    }
+  });
+} else {
+  console.log('⚠️ Bot not initialized, skipping command handlers setup');
+}
 
 // Handle /getchatid command (for getting group chat IDs)
 bot.onText(/\/getchatid/, (msg) => {
@@ -1050,66 +1473,81 @@ bot.on('callback_query', (query) => {
   }
 });
 
-// Error handling with retry mechanism
+// Enhanced error handling with retry mechanism
 let pollingRetryCount = 0;
 const MAX_POLLING_RETRIES = 5;
 const POLLING_RETRY_DELAY = 10000; // 10 seconds
+let currentPollingState = 'stopped';
 
-bot.on('polling_error', (error) => {
-  pollingRetryCount++;
-  console.error(`🚨 POLLING ERROR #${pollingRetryCount}:`, error.message);
-  console.error('Error code:', error.code);
-  console.error('Error response:', error.response?.body);
+// Only set up error handlers if bot is initialized
+if (bot && botInitialized) {
+  bot.on('polling_error', (error) => {
+    pollingRetryCount++;
+    currentPollingState = 'error';
+    console.error(`🚨 POLLING ERROR #${pollingRetryCount}:`, error.message);
+    console.error('Error code:', error.code);
+    console.error('Error response:', error.response?.body);
 
-  // Handle multiple instance conflict specifically
-  if (error.code === 'ETELEGRAM' && error.message.includes('409') && error.message.includes('terminated by other getUpdates request')) {
-    console.error('🚨 MULTIPLE BOT INSTANCES DETECTED!');
-    console.error('💡 This means another instance of the bot is running');
-    console.error('🔧 Solution: Stop the other bot instance or check Railway deployment');
-    console.error('🔄 Stopping this instance to prevent conflicts...');
-    bot.stopPolling();
-    return;
-  }
+    // Handle multiple instance conflict specifically
+    if (error.code === 'ETELEGRAM' && error.message.includes('409') && error.message.includes('terminated by other getUpdates request')) {
+      console.error('🚨 MULTIPLE BOT INSTANCES DETECTED!');
+      console.error('💡 This means another instance of the bot is running');
+      console.error('🔧 Solution: Stop the other bot instance or check Railway deployment');
+      console.error('🔄 Stopping this instance to prevent conflicts...');
+      currentPollingState = 'stopped';
+      bot.stopPolling();
+      return;
+    }
 
-  // Provide specific error messages
-  if (error.code === 'EFATAL') {
-    console.error('💀 FATAL ERROR: Bot token may be invalid or bot is blocked');
-    console.error('🔄 Stopping polling to prevent spam...');
-    bot.stopPolling();
-    return;
-  } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-    console.error('🌐 NETWORK ERROR: Cannot reach Telegram servers');
-  } else if (error.code === 'ETIMEDOUT') {
-    console.error('⏰ TIMEOUT ERROR: Request to Telegram timed out');
-  }
+    // Provide specific error messages
+    if (error.code === 'EFATAL') {
+      console.error('💀 FATAL ERROR: Bot token may be invalid or bot is blocked');
+      console.error('🔄 Stopping polling to prevent spam...');
+      currentPollingState = 'stopped';
+      bot.stopPolling();
+      return;
+    } else if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+      console.error('🌐 NETWORK ERROR: Cannot reach Telegram servers');
+    } else if (error.code === 'ETIMEDOUT') {
+      console.error('⏰ TIMEOUT ERROR: Request to Telegram timed out');
+    }
 
-  // Retry logic
-  if (pollingRetryCount < MAX_POLLING_RETRIES) {
-    console.log(`⏳ Retrying in ${POLLING_RETRY_DELAY / 1000} seconds... (${pollingRetryCount}/${MAX_POLLING_RETRIES})`);
-    setTimeout(() => {
-      console.log('🔄 Attempting to restart polling...');
-      bot.startPolling().catch(retryError => {
-        console.error('❌ Retry failed:', retryError.message);
-      });
-    }, POLLING_RETRY_DELAY);
-  } else {
-    console.error('💀 MAX RETRIES REACHED: Giving up on polling');
-    console.error('💡 Please check your BOT_TOKEN and network connectivity');
-    bot.stopPolling();
-  }
+    // Retry logic
+    if (pollingRetryCount < MAX_POLLING_RETRIES) {
+      console.log(`⏳ Retrying in ${POLLING_RETRY_DELAY / 1000} seconds... (${pollingRetryCount}/${MAX_POLLING_RETRIES})`);
+      setTimeout(() => {
+        console.log('🔄 Attempting to restart polling...');
+        currentPollingState = 'retrying';
+        bot.startPolling().then(() => {
+          currentPollingState = 'active';
+          console.log('✅ Polling restarted successfully');
+        }).catch(retryError => {
+          console.error('❌ Retry failed:', retryError.message);
+          currentPollingState = 'error';
+        });
+      }, POLLING_RETRY_DELAY);
+    } else {
+      console.error('💀 MAX RETRIES REACHED: Giving up on polling');
+      console.error('💡 Please check your BOT_TOKEN and network connectivity');
+      currentPollingState = 'stopped';
+      bot.stopPolling();
+    }
 
-  log('error', 'Polling error occurred', {
-    error: error.message,
-    code: error.code,
-    response: error.response?.body,
-    retryCount: pollingRetryCount
+    log('error', 'Polling error occurred', {
+      error: error.message,
+      code: error.code,
+      response: error.response?.body,
+      retryCount: pollingRetryCount
+    });
   });
-});
 
-bot.on('error', (error) => {
-  console.error('🚨 BOT ERROR:', error.message);
-  log('error', 'Bot error occurred', { error: error.message });
-});
+  bot.on('error', (error) => {
+    console.error('🚨 BOT ERROR:', error.message);
+    log('error', 'Bot error occurred', { error: error.message });
+  });
+} else {
+  console.log('⚠️ Bot not initialized, skipping error handlers setup');
+}
 
 // Graceful shutdown
 process.on('SIGINT', () => {
@@ -1154,7 +1592,7 @@ async function validateBotToken() {
   }
 }
 
-// Initialize bot
+// Enhanced bot initialization
 async function startBot() {
   console.log('🤖 Dhrone Predictions Telegram Bot Starting...');
   console.log(`📅 Environment: ${NODE_ENV}`);
@@ -1164,30 +1602,67 @@ async function startBot() {
   // Load persistent data
   loadData();
 
-  // Only validate token if we have proper environment variables
-  if (BOT_TOKEN && ADMIN_USER_ID && BOT_TOKEN.includes(':')) {
-    try {
-      const isTokenValid = await validateBotToken();
-      if (isTokenValid) {
-        console.log('✅ Bot token validated successfully');
+  // Only proceed with bot operations if configuration is valid
+  if (!configValid) {
+    console.error('❌ Skipping bot operations due to configuration errors');
+    console.log('💡 Fix the configuration errors listed above to enable bot functionality');
+    return;
+  }
 
-        // Bot will auto-poll since polling: true is set
-        console.log('🔄 Bot polling enabled automatically');
-      } else {
-        console.error('❌ Bot token validation failed');
-        console.error('🔧 Please check BOT_TOKEN in Railway environment variables');
-      }
-    } catch (error) {
-      console.error('❌ Error during bot initialization:', error.message);
-      console.error('🔧 Please check your environment variables and bot token');
+  try {
+    // Validate bot token first
+    const isTokenValid = await validateBotToken();
+    if (!isTokenValid) {
+      console.error('❌ Bot token validation failed');
+      console.error('🔧 Please check BOT_TOKEN in Railway environment variables');
+      return;
     }
-  } else {
-    console.log('⚠️ Environment variables not configured properly');
-    console.log('🔧 Please set BOT_TOKEN and ADMIN_USER_ID in Railway');
+
+    console.log('✅ Bot token validated successfully');
+
+    // Start polling (it should already be enabled, but let's ensure it)
+    if (bot && botInitialized) {
+      try {
+        // Ensure bot is polling
+        if (!bot.isPolling()) {
+          console.log('🔄 Starting bot polling...');
+          await bot.startPolling();
+          currentPollingState = 'active';
+        } else {
+          console.log('✅ Bot polling is already active');
+          currentPollingState = 'active';
+        }
+        
+        console.log('✅ Bot polling enabled successfully');
+        console.log('🎉 Bot is now ready to receive messages!');
+        
+        // Notify admin that bot is running
+        try {
+          await bot.sendMessage(ADMIN_USER_ID,
+            '🤖 **Bot Status Update**\n\n✅ Bot successfully started and is now running!\n\n' +
+            `📅 Environment: ${NODE_ENV}\n` +
+            `⏰ Started: ${new Date().toLocaleString()}\n\n` +
+            'The bot is ready to process access codes and manage VVIP memberships.',
+            { parse_mode: 'Markdown' }
+          );
+        } catch (notifyError) {
+          console.log('⚠️ Could not send startup notification to admin:', notifyError.message);
+        }
+        
+      } catch (pollingError) {
+        console.error('❌ Failed to start polling:', pollingError.message);
+        currentPollingState = 'error';
+      }
+    } else {
+      console.error('❌ Bot instance not available for polling');
+    }
+
+  } catch (error) {
+    console.error('❌ Error during bot initialization:', error.message);
+    console.error('🔧 Please check your environment variables and bot token');
   }
 
   console.log('✅ Bot initialization completed');
-  console.log('📊 Bot will continue running even with configuration issues');
 }
 
 // Initialize bot when module is loaded
