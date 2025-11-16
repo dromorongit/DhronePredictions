@@ -135,72 +135,30 @@
     </footer>
 
     <script>
-        // Dynamic prediction loading for Draws
-        async function loadDrawsPredictions() {
-            try {
-                const response = await fetch('/api/draws');
-                if (response.ok) {
-                    const predictions = await response.json();
-                    displayDrawsPredictions(predictions);
+        async function loadPredictions() {
+          try {
+            const response = await fetch('https://dhronepredictionspms.up.railway.app/api/predictions?category=draws');
+            const predictions = await response.json();
+
+            // Assuming predictions is an array, display them
+            const container = document.querySelector('.predictions-section .predictions-grid') || document.querySelector('.predictions-section');
+            if (container) {
+                if (predictions.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;"><div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div><h3 style="color: #6c757d; margin: 0;">No Predictions Here Today!</h3><p style="color: #6c757d; margin: 10px 0 0 0;">Stay tuned for our next Draw predictions.</p></div>';
                 } else {
-                    console.error('Failed to load predictions');
+                    container.innerHTML = predictions.map(pred => `<div class="prediction-card" style="padding: 20px; margin: 10px 0; background: white; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${pred.match} - ${pred.prediction}</div>`).join('');
                 }
-            } catch (error) {
-                console.error('Error loading predictions:', error);
             }
+          } catch (error) {
+            console.error('Error loading predictions:', error);
+            const container = document.querySelector('.predictions-section .predictions-grid') || document.querySelector('.predictions-section');
+            if (container) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;"><div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">🚫</div><h3 style="color: #6c757d; margin: 0;">Error Loading Predictions</h3><p style="color: #6c757d; margin: 10px 0 0 0;">Please try again later.</p></div>';
+            }
+          }
         }
 
-        function displayDrawsPredictions(predictions) {
-            const container = document.querySelector('.predictions-section');
-            if (!container) return;
-
-            // Find the existing predictions grid or create one
-            let predictionsGrid = container.querySelector('.predictions-grid');
-            if (!predictionsGrid) {
-                // Remove the "No Predictions" message and add grid
-                const noPredictionsDiv = container.querySelector('div[style*="text-align: center"]');
-                if (noPredictionsDiv) {
-                    noPredictionsDiv.remove();
-                }
-
-                predictionsGrid = document.createElement('div');
-                predictionsGrid.className = 'predictions-grid';
-                container.appendChild(predictionsGrid);
-            }
-
-            // Clear existing predictions
-            predictionsGrid.innerHTML = '';
-
-            if (predictions.length === 0) {
-                predictionsGrid.innerHTML = '<p>No predictions available at the moment.</p>';
-                return;
-            }
-
-            predictions.forEach(prediction => {
-                const statusClass = prediction.status.toLowerCase();
-                const statusColor = statusClass === 'won' ? '#28a745' : statusClass === 'lost' ? '#dc3545' : '#ffc107';
-
-                const predictionCard = document.createElement('div');
-                predictionCard.className = 'prediction-card';
-                predictionCard.innerHTML = `
-                    <div class="league-name">${prediction.match}</div>
-                    <div class="match-info">
-                        <div class="teams">${prediction.prediction}</div>
-                        <div class="time">${prediction.date}</div>
-                    </div>
-                    <div class="prediction">
-                        <span class="prediction-type" style="color: ${statusColor}">${prediction.status}</span>
-                    </div>
-                    <div class="odds-info">
-                        <span class="odds">Score: ${prediction.score || 'N/A'}</span>
-                    </div>
-                `;
-                predictionsGrid.appendChild(predictionCard);
-            });
-        }
-
-        // Load predictions when page loads
-        document.addEventListener('DOMContentLoaded', loadDrawsPredictions);
+        loadPredictions();
     </script>
     <script src="scripts.js"></script>
 </body>
