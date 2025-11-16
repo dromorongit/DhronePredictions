@@ -283,7 +283,24 @@
                 if (predictions.length === 0) {
                     container.innerHTML = '<div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;"><div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div><h3 style="color: #6c757d; margin: 0;">No Predictions Here Today!</h3><p style="color: #6c757d; margin: 10px 0 0 0;">Stay tuned for our next VVIP predictions.</p></div>';
                 } else {
-                    container.innerHTML = predictions.map(pred => `<div class="prediction-card" style="padding: 20px; margin: 10px 0; background: white; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${pred.match} - ${pred.prediction}</div>`).join('');
+                    container.innerHTML = predictions.map(pred => `
+                        <div class="prediction-card" style="padding: 20px; margin: 10px 0; background: white; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <div class="league-name">${pred.league || 'N/A'}</div>
+                            <div class="match-info">
+                                <div class="teams">${pred.match}</div>
+                                <div class="time">${pred.time || pred.date || 'TBD'}</div>
+                            </div>
+                            <div class="prediction">
+                                <span class="prediction-type">${pred.prediction}</span>
+                            </div>
+                            <div class="odds-info">
+                                <span class="odds">Odds: ${pred.odds || 'N/A'}</span>
+                                <span class="probability">Prob: ${pred.probability || 'N/A'}</span>
+                            </div>
+                            ${pred.status ? `<div class="status">Status: ${pred.status}</div>` : ''}
+                            ${pred.additionalNotes ? `<div class="notes">Notes: ${pred.additionalNotes}</div>` : ''}
+                        </div>
+                    `).join('');
                 }
             }
           } catch (error) {
