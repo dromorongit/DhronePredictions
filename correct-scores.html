@@ -80,18 +80,6 @@
             </div>
         </section>
 
-        <section class="lost-tips-section" style="margin: 40px 0;">
-            <h2>Previously Lost Correct Score Tips</h2>
-            <div class="updated-date" id="lost-date"></div>
-            <p class="section-description">Learning from every Correct Score prediction for better accuracy</p>
-            <div id="previously-lost" class="lost-tips-grid">
-                <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
-                    <div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div>
-                    <h3 style="color: #6c757d; margin: 0;">No Lost Correct Score Tips Yet!</h3>
-                    <p style="color: #6c757d; margin: 10px 0 0 0;">Check back after games are completed.</p>
-                </div>
-            </div>
-        </section>
 
         <section id="predictions" class="predictions-section">
             <h2>Correct Scores Predictions</h2>
@@ -258,39 +246,6 @@
             }
         }
 
-        // Load previously lost predictions
-        async function loadPreviouslyLost() {
-            try {
-                console.log('Fetching previously lost predictions from API...');
-                const response = await fetch(`${API_BASE}?category=${CATEGORY_CONFIG.category}&status=Lost`);
-                console.log('Response status:', response.status);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const predictions = await response.json();
-                console.log('Previously lost predictions received:', predictions);
-
-                const container = document.getElementById('previously-lost');
-                if (!container) return;
-
-                if (predictions.length === 0) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
-                            <div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div>
-                            <h3 style="color: #6c757d; margin: 0;">No Lost Predictions Yet!</h3>
-                            <p style="color: #6c757d; margin: 10px 0 0 0;">Check back after games are completed.</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = predictions.map(pred => createPredictionCard(pred, 'lost')).join('');
-                    updateStatistics(predictions, 'lost');
-                }
-            } catch (error) {
-                console.error('Error loading previously lost predictions:', error);
-            }
-        }
 
         // Create prediction card HTML
         function createPredictionCard(pred, status) {
@@ -385,8 +340,7 @@
         async function loadAllPredictions() {
             await Promise.all([
                 loadCurrentPredictions(),
-                loadPreviouslyWon(),
-                loadPreviouslyLost()
+                loadPreviouslyWon()
             ]);
         }
 

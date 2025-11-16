@@ -46,16 +46,16 @@
     </section>
 
     <main>
-        <!-- Previously Won Tips Section -->
+        <!-- Previously Completed Tips Section (Now includes both Won and Lost) -->
         <section class="won-tips-section">
-            <h2>Previously Won Draw Tips</h2>
+            <h2>Previously Completed Draw Tips</h2>
             <div class="updated-date" id="yesterday-date"></div>
-            <p class="section-description">Our track record of successful Draw predictions</p>
+            <p class="section-description">Our track record of completed Draw predictions</p>
             <div class="won-tips-grid" id="previously-won">
                 <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
                     <div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div>
                     <h3 style="color: #6c757d; margin: 0;">Predictions Coming Soon!</h3>
-                    <p style="color: #6c757d; margin: 10px 0 0 0;">Stay tuned for our next previously won tips.</p>
+                    <p style="color: #6c757d; margin: 10px 0 0 0;">Stay tuned for our next completed draw tips.</p>
                 </div>
             </div>
 
@@ -76,19 +76,6 @@
                 <div class="stat-item">
                     <div class="stat-number">0</div>
                     <div class="stat-label">Lost</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="lost-tips-section" style="margin: 40px 0;">
-            <h2>Previously Lost Draw Tips</h2>
-            <div class="updated-date" id="lost-date"></div>
-            <p class="section-description">Learning from every Draw prediction for better accuracy</p>
-            <div id="previously-lost" class="lost-tips-grid">
-                <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
-                    <div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div>
-                    <h3 style="color: #6c757d; margin: 0;">No Lost Draw Tips Yet!</h3>
-                    <p style="color: #6c757d; margin: 10px 0 0 0;">Check back after games are completed.</p>
                 </div>
             </div>
         </section>
@@ -224,71 +211,51 @@
             }
         }
 
-        // Load previously won predictions
-        async function loadPreviouslyWon() {
+        // Load completed predictions (both won and lost)
+        async function loadCompletedPredictions() {
             try {
-                console.log('Fetching previously won predictions from API...');
-                const response = await fetch(`${API_BASE}?category=${CATEGORY_CONFIG.category}&status=Won`);
-                console.log('Response status:', response.status);
+                console.log('Fetching completed predictions from API...');
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                // Fetch both won and lost predictions
+                const [wonResponse, lostResponse] = await Promise.all([
+                    fetch(`${API_BASE}?category=${CATEGORY_CONFIG.category}&status=Won`),
+                    fetch(`${API_BASE}?category=${CATEGORY_CONFIG.category}&status=Lost`)
+                ]);
+
+                console.log('Won response status:', wonResponse.status);
+                console.log('Lost response status:', lostResponse.status);
                 
-                const predictions = await response.json();
-                console.log('Previously won predictions received:', predictions);
+                const wonPredictions = await wonResponse.json();
+                const lostPredictions = await lostResponse.json();
+                
+                console.log('Won predictions received:', wonPredictions);
+                console.log('Lost predictions received:', lostPredictions);
+
+                // Combine both won and lost predictions
+                const allCompleted = [...wonPredictions, ...lostPredictions];
 
                 const container = document.getElementById('previously-won');
                 if (!container) return;
 
-                if (predictions.length === 0) {
+                if (allCompleted.length === 0) {
                     container.innerHTML = `
                         <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
                             <div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div>
-                            <h3 style="color: #6c757d; margin: 0;">No Won Predictions Yet!</h3>
+                            <h3 style="color: #6c757d; margin: 0;">No Completed Predictions Yet!</h3>
                             <p style="color: #6c757d; margin: 10px 0 0 0;">Check back after games are completed.</p>
                         </div>
                     `;
                 } else {
-                    container.innerHTML = predictions.map(pred => createPredictionCard(pred, 'won')).join('');
-                    updateStatistics(predictions, 'won');
+                    container.innerHTML = allCompleted.map(pred => {
+                        const status = wonPredictions.includes(pred) ? 'won' : 'lost';
+                        return createPredictionCard(pred, status);
+                    }).join('');
+                    
+                    // Update statistics
+                    updateStatistics(wonPredictions.length, lostPredictions.length);
                 }
             } catch (error) {
-                console.error('Error loading previously won predictions:', error);
-            }
-        }
-
-        // Load previously lost predictions
-        async function loadPreviouslyLost() {
-            try {
-                console.log('Fetching previously lost predictions from API...');
-                const response = await fetch(`${API_BASE}?category=${CATEGORY_CONFIG.category}&status=Lost`);
-                console.log('Response status:', response.status);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const predictions = await response.json();
-                console.log('Previously lost predictions received:', predictions);
-
-                const container = document.getElementById('previously-lost');
-                if (!container) return;
-
-                if (predictions.length === 0) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
-                            <div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div>
-                            <h3 style="color: #6c757d; margin: 0;">No Lost Predictions Yet!</h3>
-                            <p style="color: #6c757d; margin: 10px 0 0 0;">Check back after games are completed.</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = predictions.map(pred => createPredictionCard(pred, 'lost')).join('');
-                    updateStatistics(predictions, 'lost');
-                }
-            } catch (error) {
-                console.error('Error loading previously lost predictions:', error);
+                console.error('Error loading completed predictions:', error);
             }
         }
 
@@ -319,7 +286,7 @@
                     cardGradient: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
                     timeText: 'Completed',
                     timeIcon: '❌',
-                    labelText: `Failed ${CATEGORY_CONFIG.displayName} Prediction`,
+                    labelText: `Lost ${CATEGORY_CONFIG.displayName} Prediction`,
                     probabilityLabel: 'Win Probability'
                 }
             };
@@ -376,17 +343,27 @@
         }
 
         // Update statistics
-        function updateStatistics(predictions, type) {
-            // This will be expanded when we have actual data to calculate real statistics
-            console.log(`Updated ${type} statistics with ${predictions.length} predictions`);
+        function updateStatistics(wonCount, lostCount) {
+            const totalTips = wonCount + lostCount;
+            const winRate = totalTips > 0 ? Math.round((wonCount / totalTips) * 100) : 0;
+
+            // Update stat items if they exist
+            const statNumbers = document.querySelectorAll('.stat-number');
+            if (statNumbers.length >= 4) {
+                statNumbers[0].textContent = `${winRate}%`; // Win Rate
+                statNumbers[1].textContent = totalTips; // Total Tips
+                statNumbers[2].textContent = wonCount; // Won
+                statNumbers[3].textContent = lostCount; // Lost
+            }
+
+            console.log(`Updated statistics: Won: ${wonCount}, Lost: ${lostCount}, Total: ${totalTips}, Win Rate: ${winRate}%`);
         }
 
         // Load all predictions when page loads
         async function loadAllPredictions() {
             await Promise.all([
                 loadCurrentPredictions(),
-                loadPreviouslyWon(),
-                loadPreviouslyLost()
+                loadCompletedPredictions()
             ]);
         }
 
