@@ -46,11 +46,11 @@
     </section>
 
     <main>
-        <!-- Previously Won Tips Section -->
+        <!-- Previously Completed Tips Section -->
         <section class="won-tips-section">
-            <h2>Previously Won Over/Under 3.5 Tips</h2>
+            <h2>Previously Completed Over/Under 3.5 Tips</h2>
             <div class="updated-date" id="yesterday-date"></div>
-            <p class="section-description">Our track record of successful Over/Under 3.5 predictions</p>
+            <p class="section-description">Our track record of completed Over/Under 3.5 predictions</p>
             <div class="won-tips-grid" id="previously-won">
                 <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
                     <div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div>
@@ -212,37 +212,45 @@
             }
         }
 
-        // Load previously won predictions
+        // Load previously completed predictions
         async function loadPreviouslyWon() {
             try {
-                console.log('Fetching previously won predictions from API...');
-                const response = await fetch(`${API_BASE}?category=${CATEGORY_CONFIG.category}&status=Won`);
-                console.log('Response status:', response.status);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                console.log('Fetching previously completed predictions from API...');
+                // Fetch both Won and Lost predictions
+                const [wonResponse, lostResponse] = await Promise.all([
+                    fetch(`${API_BASE}?category=${CATEGORY_CONFIG.category}&status=Won`),
+                    fetch(`${API_BASE}?category=${CATEGORY_CONFIG.category}&status=Lost`)
+                ]);
+
+                if (!wonResponse.ok || !lostResponse.ok) {
+                    throw new Error(`HTTP error! Won status: ${wonResponse.status}, Lost status: ${lostResponse.status}`);
                 }
-                
-                const predictions = await response.json();
-                console.log('Previously won predictions received:', predictions);
+
+                const wonPredictions = await wonResponse.json();
+                const lostPredictions = await lostResponse.json();
+                const allCompletedPredictions = [...wonPredictions, ...lostPredictions];
+
+                console.log('Previously completed predictions received:', allCompletedPredictions);
 
                 const container = document.getElementById('previously-won');
                 if (!container) return;
 
-                if (predictions.length === 0) {
+                if (allCompletedPredictions.length === 0) {
                     container.innerHTML = `
                         <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;">
                             <div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div>
-                            <h3 style="color: #6c757d; margin: 0;">No Won Predictions Yet!</h3>
+                            <h3 style="color: #6c757d; margin: 0;">No Completed Predictions Yet!</h3>
                             <p style="color: #6c757d; margin: 10px 0 0 0;">Check back after games are completed.</p>
                         </div>
                     `;
                 } else {
-                    container.innerHTML = predictions.map(pred => createPredictionCard(pred, 'won')).join('');
-                    updateStatistics(predictions, 'won');
+                    // Sort by date (newest first)
+                    allCompletedPredictions.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                    container.innerHTML = allCompletedPredictions.map(pred => createPredictionCard(pred, pred.status.toLowerCase())).join('');
+                    updateStatistics(allCompletedPredictions, 'completed');
                 }
             } catch (error) {
-                console.error('Error loading previously won predictions:', error);
+                console.error('Error loading previously completed predictions:', error);
             }
         }
 
@@ -332,7 +340,23 @@
 
         // Update statistics
         function updateStatistics(predictions, type) {
-            // This will be expanded when we have actual data to calculate real statistics
+            if (type === 'completed') {
+                const wonCount = predictions.filter(p => p.status === 'Won').length;
+                const lostCount = predictions.filter(p => p.status === 'Lost').length;
+                const totalCount = predictions.length;
+                const winRate = totalCount > 0 ? ((wonCount / totalCount) * 100).toFixed(1) : 0;
+
+                // Update statistics display
+                const winRateElement = document.querySelector('.tips-stats .stat-item:nth-child(1) .stat-number');
+                const totalElement = document.querySelector('.tips-stats .stat-item:nth-child(2) .stat-number');
+                const wonElement = document.querySelector('.tips-stats .stat-item:nth-child(3) .stat-number');
+                const lostElement = document.querySelector('.tips-stats .stat-item:nth-child(4) .stat-number');
+
+                if (winRateElement) winRateElement.textContent = winRate + '%';
+                if (totalElement) totalElement.textContent = totalCount;
+                if (wonElement) wonElement.textContent = wonCount;
+                if (lostElement) lostElement.textContent = lostCount;
+            }
             console.log(`Updated ${type} statistics with ${predictions.length} predictions`);
         }
 
