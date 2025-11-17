@@ -86,6 +86,21 @@ function updateFooterStats() {
   }
 }
 
+// Start continuous footer stats animation
+function startFooterStatsAnimation() {
+  setInterval(() => {
+    const stats = ['total-clients', 'total-predictions', 'satisfied-clients'];
+    stats.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        let num = parseInt(element.textContent.replace(/,/g, ''));
+        num += Math.floor(Math.random() * 5) + 1; // Add 1-5 randomly
+        element.textContent = num.toLocaleString();
+      }
+    });
+  }, 1000); // Update every second
+}
+
 // Sort predictions by probability (highest to lowest)
 function sortPredictions() {
   const grids = document.querySelectorAll('.predictions-grid');
@@ -792,6 +807,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Update footer statistics
   updateFooterStats();
+
+  // Start continuous footer stats animation
+  startFooterStatsAnimation();
 
   // Initialize VVIP functionality if on VVIP page
   if (document.querySelector('.subscription-section')) {
