@@ -4450,8 +4450,6 @@ body:has(.user-avatar) .nav-menu li a:hover {
   transition: all 0.3s ease;
   border: 2px solid transparent;
   min-width: 100px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
