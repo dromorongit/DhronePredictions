@@ -90,37 +90,206 @@ function updateFooterStats() {
 function sortPredictions() {
   const grids = document.querySelectorAll('.predictions-grid');
   grids.forEach(grid => {
-    const cards = Array.from(grid.children);
+    const cards = Array.from(grid.children).filter(card =>
+      card.classList.contains('prediction-card')
+    );
+    
     cards.sort((a, b) => {
-      const probA = parseInt(a.querySelector('.probability').textContent.replace('%', ''));
-      const probB = parseInt(b.querySelector('.probability').textContent.replace('%', ''));
+      // Extract probability values from the probability-info spans
+      const probAElement = a.querySelector('.probability-info span:last-child');
+      const probBElement = b.querySelector('.probability-info span:last-child');
+      
+      const probA = probAElement ? parseInt(probAElement.textContent.replace('%', '').replace('N/A', '0')) : 0;
+      const probB = probBElement ? parseInt(probBElement.textContent.replace('%', '').replace('N/A', '0')) : 0;
+      
       return probB - probA; // Highest first
     });
-    cards.forEach(card => grid.appendChild(card));
+    
+    // Clear the grid and re-append sorted cards
+    cards.forEach(card => {
+      grid.appendChild(card);
+    });
+    
+    console.log('✅ Predictions sorted by probability (highest to lowest)');
   });
 }
 
-// Toggle sort
+// Toggle sort functionality with better UX
 let isSorted = false;
+let originalOrder = [];
+
 function toggleSort() {
-  if (isSorted) {
-    // To unsort, reload or reset, but for simplicity, just toggle
-    location.reload(); // Simple way to reset
-  } else {
+  const grids = document.querySelectorAll('.predictions-grid');
+  
+  if (!isSorted) {
+    // Store original order before sorting
+    grids.forEach(grid => {
+      originalOrder[grid] = Array.from(grid.children).filter(card =>
+        card.classList.contains('prediction-card')
+      );
+    });
+    
     sortPredictions();
     isSorted = true;
+    
+    // Update button text and show notification
+    const buttons = document.querySelectorAll('.sort-button');
+    buttons.forEach(button => {
+      button.textContent = 'Reset Sort';
+      button.style.background = '#dc3545';
+    });
+    
+    showSortNotification('Predictions sorted by highest probability first!', 'success');
+  } else {
+    // Reset to original order
+    grids.forEach(grid => {
+      const cards = Array.from(grid.children).filter(card =>
+        card.classList.contains('prediction-card')
+      );
+      
+      // Clear grid
+      cards.forEach(card => card.remove());
+      
+      // Re-append in original order
+      if (originalOrder[grid]) {
+        originalOrder[grid].forEach(card => grid.appendChild(card));
+      }
+    });
+    
+    isSorted = false;
+    
+    // Update button text
+    const buttons = document.querySelectorAll('.sort-button');
+    buttons.forEach(button => {
+      button.textContent = 'Sort by Probability';
+      button.style.background = '';
+    });
+    
+    showSortNotification('Sort reset - showing predictions in original order', 'info');
+  }
+}
+
+// Show sort notification
+function showSortNotification(message, type = 'success') {
+  // Remove existing notifications
+  const existing = document.querySelector('.sort-notification');
+  if (existing) {
+    existing.remove();
+  }
+  
+  const notification = document.createElement('div');
+  notification.className = `sort-notification ${type}`;
+  notification.innerHTML = `
+    <div class="notification-content">
+      <span class="notification-icon">${type === 'success' ? '✅' : 'ℹ️'}</span>
+      <span class="notification-message">${message}</span>
+      <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+    </div>
+  `;
+  
+  // Add styles
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    background: ${type === 'success' ? '#28a745' : '#17a2b8'};
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-width: 400px;
+    animation: slideInRight 0.3s ease-out;
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Auto-remove after 3 seconds
+  setTimeout(() => {
+    if (document.body.contains(notification)) {
+      notification.style.animation = 'slideOutRight 0.3s ease-in';
+      setTimeout(() => notification.remove(), 300);
+    }
+  }, 3000);
+}
+
+// Add CSS animations
+function addSortStyles() {
+  if (!document.querySelector('#sort-styles')) {
+    const style = document.createElement('style');
+    style.id = 'sort-styles';
+    style.textContent = `
+      @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      
+      @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+      
+      .sort-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+      
+      .sort-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+      
+      .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .notification-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
+        margin-left: auto;
+      }
+      
+      .notification-close:hover {
+        opacity: 0.8;
+      }
+    `;
+    document.head.appendChild(style);
   }
 }
 
 // Add sort button to each predictions section
 function addSortButton() {
+  addSortStyles();
+  
   const sections = document.querySelectorAll('.predictions-section');
   sections.forEach(section => {
+    // Check if button already exists
+    if (section.querySelector('.sort-button')) return;
+    
     const button = document.createElement('button');
     button.textContent = 'Sort by Probability';
     button.className = 'sort-button';
     button.onclick = toggleSort;
-    section.insertBefore(button, section.querySelector('.predictions-grid'));
+    
+    const grid = section.querySelector('.predictions-grid');
+    if (grid) {
+      section.insertBefore(button, grid);
+    }
   });
 }
 
