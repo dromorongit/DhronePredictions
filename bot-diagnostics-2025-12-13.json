@@ -1,0 +1,242 @@
+{
+  "timestamp": "2025-12-13T04:57:08.848Z",
+  "tests": [
+    {
+      "name": "Required Var: BOT_TOKEN",
+      "status": "failed",
+      "message": "BOT_TOKEN is missing",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.054Z"
+    },
+    {
+      "name": "Required Var: ADMIN_USER_ID",
+      "status": "failed",
+      "message": "ADMIN_USER_ID is missing",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.054Z"
+    },
+    {
+      "name": "Optional Var: NODE_ENV",
+      "status": "warning",
+      "message": "NODE_ENV is not set (optional)",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.055Z"
+    },
+    {
+      "name": "Optional Var: PORT",
+      "status": "warning",
+      "message": "PORT is not set (optional)",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.055Z"
+    },
+    {
+      "name": "Optional Var: DAILY_GROUP_ID",
+      "status": "warning",
+      "message": "DAILY_GROUP_ID is not set (optional)",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.055Z"
+    },
+    {
+      "name": "Optional Var: MONTHLY_GROUP_ID",
+      "status": "warning",
+      "message": "MONTHLY_GROUP_ID is not set (optional)",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.056Z"
+    },
+    {
+      "name": "Optional Var: YEARLY_GROUP_ID",
+      "status": "warning",
+      "message": "YEARLY_GROUP_ID is not set (optional)",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.059Z"
+    },
+    {
+      "name": "File: bot-production.js",
+      "status": "passed",
+      "message": "File exists",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.061Z"
+    },
+    {
+      "name": "File: package.json",
+      "status": "passed",
+      "message": "File exists",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.062Z"
+    },
+    {
+      "name": "File: railway.toml",
+      "status": "passed",
+      "message": "File exists",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.063Z"
+    },
+    {
+      "name": "Data File: data/pendingUsers.json",
+      "status": "passed",
+      "message": "File exists (291 bytes)",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.094Z"
+    },
+    {
+      "name": "Data File: data/usedCodes.json",
+      "status": "passed",
+      "message": "File exists (28 bytes)",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.095Z"
+    },
+    {
+      "name": "Data File: data/activeSubscriptions.json",
+      "status": "passed",
+      "message": "File exists (2 bytes)",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.103Z"
+    },
+    {
+      "name": "Data File: data/userHistory.json",
+      "status": "passed",
+      "message": "File exists (297 bytes)",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:09.104Z"
+    },
+    {
+      "name": "Bot Token Validity",
+      "status": "passed",
+      "message": "Valid bot token for @dhronepredictionsbot",
+      "details": {
+        "botName": "Dhrone Predictions AI",
+        "username": "dhronepredictionsbot",
+        "botId": 8284449243,
+        "canJoinGroups": true,
+        "canReadAllGroupMessages": false
+      },
+      "timestamp": "2025-12-13T04:57:09.923Z"
+    },
+    {
+      "name": "Admin User Access",
+      "status": "warning",
+      "message": "Admin user might be inaccessible: ETELEGRAM: 400 Bad Request: chat not found",
+      "details": {
+        "userId": "83222398921"
+      },
+      "timestamp": "2025-12-13T04:57:10.507Z"
+    },
+    {
+      "name": "Command Handler: /start",
+      "status": "passed",
+      "message": "Handler found in bot file",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:10.508Z"
+    },
+    {
+      "name": "Command Handler: /help",
+      "status": "passed",
+      "message": "Handler found in bot file",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:10.508Z"
+    },
+    {
+      "name": "Command Handler: /status",
+      "status": "passed",
+      "message": "Handler found in bot file",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:10.509Z"
+    },
+    {
+      "name": "Command Handler: /getchatid",
+      "status": "passed",
+      "message": "Handler found in bot file",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:10.509Z"
+    },
+    {
+      "name": "Command Handler: /checkbotadmin",
+      "status": "passed",
+      "message": "Handler found in bot file",
+      "details": {},
+      "timestamp": "2025-12-13T04:57:10.509Z"
+    },
+    {
+      "name": "Data File: pendingUsers.json",
+      "status": "passed",
+      "message": "Valid JSON (2 entries)",
+      "details": {
+        "entries": 2
+      },
+      "timestamp": "2025-12-13T04:57:10.537Z"
+    },
+    {
+      "name": "Data File: usedCodes.json",
+      "status": "passed",
+      "message": "Valid JSON (2 entries)",
+      "details": {
+        "entries": 2
+      },
+      "timestamp": "2025-12-13T04:57:10.538Z"
+    },
+    {
+      "name": "Data File: activeSubscriptions.json",
+      "status": "passed",
+      "message": "Valid JSON (0 entries)",
+      "details": {
+        "entries": 0
+      },
+      "timestamp": "2025-12-13T04:57:10.539Z"
+    },
+    {
+      "name": "Data File: userHistory.json",
+      "status": "passed",
+      "message": "Valid JSON (2 entries)",
+      "details": {
+        "entries": 2
+      },
+      "timestamp": "2025-12-13T04:57:10.539Z"
+    },
+    {
+      "name": "Railway CLI",
+      "status": "warning",
+      "message": "Railway CLI not installed",
+      "details": {
+        "installCommand": "npm install -g @railway/cli"
+      },
+      "timestamp": "2025-12-13T04:57:10.746Z"
+    },
+    {
+      "name": "Endpoint: http://localhost:3000/health",
+      "status": "warning",
+      "message": "Not reachable: ",
+      "details": {
+        "error": "",
+        "responseTime": 104
+      },
+      "timestamp": "2025-12-13T04:57:10.851Z"
+    },
+    {
+      "name": "Endpoint: https://api.telegram.org",
+      "status": "passed",
+      "message": "Reachable (571ms, status: 302)",
+      "details": {
+        "statusCode": 302,
+        "responseTime": 571
+      },
+      "timestamp": "2025-12-13T04:57:11.423Z"
+    }
+  ],
+  "summary": {
+    "total": 28,
+    "passed": 18,
+    "failed": 2,
+    "warnings": 8
+  },
+  "recommendations": [
+    "🔧 Fix failed tests before deploying to production",
+    "⚠️ Address warnings to ensure optimal performance",
+    "🌍 Set missing environment variables in Railway dashboard"
+  ],
+  "nextSteps": [
+    "🛠️ Fix failed tests before proceeding with deployment",
+    "📚 Check diagnostic report for detailed error information",
+    "🔍 Monitor Railway logs after deployment",
+    "📊 Check bot health at: https://your-domain.railway.app/health"
+  ]
+}
