@@ -3272,6 +3272,74 @@ footer::after {
     text-align: center;
   }
 
+  /* Mobile Vertical Layout Adjustments for Better Card Structure */
+    
+    /* League Type and Status - Vertical Layout */
+    .prediction-card .league-name,
+    .won-tip-card .league-name {
+      display: block !important;
+      margin: 0 auto 0.5rem auto !important;
+      text-align: center !important;
+      width: auto !important;
+      max-width: fit-content !important;
+    }
+  
+    .prediction-card .result-label,
+    .won-tip-card .result-label {
+      display: block !important;
+      margin: 0 auto 0.5rem auto !important;
+      text-align: center !important;
+      width: auto !important;
+      max-width: fit-content !important;
+    }
+  
+    /* Ensure they stack vertically */
+    .prediction-card .league-name + .result-label,
+    .won-tip-card .league-name + .result-label {
+      margin-top: 0.5rem !important;
+      margin-bottom: 0.5rem !important;
+    }
+  
+    /* Odds and Win Probability - Vertical Layout */
+    .prediction-card .odds,
+    .won-tip-card .odds {
+      display: block !important;
+      margin: 0 auto 0.5rem auto !important;
+      text-align: center !important;
+    }
+  
+    .prediction-card .probability,
+    .won-tip-card .probability {
+      display: block !important;
+      margin: 0.5rem auto 0 auto !important;
+      text-align: center !important;
+    }
+  
+    /* Ensure Win Probability appears under Odds */
+    .prediction-card .odds + .probability,
+    .won-tip-card .odds + .probability {
+      margin-top: 0.5rem !important;
+      margin-bottom: 0.5rem !important;
+    }
+  
+    /* Match Info - Ensure proper spacing for vertical layout */
+    .prediction-card .match-info,
+    .won-tip-card .match-info {
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 0.5rem !important;
+      text-align: center !important;
+    }
+  
+    /* Tip section - Vertical layout */
+    .prediction-card .tip,
+    .won-tip-card .tip {
+      display: block !important;
+      margin: 0 auto 0.5rem auto !important;
+      text-align: center !important;
+    }
+
+  
   
   /* Mobile Footer - Single Column Layout */
   .footer-content {
