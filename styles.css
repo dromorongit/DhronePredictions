@@ -3182,89 +3182,133 @@ footer::after {
     font-size: 0.85rem;
   }
 
-  /* Mobile Footer - Redesigned Layout */
+  /* Mobile Footer - Double Column Layout */
   .footer-content {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    text-align: center;
-    padding: 2rem 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    text-align: left;
+    padding: var(--space-8) var(--space-4);
+    display: grid;
+    align-items: start;
   }
 
   .footer-stats {
     order: -1;
+    grid-column: 1 / -1;
     text-align: center;
     width: 100%;
-    max-width: 400px;
+    max-width: 100%;
+    margin-bottom: var(--space-4);
+  }
+
+  /* Modern statistics card styling for mobile */
+  .footer-stats .stat-card {
+    padding: var(--space-3);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   /* Reduce font size of numbers in statistics cards */
   .footer-stats .stat-number {
-    font-size: 1.5rem !important;
+    font-size: var(--text-lg) !important;
     font-weight: 700;
   }
 
   .footer-stats .stat-label {
-    font-size: 0.85rem;
+    font-size: var(--text-xs);
   }
 
   .footer-content p {
-    font-size: 0.8rem;
+    grid-column: 1 / -1;
+    font-size: var(--text-sm);
     line-height: 1.4;
-    order: 3;
-    margin-top: 1rem;
+    text-align: center;
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  /* Social media icons horizontally under statistics */
+  /* Social media icons in double column layout */
   .social-links {
+    grid-column: 1 / -1;
     order: 1;
-    flex-direction: row !important;
-    gap: 1rem;
+    flex-direction: row;
+    gap: var(--space-4);
     justify-content: center;
-    margin: 1rem 0;
+    margin: var(--space-4) 0;
     width: 100%;
-    max-width: 100%;
   }
 
   .social-links a {
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
   }
 
-  /* Telegram and affiliate buttons horizontally */
+  /* Telegram and bookmaker buttons in double column */
   .footer-actions {
+    grid-column: 1 / -1;
     order: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: var(--space-4);
     width: 100%;
-    margin: 1rem 0;
+    margin: var(--space-4) 0;
   }
 
   .telegram-button {
-    padding: 0.8rem 1.5rem;
-    font-size: 0.95rem;
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-sm);
     margin-bottom: 0;
     width: auto;
     max-width: 280px;
   }
 
   .bookmaker-buttons {
-    gap: 0.75rem;
-    justify-content: center;
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
     width: 100%;
+    max-width: 300px;
   }
 
   .bookmaker-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-    min-width: 70px;
-    flex-shrink: 0;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    min-width: auto;
+    text-align: center;
+  }
+
+  /* Footer links in double column */
+  .footer-links {
+    grid-column: 1 / -1;
+    order: 3;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .footer-links li {
+    text-align: center;
+  }
+
+  .footer-links li a {
+    font-size: var(--text-xs);
+    padding: var(--space-1) var(--space-2);
+  }
+
+  /* Disclaimer section */
+  .footer-disclaimer {
+    grid-column: 1 / -1;
+    order: 4;
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
   }
 }
 
@@ -3302,12 +3346,28 @@ footer::after {
   }
 
   .social-links a {
-    width: 45px;
-    height: 45px;
+    width: 42px;
+    height: 42px;
   }
 
   .footer-content {
-    padding: 0 1rem;
+    padding: var(--space-5) var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .bookmaker-buttons {
+    grid-template-columns: 1fr;
+    max-width: 180px;
+  }
+
+  .footer-links {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+
+  .footer-links li a {
+    font-size: var(--text-xs);
+    padding: var(--space-1);
   }
 
   /* Extra Small Mobile VVIP CTA - Compact Professional */
