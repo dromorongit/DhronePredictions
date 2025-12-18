@@ -3470,8 +3470,8 @@ footer::after {
   }
 
   /* Mobile Typography - Compact for 2-Column Layout */
-  .prediction-card .fixture,
-  .won-tip-card .fixture {
+  /* Mobile Typography - Compact for 2-Column Layout */
+  .prediction-card .fixture {
     font-size: 0.65rem;
     font-weight: 600;
     color: var(--text-color);
@@ -3479,30 +3479,56 @@ footer::after {
     line-height: 1.2;
   }
 
-  .prediction-card .tip,
-  .won-tip-card .tip {
+  .won-tip-card .fixture {
+    font-size: 0.4rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+  }
+
+  .prediction-card .tip {
     font-size: 0.55rem;
     padding: 0.25rem 0.4rem;
     margin-bottom: 0.3rem;
   }
 
-  .prediction-card .odds,
-  .won-tip-card .odds {
+  .won-tip-card .tip {
+    font-size: 0.35rem;
+    padding: 0.25rem 0.4rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .prediction-card .odds {
     font-size: 0.6rem;
     font-weight: 700;
   }
 
+  .won-tip-card .odds {
+    font-size: 0.4rem;
+    font-weight: 700;
+  }
+
   /* Mobile Card Headers - Compact */
-  .prediction-card h3,
-  .won-tip-card h3 {
+  .prediction-card h3 {
     font-size: 0.65rem;
     margin-bottom: 0.4rem;
   }
 
+  .won-tip-card h3 {
+    font-size: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
   /* Mobile Card Text - Compact */
-  .prediction-card p,
-  .won-tip-card p {
+  .prediction-card p {
     font-size: 0.55rem;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+  }
+
+  .won-tip-card p {
+    font-size: 0.35rem;
     margin-bottom: 0.3rem;
     line-height: 1.3;
   }
@@ -3694,36 +3720,69 @@ footer::after {
     margin-bottom: 0.6rem;
   }
 
-  .prediction-card .fixture,
-  .won-tip-card .fixture {
+  /* Compact Mobile Cards - Ultra Compact for Small Screens */
+  .prediction-card {
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .won-tip-card {
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .prediction-card .fixture {
     font-size: 0.65rem;
     margin-bottom: 0.4rem;
     line-height: 1.2;
   }
 
-  .prediction-card .tip,
-  .won-tip-card .tip {
+  .won-tip-card .fixture {
+    font-size: 0.4rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+  }
+
+  .prediction-card .tip {
     font-size: 0.55rem;
     padding: 0.25rem 0.4rem;
     margin-bottom: 0.3rem;
   }
 
-  .prediction-card .odds,
-  .won-tip-card .odds {
+  .won-tip-card .tip {
+    font-size: 0.35rem;
+    padding: 0.25rem 0.4rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .prediction-card .odds {
     font-size: 0.6rem;
   }
 
+  .won-tip-card .odds {
+    font-size: 0.4rem;
+  }
+
   /* Ultra Compact Headers */
-  .prediction-card h3,
-  .won-tip-card h3 {
+  .prediction-card h3 {
     font-size: 0.65rem;
     margin-bottom: 0.4rem;
   }
 
+  .won-tip-card h3 {
+    font-size: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
   /* Ultra Compact Text */
-  .prediction-card p,
-  .won-tip-card p {
+  .prediction-card p {
     font-size: 0.55rem;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+  }
+
+  .won-tip-card p {
+    font-size: 0.35rem;
     margin-bottom: 0.3rem;
     line-height: 1.3;
   }
