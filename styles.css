@@ -3131,7 +3131,6 @@ footer::after {
   }
 
   /* Mobile Cards */
-  .won-tips-grid,
   .pricing-grid,
   .betting-codes-grid,
   .contact-info {
@@ -3141,6 +3140,12 @@ footer::after {
 
   /* Mobile Predictions - Double Column Layout */
   .predictions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Mobile Won Tips - Double Column Layout */
+  .won-tips-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
   }
