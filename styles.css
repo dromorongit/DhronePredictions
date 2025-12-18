@@ -3144,10 +3144,10 @@ footer::after {
     gap: 0.75rem;
   }
 
-  /* Mobile Won Tips - Double Column Layout */
+  /* Mobile Won Tips - Single Column Layout for Better Readability */
   .won-tips-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .won-tip-card,
@@ -3480,11 +3480,11 @@ footer::after {
   }
 
   .won-tip-card .fixture {
-    font-size: 0.4rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 0.4rem;
-    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
   }
 
   .prediction-card .tip {
@@ -3494,7 +3494,7 @@ footer::after {
   }
 
   .won-tip-card .tip {
-    font-size: 0.35rem;
+    font-size: 0.8rem;
     padding: 0.25rem 0.4rem;
     margin-bottom: 0.3rem;
   }
@@ -3505,7 +3505,7 @@ footer::after {
   }
 
   .won-tip-card .odds {
-    font-size: 0.4rem;
+    font-size: 1rem;
     font-weight: 700;
   }
 
@@ -3516,8 +3516,8 @@ footer::after {
   }
 
   .won-tip-card h3 {
-    font-size: 0.4rem;
-    margin-bottom: 0.4rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
   }
 
   /* Mobile Card Text - Compact */
@@ -3528,9 +3528,9 @@ footer::after {
   }
 
   .won-tip-card p {
-    font-size: 0.35rem;
-    margin-bottom: 0.3rem;
-    line-height: 1.3;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
   }
 
   /* Mobile Result Labels - Compact */
@@ -3738,9 +3738,9 @@ footer::after {
   }
 
   .won-tip-card .fixture {
-    font-size: 0.4rem;
-    margin-bottom: 0.4rem;
-    line-height: 1.2;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
   }
 
   .prediction-card .tip {
@@ -3750,7 +3750,7 @@ footer::after {
   }
 
   .won-tip-card .tip {
-    font-size: 0.35rem;
+    font-size: 0.8rem;
     padding: 0.25rem 0.4rem;
     margin-bottom: 0.3rem;
   }
@@ -3760,7 +3760,7 @@ footer::after {
   }
 
   .won-tip-card .odds {
-    font-size: 0.4rem;
+    font-size: 1rem;
   }
 
   /* Ultra Compact Headers */
@@ -3770,8 +3770,8 @@ footer::after {
   }
 
   .won-tip-card h3 {
-    font-size: 0.4rem;
-    margin-bottom: 0.4rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
   }
 
   /* Ultra Compact Text */
@@ -3782,9 +3782,9 @@ footer::after {
   }
 
   .won-tip-card p {
-    font-size: 0.35rem;
-    margin-bottom: 0.3rem;
-    line-height: 1.3;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
   }
 
   /* Ultra Compact Result Labels */
