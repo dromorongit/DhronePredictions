@@ -3559,6 +3559,61 @@ footer::after {
     padding: 0.2rem 0.4rem;
   }
 
+  /* Mobile Won Tips Card - Reorganized Layout */
+  .won-tip-card {
+    text-align: center;
+  }
+
+  /* Mobile League + Result (Top Section) */
+  .won-tip-card .league-name,
+  .won-tip-card .result-label {
+    display: block;
+    margin: 0 auto 0.4rem auto;
+    text-align: center;
+  }
+
+  /* Mobile Match Info (Second Section) */
+  .won-tip-card .match-info {
+    margin: 0 auto 0.6rem auto;
+    text-align: center;
+  }
+
+  /* Mobile Winning Prediction (Third Section) */
+  .won-tip-card .tip {
+    display: block;
+    margin: 0 auto 0.4rem auto;
+    text-align: center;
+  }
+
+  /* Mobile Odds (Fourth Section) */
+  .won-tip-card .odds {
+    display: block;
+    margin: 0 auto 0.2rem auto;
+    text-align: center;
+  }
+
+  /* Mobile Probability (Fifth Section) */
+  .won-tip-card .probability {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* Mobile Result Indicator Positioning */
+  .won-tip-card .result-indicator {
+    justify-content: center;
+    margin-bottom: 0.4rem;
+  }
+
+  /* Mobile Tip Header Organization */
+  .won-tip-card .tip-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 0.8rem;
+  }
+
   /* Mobile Grid Improvements */
   .predictions-grid,
   .won-tips-grid,
@@ -3723,6 +3778,61 @@ footer::after {
   .probability {
     font-size: 0.6rem;
     padding: 0.15rem 0.3rem;
+  }
+
+  /* Extra Small Mobile - Won Tips Card Reorganization */
+  .won-tip-card {
+    text-align: center;
+  }
+
+  /* Ultra Compact League + Result (Top Section) */
+  .won-tip-card .league-name,
+  .won-tip-card .result-label {
+    display: block;
+    margin: 0 auto 0.3rem auto;
+    text-align: center;
+  }
+
+  /* Ultra Compact Match Info (Second Section) */
+  .won-tip-card .match-info {
+    margin: 0 auto 0.5rem auto;
+    text-align: center;
+  }
+
+  /* Ultra Compact Winning Prediction (Third Section) */
+  .won-tip-card .tip {
+    display: block;
+    margin: 0 auto 0.3rem auto;
+    text-align: center;
+  }
+
+  /* Ultra Compact Odds (Fourth Section) */
+  .won-tip-card .odds {
+    display: block;
+    margin: 0 auto 0.15rem auto;
+    text-align: center;
+  }
+
+  /* Ultra Compact Probability (Fifth Section) */
+  .won-tip-card .probability {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* Ultra Compact Result Indicator */
+  .won-tip-card .result-indicator {
+    justify-content: center;
+    margin-bottom: 0.3rem;
+  }
+
+  /* Ultra Compact Tip Header */
+  .won-tip-card .tip-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 0.6rem;
   }
 
   /* Compact Mobile Forms */
