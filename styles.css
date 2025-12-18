@@ -3132,12 +3132,17 @@ footer::after {
 
   /* Mobile Cards */
   .won-tips-grid,
-  .predictions-grid,
   .pricing-grid,
   .betting-codes-grid,
   .contact-info {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+
+  /* Mobile Predictions - Double Column Layout */
+  .predictions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 
   .won-tip-card,
@@ -3182,11 +3187,11 @@ footer::after {
     font-size: 0.85rem;
   }
 
-  /* Mobile Footer - Double Column Layout */
+  /* Mobile Footer - Single Column Layout */
   .footer-content {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: var(--space-6);
-    text-align: left;
+    text-align: center;
     padding: var(--space-8) var(--space-4);
     display: grid;
     align-items: start;
@@ -3247,7 +3252,7 @@ footer::after {
     flex-shrink: 0;
   }
 
-  /* Telegram and bookmaker buttons in double column */
+  /* Telegram and bookmaker buttons in single column */
   .footer-actions {
     grid-column: 1 / -1;
     order: 2;
@@ -3268,11 +3273,12 @@ footer::after {
   }
 
   .bookmaker-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
     gap: var(--space-3);
     width: 100%;
     max-width: 300px;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .bookmaker-btn {
@@ -3280,18 +3286,20 @@ footer::after {
     font-size: var(--text-xs);
     min-width: auto;
     text-align: center;
+    flex: 0 1 auto;
   }
 
-  /* Footer links in double column */
+  /* Footer links in single column */
   .footer-links {
     grid-column: 1 / -1;
     order: 3;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-2);
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
     margin-top: var(--space-4);
     padding-top: var(--space-4);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
   }
 
   .footer-links li {
