@@ -574,12 +574,18 @@
 
             @media (max-width: 768px) {
                 .floating-telegram-btn {
-                    bottom: 15px;
+                    bottom: 80px;
                     right: 15px;
                     width: 50px;
                     height: 50px;
                     font-size: 20px;
                 }
+            }
+
+            /* Ensure button stays above footer */
+            footer {
+                position: relative;
+                z-index: 1;
             }
         `;
         document.head.appendChild(style);
