@@ -89,15 +89,15 @@
   --space-1: 0.25rem;  /* 4px */
   --space-2: 0.5rem;   /* 8px */
   --space-3: 0.75rem;  /* 12px */
-  --space-4: 1rem;   /* 16px */
+  --space-4: 1rem;     /* 16px */
   --space-5: 1.25rem;  /* 20px */
   --space-6: 1.5rem;   /* 24px */
-  --space-8: 2rem;   /* 32px */
+  --space-8: 2rem;     /* 32px */
   --space-10: 2.5rem;  /* 40px */
-  --space-12: 3rem;  /* 48px */
-  --space-16: 4rem;  /* 64px */
-  --space-20: 5rem;  /* 80px */
-  --space-24: 6rem;  /* 96px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+  --space-20: 5rem;    /* 80px */
+  --space-24: 6rem;    /* 96px */
   
   /* Typography Scale */
   --text-xs: 0.75rem;
@@ -152,9 +152,9 @@ body::before {
   width: 100%;
   height: 100%;
   background:
-  radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
-  radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
-  radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
   animation: backgroundFloat 20s ease-in-out infinite alternate;
@@ -375,9 +375,9 @@ a:hover {
   right: 0;
   bottom: 0;
   background:
-  radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-  radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-  radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
   z-index: 1;
 }
 
@@ -389,7 +389,7 @@ a:hover {
   width: 200%;
   height: 200%;
   background:
-  radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
   animation: heroPattern 30s linear infinite;
   z-index: 0;
@@ -493,8 +493,8 @@ a:hover {
 .cta-button:hover {
   transform: translateY(-4px) scale(1.05);
   box-shadow:
-  0 20px 40px rgba(0, 0, 0, 0.2),
-  0 0 30px rgba(255, 255, 255, 0.3);
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    0 0 30px rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.4);
   background: rgba(255, 255, 255, 0.25);
 }
@@ -536,8 +536,8 @@ a:hover {
   right: 0;
   bottom: 0;
   background:
-  radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-  radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
   opacity: 0.6;
   pointer-events: none;
 }
@@ -643,8 +643,8 @@ a:hover {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.4);
   box-shadow:
-  0 20px 40px rgba(0, 0, 0, 0.2),
-  var(--glass-shadow);
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    var(--glass-shadow);
 }
 
 .benefit-item:hover::before {
@@ -687,8 +687,8 @@ a:hover {
   text-transform: uppercase;
   letter-spacing: 1px;
   box-shadow:
-  0 10px 30px rgba(255, 107, 107, 0.4),
-  0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    0 10px 30px rgba(255, 107, 107, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
 .vvip-button::before {
@@ -716,8 +716,8 @@ a:hover {
 .vvip-button:hover {
   transform: translateY(-6px) scale(1.1);
   box-shadow:
-  0 25px 50px rgba(255, 107, 107, 0.6),
-  0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+    0 25px 50px rgba(255, 107, 107, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
   border-color: rgba(255, 255, 255, 0.4);
   background: linear-gradient(135deg, #ff5252 0%, #e53e3e 50%, #ff9800 100%);
 }
@@ -909,15 +909,14 @@ a:hover {
   accent-color: var(--success);
 }
 
-/* Status Indicator - Centered under league type */
 .result-label {
   font-weight: 600;
   font-size: var(--text-sm);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-xl);
-  display: block;
-  text-align: center;
-  margin: 0 auto var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   font-size: var(--text-xs);
@@ -1109,277 +1108,6 @@ a:hover {
   cursor: pointer;
 }
 
-/* Prediction Card Status Styles */
-.prediction-card.pending {
-  border-color: var(--warning);
-  background: linear-gradient(135deg, var(--white) 0%, rgba(255, 193, 7, 0.05) 100%);
-}
-
-.prediction-card.won {
-  border-color: var(--success);
-  background: linear-gradient(135deg, var(--white) 0%, rgba(16, 185, 129, 0.05) 100%);
-}
-
-.prediction-card.lost {
-  border-color: var(--error);
-  background: linear-gradient(135deg, var(--white) 0%, rgba(239, 68, 68, 0.05) 100%);
-}
-
-/* Prediction Card Header */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-6);
-}
-
-.league-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: var(--space-1) var(--space-4);
-  border-radius: var(--radius-full);
-  font-size: var(--text-xs);
-  font-weight: bold;
-  color: var(--text-inverse);
-}
-
-.status-badge {
-  background: var(--warning);
-  color: var(--text-inverse);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-xl);
-  font-size: var(--text-xs);
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.prediction-card.won .status-badge {
-  background: var(--success);
-}
-
-.prediction-card.lost .status-badge {
-  background: var(--error);
-}
-
-/* Match Section */
-.match-section {
-  margin-bottom: var(--space-8);
-}
-
-.match-teams {
-  font-size: var(--text-xl);
-  font-weight: bold;
-  margin-bottom: var(--space-3);
-  color: var(--text-primary);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.match-time {
-  font-size: var(--text-sm);
-  opacity: 0.9;
-  display: flex;
-  align-items: center;
-  color: var(--text-secondary);
-}
-
-.time-icon {
-  margin-right: var(--space-2);
-}
-
-/* Prediction Section */
-.prediction-section {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  margin-bottom: var(--space-6);
-  backdrop-filter: blur(10px);
-}
-
-.prediction-label {
-  font-size: var(--text-xs);
-  opacity: 0.8;
-  margin-bottom: var(--space-3);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-secondary);
-}
-
-.prediction-value {
-  font-size: var(--text-lg);
-  font-weight: bold;
-  color: var(--text-primary);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Stats Section */
-.stats-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.odds-info,
-.probability-info {
-  display: flex;
-  align-items: center;
-}
-
-.odds-info span:first-child,
-.probability-info span:first-child {
-  font-size: var(--text-sm);
-  margin-right: var(--space-2);
-  font-weight: bold;
-  color: var(--text-secondary);
-}
-
-.odds-info span:last-child,
-.probability-info span:last-child {
-  font-weight: bold;
-  color: var(--text-primary);
-}
-
-/* Notes Section */
-.notes-section {
-  margin-top: var(--space-6);
-  padding: var(--space-4);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-lg);
-  font-size: var(--text-sm);
-  line-height: 1.4;
-  color: var(--text-secondary);
-}
-
-.notes-label {
-  font-weight: bold;
-  margin-bottom: var(--space-2);
-  color: var(--text-primary);
-}
-
-/* Card Decoration */
-.card-decoration {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.card-decoration.top-right {
-  top: -50px;
-  right: -50px;
-  width: 100px;
-  height: 100px;
-}
-
-.card-decoration.bottom-left {
-  bottom: -30px;
-  left: -30px;
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* Hover Effects */
-.prediction-card:hover {
-  transform: translateY(-10px) scale(1.03);
-  box-shadow: var(--shadow-2xl);
-  border-color: var(--primary-blue-lighter);
-}
-
-.prediction-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: var(--gradient-primary);
-  transform: scaleX(0);
-  transition: transform var(--transition-normal);
-}
-
-.prediction-card:hover::before {
-  transform: scaleX(1);
-}
-
-.prediction-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-primary);
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-  z-index: -1;
-}
-
-.prediction-card:hover::after {
-  opacity: 0.05;
-}
-
-/* Status-specific prediction card styles */
-.prediction-card.pending {
-  border-color: var(--warning);
-  background: linear-gradient(135deg, var(--white) 0%, rgba(255, 193, 7, 0.05) 100%);
-}
-
-.prediction-card.won {
-  border-color: var(--success);
-  background: linear-gradient(135deg, var(--white) 0%, rgba(16, 185, 129, 0.05) 100%);
-}
-
-.prediction-card.lost {
-  border-color: var(--error);
-  background: linear-gradient(135deg, var(--white) 0%, rgba(239, 68, 68, 0.05) 100%);
-}
-
-/* Status badges for prediction cards */
-.pending-badge {
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
-  color: var(--warning);
-  border: 1px solid rgba(255, 193, 7, 0.2);
-  box-shadow: 0 2px 4px rgba(255, 193, 7, 0.1);
-}
-
-.won-badge {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
-  color: var(--success);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
-}
-
-.lost-badge {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
-  color: var(--error);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
-}
-
-/* Notes section styling */
-.notes-section {
-  margin-top: var(--space-4);
-  padding: var(--space-3);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-light);
-}
-
-.notes-label {
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--space-2);
-  font-size: var(--text-sm);
-}
-
-.notes-content {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.time-icon {
-  margin-right: var(--space-2);
-}
-
 .prediction-card::before {
   content: '';
   position: absolute;
@@ -1419,19 +1147,18 @@ a:hover {
   opacity: 0.05;
 }
 
-/* Modern League Name Styling - Centered */
+/* Modern League Name Styling */
 .league-name {
   font-size: var(--text-xs);
   font-weight: 700;
   color: var(--accent-purple);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-4);
   text-transform: uppercase;
   letter-spacing: 1px;
   background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(139, 92, 246, 0.05));
   padding: var(--space-1) var(--space-4);
   border-radius: var(--radius-xl);
-  display: block;
-  text-align: center;
+  display: inline-block;
   border: 1px solid rgba(124, 58, 237, 0.2);
   box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1);
 }
@@ -1482,7 +1209,6 @@ a:hover {
 /* Modern Prediction Section */
 .prediction {
   margin-bottom: var(--space-6);
-  text-align: center;
 }
 
 .prediction-type {
@@ -1500,7 +1226,6 @@ a:hover {
   text-transform: uppercase;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
   transition: all var(--transition-normal);
-  margin: 0 auto var(--space-4);
 }
 
 .prediction-type:hover {
@@ -1508,17 +1233,16 @@ a:hover {
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
-/* Modern Odds Info Section - Centered and stacked */
+/* Modern Odds Info Section */
 .odds-info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
   align-items: center;
   padding: var(--space-4);
   background: var(--bg-secondary);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-light);
-  text-align: center;
 }
 
 .odds {
@@ -1532,8 +1256,6 @@ a:hover {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  display: block;
-  text-align: center;
 }
 
 .probability {
@@ -1546,9 +1268,6 @@ a:hover {
   border-radius: var(--radius-lg);
   background: rgba(100, 116, 139, 0.1);
   border: 1px solid rgba(100, 116, 139, 0.2);
-  display: block;
-  text-align: center;
-  margin: 0 auto;
 }
 
 .probability:hover {
@@ -1586,8 +1305,8 @@ footer::after {
   width: 200%;
   height: 200%;
   background:
-  radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
-  radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 50%);
+    radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+    radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 50%);
   animation: footerFloat 25s ease-in-out infinite alternate;
   pointer-events: none;
 }
@@ -1785,57 +1504,57 @@ footer::after {
 /* Responsive Design for Upcoming Picks */
 @media (max-width: 768px) {
   .upcoming-picks-section h2 {
-  font-size: 2rem;
+    font-size: 2rem;
   }
 
   .upcoming-notice {
-  padding: 1.5rem;
+    padding: 1.5rem;
   }
 
   .upcoming-notice p {
-  font-size: 1rem;
+    font-size: 1rem;
   }
 
   .premium-cta {
-  padding: 0.7rem 1.8rem;
-  font-size: 0.85rem;
+    padding: 0.7rem 1.8rem;
+    font-size: 0.85rem;
   }
 }
 
 @media (max-width: 480px) {
   .upcoming-picks-section {
-  padding: 3rem 0;
+    padding: 3rem 0;
   }
 
   .upcoming-picks-section h2 {
-  font-size: 1.8rem;
+    font-size: 1.8rem;
   }
 
   .next-day-date {
-  font-size: 1.1rem;
+    font-size: 1.1rem;
   }
 
   .upcoming-picks-section .section-description {
-  font-size: 1rem;
-  margin-bottom: 2rem;
+    font-size: 1rem;
+    margin-bottom: 2rem;
   }
 
   .status-badge {
-  font-size: 0.75rem;
-  padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
   }
 
   .premium-cta {
-  padding: 0.6rem 1.5rem;
-  font-size: 0.85rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.85rem;
   }
 
   .upcoming-notice {
-  padding: 1.25rem;
+    padding: 1.25rem;
   }
 
   .upcoming-notice p {
-  font-size: 0.95rem;
+    font-size: 0.95rem;
   }
 }
 
@@ -1945,7 +1664,7 @@ footer::after {
 
 .subscription-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
 }
 
@@ -2053,7 +1772,7 @@ footer::after {
 .activity-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
@@ -2243,7 +1962,7 @@ footer::after {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .checkbox-label {
@@ -2402,7 +2121,7 @@ footer::after {
 .payment-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .payment-item {
@@ -2439,239 +2158,239 @@ footer::after {
 /* Responsive Design for Dashboard - DISABLED */
 /* @media (max-width: 768px) {
   .user-header {
-  flex-direction: column;
-  text-align: center;
-  gap: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
   }
 
   .user-avatar {
-  width: 70px;
-  height: 70px;
+    width: 70px;
+    height: 70px;
   }
 
   .user-info h1 {
-  font-size: 2rem;
+    font-size: 2rem;
   }
 
   .status-card {
-  padding: 1.5rem;
+    padding: 1.5rem;
   }
 
   .stats-grid {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 
   .settings-grid {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .activity-item {
-  padding: 1rem;
+    padding: 1rem;
   }
 
   .activity-content p {
-  font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
   .user-header-section {
-  padding: 2rem 1rem;
+    padding: 2rem 1rem;
   }
 
   .user-info h1 {
-  font-size: 1.8rem;
+    font-size: 1.8rem;
   }
 
   .user-info p {
-  font-size: 1rem;
+    font-size: 1rem;
   }
 
   .status-card {
-  padding: 1.25rem;
+    padding: 1.25rem;
   }
 
   .plan-badge {
-  font-size: 0.9rem;
-  padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
   }
 
   .time-remaining {
-  font-size: 1.1rem;
+    font-size: 1.1rem;
   }
 
   .stats-grid {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .stat-card {
-  padding: 1.5rem;
+    padding: 1.5rem;
   }
 
   .stat-icon {
-  font-size: 2.5rem;
+    font-size: 2.5rem;
   }
 
   .stat-content h3 {
-  font-size: 2rem;
+    font-size: 2rem;
   }
 
   .settings-section h2,
   .stats-section h2,
   .activity-section h2 {
-  font-size: 2rem;
+    font-size: 2rem;
   }
 
   .activity-list {
-  padding: 0 1rem;
+    padding: 0 1rem;
   }
 } */
 
 /* Responsive Design for Login/Auth */
 @media (max-width: 768px) {
   .auth-section {
-  padding: 3rem 2rem;
+    padding: 3rem 2rem;
   }
 
   .auth-container {
-  max-width: 100%;
+    max-width: 100%;
   }
 
   .auth-header h2 {
-  font-size: 1.8rem;
+    font-size: 1.8rem;
   }
 
   .auth-header p {
-  font-size: 1rem;
+    font-size: 1rem;
   }
 
   .auth-form {
-  gap: 1.25rem;
+    gap: 1.25rem;
   }
 
   .form-options {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.75rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .auth-section {
-  padding: 2rem 1rem;
+    padding: 2rem 1rem;
   }
 
   .auth-header h2 {
-  font-size: 1.6rem;
+    font-size: 1.6rem;
   }
 
   .auth-header p {
-  font-size: 0.95rem;
+    font-size: 0.95rem;
   }
 
   .auth-form {
-  gap: 0.75rem;
+    gap: 1rem;
   }
 
   .form-group input {
-  padding: 0.6rem;
-  font-size: 0.95rem;
+    padding: 0.6rem;
+    font-size: 0.95rem;
   }
 
   .auth-submit-btn {
-  padding: 0.6rem;
-  font-size: 0.95rem;
+    padding: 0.6rem;
+    font-size: 0.95rem;
   }
 
   .auth-footer p {
-  font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 }
 
 /* Responsive Design for Modal */
 @media (max-width: 480px) {
   .modal-content {
-  margin: 1rem;
-  max-height: 80vh;
+    margin: 1rem;
+    max-height: 80vh;
   }
 
   .modal-header h3 {
-  font-size: 1.2rem;
+    font-size: 1.2rem;
   }
 
   .modal-body {
-  padding: 1rem;
+    padding: 1rem;
   }
 
   .payment-item {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 
   .payment-info {
-  width: 100%;
+    width: 100%;
   }
 }
 
 /* Responsive Design for Footer Statistics - DISABLED */
 /* @media (max-width: 768px) {
   .footer-content {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .footer-stats {
-  order: -1;
-  text-align: center;
+    order: -1;
+    text-align: center;
   }
 
   .footer-stats .stat-card {
-  padding: 0.6rem;
+    padding: 0.6rem;
   }
 
   .footer-stats .stat-number {
-  font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 
   .footer-stats .stat-label {
-  font-size: 0.7rem;
+    font-size: 0.7rem;
   }
 
   .footer-content p {
-  grid-column: 1;
-  text-align: center;
-  margin: 1rem 0;
-  font-size: 0.85rem;
+    grid-column: 1;
+    text-align: center;
+    margin: 1rem 0;
+    font-size: 0.85rem;
   }
 }
 
 @media (max-width: 480px) {
   .footer-stats .stat-card {
-  padding: 0.5rem;
+    padding: 0.5rem;
   }
 
   .footer-stats .stat-row {
-  margin-bottom: 0.2rem;
+    margin-bottom: 0.2rem;
   }
 
   .footer-stats .stat-number {
-  font-size: 0.85rem;
+    font-size: 0.85rem;
   }
 
   .footer-stats .stat-label {
-  font-size: 0.65rem;
+    font-size: 0.65rem;
   }
 
   .footer-content p {
-  grid-column: 1;
-  text-align: center;
-  margin: 1rem 0;
-  font-size: 0.8rem;
-  line-height: 1.4;
+    grid-column: 1;
+    text-align: center;
+    margin: 1rem 0;
+    font-size: 0.8rem;
+    line-height: 1.4;
   }
 } */
 
@@ -2829,12 +2548,12 @@ footer::after {
 
 @keyframes fadeInUp {
   from {
-  opacity: 0;
-  transform: translateY(30px);
+    opacity: 0;
+    transform: translateY(30px);
   }
   to {
-  opacity: 1;
-  transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -3178,151 +2897,151 @@ footer::after {
 /* Mobile-First Responsive Design */
 @media (max-width: 768px) {
   .nav-container {
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  gap: 0.5rem;
-  position: relative;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    gap: 0.5rem;
+    position: relative;
   }
 
   .nav-toggle-label {
-  display: block !important;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 1001;
-  color: #000000 !important;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 4px;
-  padding: 0.5rem;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+    display: block !important;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1001;
+    color: #000000 !important;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    padding: 0.5rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
   }
 
   /* Hamburger menu lines */
   .nav-toggle-label span {
-  display: block;
-  width: 25px;
-  height: 3px;
-  background-color: #000000;
-  margin: 2px 0;
-  transition: all 0.3s ease;
-  border-radius: 2px;
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #000000;
+    margin: 2px 0;
+    transition: all 0.3s ease;
+    border-radius: 2px;
   }
 
   .nav-toggle-label span:nth-child(1) {
-  width: 25px;
+    width: 25px;
   }
 
   .nav-toggle-label span:nth-child(2) {
-  width: 20px;
+    width: 20px;
   }
 
   .nav-toggle-label span:nth-child(3) {
-  width: 25px;
+    width: 25px;
   }
 
   /* Animate hamburger to X when checked */
   .nav-toggle:checked ~ .nav-toggle-label span:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
-  width: 25px;
+    transform: rotate(45deg) translate(5px, 5px);
+    width: 25px;
   }
 
   .nav-toggle:checked ~ .nav-toggle-label span:nth-child(2) {
-  opacity: 0;
-  width: 25px;
+    opacity: 0;
+    width: 25px;
   }
 
   .nav-toggle:checked ~ .nav-toggle-label span:nth-child(3) {
-  transform: rotate(-45deg) translate(7px, -6px);
-  width: 25px;
+    transform: rotate(-45deg) translate(7px, -6px);
+    width: 25px;
   }
 
   .nav-toggle {
-  display: block;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 1002;
-  opacity: 0;
-  cursor: pointer;
+    display: block;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1002;
+    opacity: 0;
+    cursor: pointer;
   }
 
   .nav-menu {
-  display: none;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(7, auto);
-  gap: 0.5rem;
-  width: 100%;
-  max-width: 600px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px var(--shadow);
-  margin-top: 1rem;
-  border-radius: 10px;
-  padding: 1rem;
-  justify-items: stretch;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+    display: none;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(7, auto);
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px var(--shadow);
+    margin-top: 1rem;
+    border-radius: 10px;
+    padding: 1rem;
+    justify-items: stretch;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
   }
 
   .nav-toggle:checked ~ .nav-menu {
-  display: grid;
+    display: grid;
   }
 
   .nav-menu li {
-  width: 100%;
+    width: 100%;
   }
 
   .nav-menu li a {
-  display: block;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  text-align: center;
-  background: transparent;
-  transition: all 0.3s ease;
+    display: block;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    text-align: center;
+    background: transparent;
+    transition: all 0.3s ease;
   }
 
   .nav-menu li a:hover {
-  background: var(--light-gray);
-  color: var(--primary-blue);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px var(--shadow);
+    background: var(--light-gray);
+    color: var(--primary-blue);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px var(--shadow);
   }
 
   /* Mobile Hero Section */
   .hero {
-  padding: 2rem 1rem;
-  min-height: 40vh;
-  text-align: center;
+    padding: 2rem 1rem;
+    min-height: 40vh;
+    text-align: center;
   }
 
   .hero h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
   }
 
   .hero p {
-  font-size: 1rem;
-  margin-bottom: 2rem;
-  line-height: 1.5;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
   }
 
   .cta-button {
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 25px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 25px;
   }
 
   /* Mobile Sections */
@@ -3333,8 +3052,8 @@ footer::after {
   .contact-section,
   .connect-section,
   .vvip-cta-section {
-  margin: 1rem auto;
-  padding: 1.5rem 1rem;
+    margin: 1rem auto;
+    padding: 1.5rem 1rem;
   }
 
   .won-tips-section h2,
@@ -3344,91 +3063,91 @@ footer::after {
   .contact-container h2,
   .connect-card h2,
   .vvip-cta-container h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
   }
 
   /* Mobile VVIP CTA Section - Professional */
   .vvip-cta-section {
-  padding: 2.5rem 1rem;
-  margin: 1.5rem auto;
-  border-radius: 20px;
+    padding: 2.5rem 1rem;
+    margin: 1.5rem auto;
+    border-radius: 20px;
   }
 
   .vvip-cta-container {
-  padding: 0 1rem;
+    padding: 0 1rem;
   }
 
   .vvip-cta-container h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  background: linear-gradient(45deg, #ffffff, #e0f7fa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #ffffff, #e0f7fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .vvip-cta-container p {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-  color: rgba(255, 255, 255, 0.95);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.95);
   }
 
   .vvip-benefits {
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
   }
 
   .benefit-item {
-  padding: 0.75rem 1.25rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.75rem 1.25rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
   }
 
   .benefit-icon {
-  font-size: 1.5rem;
+    font-size: 1.5rem;
   }
 
   .benefit-text {
-  font-size: 1rem;
-  font-weight: 600;
+    font-size: 1rem;
+    font-weight: 600;
   }
 
   .vvip-button {
-  padding: 1rem 2.5rem;
-  font-size: 1.1rem;
-  border-radius: 30px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
   }
 
   .section-description {
-  font-size: 0.95rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  padding: 0 0.5rem;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    padding: 0 0.5rem;
   }
 
   /* Mobile Cards */
   .pricing-grid,
   .betting-codes-grid,
   .contact-info {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   /* Mobile Predictions - Double Column Layout */
   .predictions-grid {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 
-  /* Mobile Won Tips - Double Column Layout for Better Space Utilization */
+  /* Mobile Won Tips - Single Column Layout for Better Readability */
   .won-tips-grid {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .won-tip-card,
@@ -3437,463 +3156,275 @@ footer::after {
   .betting-code-card,
   .email-section,
   .social-media-section {
-  padding: 1rem;
-  margin-bottom: 0;
-  border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0;
+    border-radius: 12px;
   }
 
   .won-tip-card h3,
   .prediction-card h3,
   .pricing-header h3 {
-  font-size: 1.1rem;
+    font-size: 1.1rem;
   }
 
   .won-tip-card p,
   .prediction-card p {
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
   }
 
   /* Mobile Statistics */
   .tips-stats {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.5rem;
   }
 
   .stat-item {
-  padding: 1rem 0.75rem;
+    padding: 1rem 0.75rem;
   }
 
   .stat-number {
-  font-size: 1.5rem;
+    font-size: 1.5rem;
   }
 
   .stat-label {
-  font-size: 0.85rem;
+    font-size: 0.85rem;
   }
 
-  /* Mobile Text Alignment - Center all content for better mobile UX */
-  .prediction-card,
-  .won-tip-card {
-    text-align: center;
-  }
-  
-  .prediction-card *,
-  .won-tip-card * {
-    text-align: center;
-  }
-  
-  .prediction-card .match-info,
-  .won-tip-card .match-info {
-    text-align: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .prediction-card .teams,
-  .won-tip-card .teams {
-    text-align: center;
-    margin-bottom: 0.5rem;
-  }
-  
-  .prediction-card .time,
-  .won-tip-card .time {
-    text-align: center;
-  }
-  
-  .prediction-card .tip,
-  .won-tip-card .tip {
-    text-align: center;
-    display: block;
-    margin: 0 auto 0.5rem auto;
-  }
-  
-  .prediction-card .odds,
-  .won-tip-card .odds {
-    text-align: center;
-    display: block;
-    margin: 0 auto 0.5rem auto;
-  }
-  
-  .prediction-card .probability,
-  .won-tip-card .probability {
-    text-align: center;
-    display: block;
-    margin: 0 auto;
-  }
-  
-  .prediction-card .league-name,
-  .won-tip-card .league-name {
-    text-align: center;
-    display: block;
-    margin: 0 auto 0.5rem auto;
-  }
-  
-  .prediction-card .result-label,
-  .won-tip-card .result-label {
-    text-align: center;
-    display: block;
-    margin: 0 auto 0.5rem auto;
-  }
-
-  /* Mobile Center Alignment for League Type and Status */
-  /* Keep all elements centered for consistency */
-  .prediction-card .league-name,
-  .won-tip-card .league-name {
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-   
-  .prediction-card .result-label,
-  .won-tip-card .result-label {
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-  
-  /* Mobile Center Alignment for Odds and Win Probability */
-  .prediction-card .odds,
-  .won-tip-card .odds {
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-   
-  .prediction-card .probability,
-  .won-tip-card .probability {
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-  
-  .prediction-card .fixture,
-  .won-tip-card .fixture {
-    text-align: center;
-  }
-  
-  .prediction-card h3,
-  .won-tip-card h3 {
-    text-align: center;
-  }
-  
-  .prediction-card p,
-  .won-tip-card p {
-    text-align: center;
-  }
-
-  /* Mobile Vertical Layout Adjustments for Better Card Structure */
-    
-    /* League Type and Status - Vertical Layout */
-    .prediction-card .league-name,
-    .won-tip-card .league-name {
-      display: block !important;
-      margin: 0 auto 0.5rem auto !important;
-      text-align: center !important;
-      width: auto !important;
-      max-width: fit-content !important;
-    }
-  
-    .prediction-card .result-label,
-    .won-tip-card .result-label {
-      display: block !important;
-      margin: 0 auto 0.5rem auto !important;
-      text-align: center !important;
-      width: auto !important;
-      max-width: fit-content !important;
-    }
-  
-    /* Ensure they stack vertically */
-    .prediction-card .league-name + .result-label,
-    .won-tip-card .league-name + .result-label {
-      margin-top: 0.5rem !important;
-      margin-bottom: 0.5rem !important;
-    }
-  
-    /* Odds and Win Probability - Vertical Layout */
-    .prediction-card .odds,
-    .won-tip-card .odds {
-      display: block !important;
-      margin: 0 auto 0.5rem auto !important;
-      text-align: center !important;
-    }
-  
-    .prediction-card .probability,
-    .won-tip-card .probability {
-      display: block !important;
-      margin: 0.5rem auto 0 auto !important;
-      text-align: center !important;
-    }
-  
-    /* Ensure Win Probability appears under Odds */
-    .prediction-card .odds + .probability,
-    .won-tip-card .odds + .probability {
-      margin-top: 0.5rem !important;
-      margin-bottom: 0.5rem !important;
-    }
-  
-    /* Match Info - Ensure proper spacing for vertical layout */
-    .prediction-card .match-info,
-    .won-tip-card .match-info {
-      flex-direction: column !important;
-      align-items: center !important;
-      gap: 0.5rem !important;
-      text-align: center !important;
-    }
-  
-    /* Tip section - Vertical layout */
-    .prediction-card .tip,
-    .won-tip-card .tip {
-      display: block !important;
-      margin: 0 auto 0.5rem auto !important;
-      text-align: center !important;
-    }
-    
-    /* Prediction type - Centered */
-    .prediction-card .prediction-type,
-    .won-tip-card .prediction-type {
-      display: block !important;
-      margin: 0 auto 0.5rem auto !important;
-      text-align: center !important;
-    }
-
-  
-  
   /* Mobile Footer - Single Column Layout */
   .footer-content {
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-6);
-  text-align: center;
-  padding: var(--space-8) var(--space-4);
-  display: grid;
-  align-items: start;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    text-align: center;
+    padding: var(--space-8) var(--space-4);
+    display: grid;
+    align-items: start;
   }
 
   .footer-stats {
-  order: -1;
-  grid-column: 1 / -1;
-  text-align: center;
-  width: 100%;
-  max-width: 100%;
-  margin-bottom: var(--space-4);
+    order: -1;
+    grid-column: 1 / -1;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: var(--space-4);
   }
 
   /* Modern statistics card styling for mobile */
   .footer-stats .stat-card {
-  padding: var(--space-3);
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-xl);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: var(--space-3);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   /* Reduce font size of numbers in statistics cards */
   .footer-stats .stat-number {
-  font-size: var(--text-lg) !important;
-  font-weight: 700;
+    font-size: var(--text-lg) !important;
+    font-weight: 700;
   }
 
   .footer-stats .stat-label {
-  font-size: var(--text-xs);
+    font-size: var(--text-xs);
   }
 
   .footer-content p {
-  grid-column: 1 / -1;
-  font-size: var(--text-sm);
-  line-height: 1.4;
-  text-align: center;
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+    grid-column: 1 / -1;
+    font-size: var(--text-sm);
+    line-height: 1.4;
+    text-align: center;
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   /* Social media icons in double column layout */
   .social-links {
-  grid-column: 1 / -1;
-  order: 1;
-  flex-direction: row;
-  gap: var(--space-4);
-  justify-content: center;
-  margin: var(--space-4) 0;
-  width: 100%;
+    grid-column: 1 / -1;
+    order: 1;
+    flex-direction: row;
+    gap: var(--space-4);
+    justify-content: center;
+    margin: var(--space-4) 0;
+    width: 100%;
   }
 
   .social-links a {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
   }
 
   /* Telegram and bookmaker buttons in single column */
   .footer-actions {
-  grid-column: 1 / -1;
-  order: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-  width: 100%;
-  margin: var(--space-4) 0;
+    grid-column: 1 / -1;
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    width: 100%;
+    margin: var(--space-4) 0;
   }
 
   .telegram-button {
-  padding: var(--space-3) var(--space-6);
-  font-size: var(--text-sm);
-  margin-bottom: 0;
-  width: auto;
-  max-width: 280px;
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-sm);
+    margin-bottom: 0;
+    width: auto;
+    max-width: 280px;
   }
 
   .bookmaker-buttons {
-  display: flex;
-  gap: var(--space-3);
-  width: 100%;
-  max-width: 300px;
-  justify-content: center;
-  flex-wrap: wrap;
+    display: flex;
+    gap: var(--space-3);
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .bookmaker-btn {
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--text-xs);
-  min-width: auto;
-  text-align: center;
-  flex: 0 1 auto;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-xs);
+    min-width: auto;
+    text-align: center;
+    flex: 0 1 auto;
   }
 
   /* Footer links in single column */
   .footer-links {
-  grid-column: 1 / -1;
-  order: 3;
-  display: flex;
-  justify-content: center;
-  gap: var(--space-4);
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  flex-wrap: wrap;
+    grid-column: 1 / -1;
+    order: 3;
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
   }
 
   .footer-links li {
-  text-align: center;
+    text-align: center;
   }
 
   .footer-links li a {
-  font-size: var(--text-xs);
-  padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+    padding: var(--space-1) var(--space-2);
   }
 
   /* Disclaimer section */
   .footer-disclaimer {
-  grid-column: 1 / -1;
-  order: 4;
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
+    grid-column: 1 / -1;
+    order: 4;
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
   }
 }
 
 @media (max-width: 480px) {
   .hero {
-  padding: 3rem 1rem;
-  min-height: 40vh;
+    padding: 3rem 1rem;
+    min-height: 40vh;
   }
 
   .hero h1 {
-  font-size: 2rem;
+    font-size: 2rem;
   }
 
   .hero p {
-  font-size: 1rem;
+    font-size: 1rem;
   }
 
   .prediction-card {
-  padding: 1.5rem;
+    padding: 1.5rem;
   }
 
   .nav-container {
-  padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem;
   }
 
   .logo {
-  font-size: 1.5rem;
+    font-size: 1.5rem;
   }
 
   .nav-menu {
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(14, auto);
-  max-width: 100%;
-  padding: 0.75rem;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(14, auto);
+    max-width: 100%;
+    padding: 0.75rem;
   }
 
   .social-links a {
-  width: 42px;
-  height: 42px;
+    width: 42px;
+    height: 42px;
   }
 
   .footer-content {
-  padding: var(--space-5) var(--space-3);
-  gap: var(--space-3);
+    padding: var(--space-5) var(--space-3);
+    gap: var(--space-3);
   }
 
   .bookmaker-buttons {
-  grid-template-columns: repeat(2, 1fr);
-  max-width: 180px;
+    grid-template-columns: 1fr;
+    max-width: 180px;
   }
 
   .footer-links {
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-1);
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
   }
 
   .footer-links li a {
-  font-size: var(--text-xs);
-  padding: var(--space-1);
+    font-size: var(--text-xs);
+    padding: var(--space-1);
   }
 
   /* Extra Small Mobile VVIP CTA - Compact Professional */
   .vvip-cta-section {
-  padding: 2rem 0.75rem;
-  margin: 1rem auto;
-  border-radius: 16px;
+    padding: 2rem 0.75rem;
+    margin: 1rem auto;
+    border-radius: 16px;
   }
 
   .vvip-cta-container h2 {
-  font-size: 1.7rem;
-  margin-bottom: 0.75rem;
+    font-size: 1.7rem;
+    margin-bottom: 0.75rem;
   }
 
   .vvip-cta-container p {
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
   }
 
   .vvip-benefits {
-  gap: 0.75rem;
-  margin-bottom: 2rem;
+    gap: 1rem;
+    margin-bottom: 2rem;
   }
 
   .benefit-item {
-  padding: 0.6rem 1rem;
-  border-radius: 20px;
+    padding: 0.6rem 1rem;
+    border-radius: 20px;
   }
 
   .benefit-icon {
-  font-size: 1.3rem;
+    font-size: 1.3rem;
   }
 
   .benefit-text {
-  font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 
   .vvip-button {
-  padding: 0.9rem 2rem;
-  font-size: 1rem;
-  border-radius: 25px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+    border-radius: 25px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
   }
 }
 
@@ -3901,8 +3432,8 @@ footer::after {
 @media (max-width: 768px) {
   /* Mobile-First Body Styles */
   body {
-  font-size: 14px;
-  line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.6;
   }
 
   /* Improved Touch Targets */
@@ -3918,253 +3449,253 @@ footer::after {
   .copy-btn,
   .unlock-btn,
   .action-btn {
-  min-height: 48px;
-  min-width: 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  border-radius: 8px;
+    min-height: 48px;
+    min-width: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
   }
 
   /* Mobile Card Improvements - Optimized for 2-Column Layout */
   .prediction-card,
   .won-tip-card,
   .betting-code-card {
-  margin-bottom: 0.75rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem;
   }
 
   /* Mobile Typography - Compact for 2-Column Layout */
   /* Mobile Typography - Compact for 2-Column Layout */
   .prediction-card .fixture {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 0.4rem;
-  line-height: 1.2;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
   }
 
   .won-tip-card .fixture {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 0.5rem;
-  line-height: 1.3;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
   }
 
   .prediction-card .tip {
-  font-size: 0.55rem;
-  padding: 0.25rem 0.4rem;
-  margin-bottom: 0.3rem;
+    font-size: 0.55rem;
+    padding: 0.25rem 0.4rem;
+    margin-bottom: 0.3rem;
   }
 
   .won-tip-card .tip {
-  font-size: 0.8rem;
-  padding: 0.25rem 0.4rem;
-  margin-bottom: 0.3rem;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.4rem;
+    margin-bottom: 0.3rem;
   }
 
   .prediction-card .odds {
-  font-size: 0.6rem;
-  font-weight: 700;
+    font-size: 0.6rem;
+    font-weight: 700;
   }
 
   .won-tip-card .odds {
-  font-size: 1rem;
-  font-weight: 700;
+    font-size: 1rem;
+    font-weight: 700;
   }
 
   /* Mobile Card Headers - Compact */
   .prediction-card h3 {
-  font-size: 0.65rem;
-  margin-bottom: 0.4rem;
+    font-size: 0.65rem;
+    margin-bottom: 0.4rem;
   }
 
   .won-tip-card h3 {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
   }
 
   /* Mobile Card Text - Compact */
   .prediction-card p {
-  font-size: 0.55rem;
-  margin-bottom: 0.3rem;
-  line-height: 1.3;
+    font-size: 0.55rem;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
   }
 
   .won-tip-card p {
-  font-size: 0.9rem;
-  margin-bottom: 0.4rem;
-  line-height: 1.4;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
   }
 
   /* Mobile Result Labels - Compact */
   .result-label {
-  font-size: 0.7rem;
-  padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
   }
 
   /* Mobile League Names - Compact */
   .league-name {
-  font-size: 0.7rem;
-  padding: 0.2rem 0.5rem;
-  margin-bottom: 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    margin-bottom: 0.5rem;
   }
 
   /* Mobile Match Info - Compact */
   .match-info {
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
   }
 
   .teams {
-  font-size: 0.9rem;
-  line-height: 1.3;
+    font-size: 0.9rem;
+    line-height: 1.3;
   }
 
   .time {
-  font-size: 0.7rem;
-  padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
   }
 
   /* Mobile Prediction Type - Compact */
   .prediction-type {
-  font-size: 0.8rem;
-  padding: 0.4rem 0.8rem;
-  min-width: 100px;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    min-width: 100px;
   }
 
   /* Mobile Odds Info - Compact */
   .odds-info {
-  padding: 0.5rem;
-  gap: 0.3rem;
+    padding: 0.5rem;
+    gap: 0.3rem;
   }
 
   .odds {
-  font-size: 1rem;
-  margin-bottom: 0.2rem;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
   }
 
   .probability {
-  font-size: 0.7rem;
-  padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
   }
 
   /* Mobile Won Tips Card - Reorganized Layout */
   .won-tip-card {
-  text-align: center;
+    text-align: center;
   }
 
   /* Mobile League + Result (Top Section) */
   .won-tip-card .league-name,
   .won-tip-card .result-label {
-  display: block;
-  margin: 0 auto 0.4rem auto;
-  text-align: center;
+    display: block;
+    margin: 0 auto 0.4rem auto;
+    text-align: center;
   }
 
   /* Mobile Match Info (Second Section) */
   .won-tip-card .match-info {
-  margin: 0 auto 0.6rem auto;
-  text-align: center;
+    margin: 0 auto 0.6rem auto;
+    text-align: center;
   }
 
   /* Mobile Winning Prediction (Third Section) */
   .won-tip-card .tip {
-  display: block;
-  margin: 0 auto 0.4rem auto;
-  text-align: center;
+    display: block;
+    margin: 0 auto 0.4rem auto;
+    text-align: center;
   }
 
   /* Mobile Odds (Fourth Section) */
   .won-tip-card .odds {
-  display: block;
-  margin: 0 auto 0.2rem auto;
-  text-align: center;
+    display: block;
+    margin: 0 auto 0.2rem auto;
+    text-align: center;
   }
 
   /* Mobile Probability (Fifth Section) */
   .won-tip-card .probability {
-  display: block;
-  margin: 0 auto;
-  text-align: center;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
   }
 
   /* Mobile Result Indicator Positioning */
   .won-tip-card .result-indicator {
-  justify-content: center;
-  margin-bottom: 0.4rem;
+    justify-content: center;
+    margin-bottom: 0.4rem;
   }
 
   /* Mobile Tip Header Organization */
   .won-tip-card .tip-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 0.8rem;
   }
 
   /* Mobile Grid Improvements */
   .predictions-grid,
   .won-tips-grid,
   .betting-codes-grid {
-  gap: 0.75rem;
-  padding: 0 0.5rem;
+    gap: 1rem;
+    padding: 0 0.5rem;
   }
 
   /* Mobile Form Improvements */
   .form-group input,
   .form-group select,
   .form-group textarea {
-  font-size: 16px; /* Prevents zoom on iOS */
-  padding: 1rem;
-  border-radius: 8px;
-  border: 2px solid var(--border-color);
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
   }
 
   /* Mobile Betting Codes Specific */
   .code-display {
-  background: rgba(0, 123, 255, 0.05);
-  border: 2px solid rgba(0, 123, 255, 0.15);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+    background: rgba(0, 123, 255, 0.05);
+    border: 2px solid rgba(0, 123, 255, 0.15);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
   }
 
   .code-value {
-  font-family: 'Courier New', monospace;
-  font-size: 1.1rem;
-  font-weight: bold;
-  background: rgba(111, 66, 193, 0.1);
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid rgba(111, 66, 193, 0.2);
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background: rgba(111, 66, 193, 0.1);
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid rgba(111, 66, 193, 0.2);
   }
 
   /* Mobile Footer Stats */
   .footer-stats .stat-row {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .footer-stats .stat-number {
-  font-size: 1.2rem;
+    font-size: 1.2rem;
   }
 
   .footer-stats .stat-label {
-  font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
   /* Extra Small Mobile - Compact Design */
   body {
-  font-size: 13px;
+    font-size: 13px;
   }
 
   /* Compact Touch Targets */
@@ -4176,218 +3707,218 @@ footer::after {
   .success-btn,
   .unlock-btn,
   .action-btn {
-  min-height: 44px;
-  padding: 0.6rem 0.8rem;
-  font-size: 0.9rem;
+    min-height: 44px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
   }
 
   /* Compact Mobile Cards - Ultra Compact for Small Screens */
   .prediction-card,
   .won-tip-card,
   .betting-code-card {
-  padding: 0.6rem;
-  margin-bottom: 0.6rem;
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
   }
 
   /* Compact Mobile Cards - Ultra Compact for Small Screens */
   .prediction-card {
-  padding: 0.6rem;
-  margin-bottom: 0.6rem;
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
   }
 
   .won-tip-card {
-  padding: 0.6rem;
-  margin-bottom: 0.6rem;
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
   }
 
   .prediction-card .fixture {
-  font-size: 0.65rem;
-  margin-bottom: 0.4rem;
-  line-height: 1.2;
+    font-size: 0.65rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
   }
 
   .won-tip-card .fixture {
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
-  line-height: 1.3;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
   }
 
   .prediction-card .tip {
-  font-size: 0.55rem;
-  padding: 0.25rem 0.4rem;
-  margin-bottom: 0.3rem;
+    font-size: 0.55rem;
+    padding: 0.25rem 0.4rem;
+    margin-bottom: 0.3rem;
   }
 
   .won-tip-card .tip {
-  font-size: 0.8rem;
-  padding: 0.25rem 0.4rem;
-  margin-bottom: 0.3rem;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.4rem;
+    margin-bottom: 0.3rem;
   }
 
   .prediction-card .odds {
-  font-size: 0.6rem;
+    font-size: 0.6rem;
   }
 
   .won-tip-card .odds {
-  font-size: 1rem;
+    font-size: 1rem;
   }
 
   /* Ultra Compact Headers */
   .prediction-card h3 {
-  font-size: 0.65rem;
-  margin-bottom: 0.4rem;
+    font-size: 0.65rem;
+    margin-bottom: 0.4rem;
   }
 
   .won-tip-card h3 {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
   }
 
   /* Ultra Compact Text */
   .prediction-card p {
-  font-size: 0.55rem;
-  margin-bottom: 0.3rem;
-  line-height: 1.3;
+    font-size: 0.55rem;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
   }
 
   .won-tip-card p {
-  font-size: 0.9rem;
-  margin-bottom: 0.4rem;
-  line-height: 1.4;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
   }
 
   /* Ultra Compact Result Labels */
   .result-label {
-  font-size: 0.6rem;
-  padding: 0.15rem 0.3rem;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.3rem;
   }
 
   /* Ultra Compact League Names */
   .league-name {
-  font-size: 0.6rem;
-  padding: 0.15rem 0.4rem;
-  margin-bottom: 0.4rem;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.4rem;
+    margin-bottom: 0.4rem;
   }
 
   /* Ultra Compact Match Info */
   .match-info {
-  margin-bottom: 0.6rem;
-  padding-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.4rem;
   }
 
   .teams {
-  font-size: 0.8rem;
-  line-height: 1.2;
+    font-size: 0.8rem;
+    line-height: 1.2;
   }
 
   .time {
-  font-size: 0.6rem;
-  padding: 0.15rem 0.3rem;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.3rem;
   }
 
   /* Ultra Compact Prediction Type */
   .prediction-type {
-  font-size: 0.7rem;
-  padding: 0.3rem 0.6rem;
-  min-width: 80px;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+    min-width: 80px;
   }
 
   /* Ultra Compact Odds Info */
   .odds-info {
-  padding: 0.4rem;
-  gap: 0.25rem;
+    padding: 0.4rem;
+    gap: 0.25rem;
   }
 
   .odds {
-  font-size: 0.9rem;
-  margin-bottom: 0.15rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.15rem;
   }
 
   .probability {
-  font-size: 0.6rem;
-  padding: 0.15rem 0.3rem;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.3rem;
   }
 
   /* Extra Small Mobile - Won Tips Card Reorganization */
   .won-tip-card {
-  text-align: center;
+    text-align: center;
   }
 
   /* Ultra Compact League + Result (Top Section) */
   .won-tip-card .league-name,
   .won-tip-card .result-label {
-  display: block;
-  margin: 0 auto 0.3rem auto;
-  text-align: center;
+    display: block;
+    margin: 0 auto 0.3rem auto;
+    text-align: center;
   }
 
   /* Ultra Compact Match Info (Second Section) */
   .won-tip-card .match-info {
-  margin: 0 auto 0.5rem auto;
-  text-align: center;
+    margin: 0 auto 0.5rem auto;
+    text-align: center;
   }
 
   /* Ultra Compact Winning Prediction (Third Section) */
   .won-tip-card .tip {
-  display: block;
-  margin: 0 auto 0.3rem auto;
-  text-align: center;
+    display: block;
+    margin: 0 auto 0.3rem auto;
+    text-align: center;
   }
 
   /* Ultra Compact Odds (Fourth Section) */
   .won-tip-card .odds {
-  display: block;
-  margin: 0 auto 0.15rem auto;
-  text-align: center;
+    display: block;
+    margin: 0 auto 0.15rem auto;
+    text-align: center;
   }
 
   /* Ultra Compact Probability (Fifth Section) */
   .won-tip-card .probability {
-  display: block;
-  margin: 0 auto;
-  text-align: center;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
   }
 
   /* Ultra Compact Result Indicator */
   .won-tip-card .result-indicator {
-  justify-content: center;
-  margin-bottom: 0.3rem;
+    justify-content: center;
+    margin-bottom: 0.3rem;
   }
 
   /* Ultra Compact Tip Header */
   .won-tip-card .tip-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 0.6rem;
   }
 
   /* Compact Mobile Forms */
   .form-group input,
   .form-group select,
   .form-group textarea {
-  padding: 0.75rem;
-  font-size: 16px;
+    padding: 0.75rem;
+    font-size: 16px;
   }
 
   /* Compact Mobile Codes */
   .code-display {
-  padding: 0.75rem;
+    padding: 0.75rem;
   }
 
   .code-value {
-  font-size: 1rem;
-  padding: 0.4rem;
+    font-size: 1rem;
+    padding: 0.4rem;
   }
 
   /* Compact Mobile Stats */
   .stat-number {
-  font-size: 1.2rem;
+    font-size: 1.2rem;
   }
 
   .stat-label {
-  font-size: 0.75rem;
+    font-size: 0.75rem;
   }
 }
 
@@ -4415,65 +3946,65 @@ footer::after {
 @media (max-width: 768px) {
   /* Mobile-Specific Hero Improvements */
   .hero-overlay {
-  padding: 0 1rem;
+    padding: 0 1rem;
   }
 
   /* Mobile Card Hover Effects - Touch Friendly */
   .prediction-card,
   .won-tip-card,
   .betting-code-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .prediction-card:active,
   .won-tip-card:active,
   .betting-code-card:active {
-  transform: scale(0.98);
+    transform: scale(0.98);
   }
 
   /* Mobile Navigation Improvements */
   .nav-menu li a:active {
-  transform: scale(0.95);
+    transform: scale(0.95);
   }
 
   /* Mobile Button Improvements */
   .cta-button:active,
   .telegram-button:active,
   .bookmaker-btn:active {
-  transform: scale(0.95);
+    transform: scale(0.95);
   }
 
   /* Mobile Stats Layout */
   .tips-stats .stat-item {
-  text-align: center;
-  border-radius: 8px;
-  transition: transform 0.2s ease;
+    text-align: center;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
   }
 
   .tips-stats .stat-item:active {
-  transform: scale(0.95);
+    transform: scale(0.95);
   }
 }
 
 /* Landscape Mobile Optimization */
 @media (max-width: 768px) and (orientation: landscape) {
   .hero {
-  min-height: 50vh;
-  padding: 1rem;
+    min-height: 50vh;
+    padding: 1rem;
   }
 
   .hero h1 {
-  font-size: 1.6rem;
-  margin-bottom: 0.5rem;
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
   }
 
   .hero p {
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
   }
 
   .nav-menu {
-  max-height: 60vh;
+    max-height: 60vh;
   }
 }
 
@@ -4484,33 +4015,33 @@ footer::after {
   .cta-button:focus,
   .telegram-button:focus,
   .bookmaker-btn:focus {
-  outline: 3px solid var(--primary-blue);
-  outline-offset: 2px;
+    outline: 3px solid var(--primary-blue);
+    outline-offset: 2px;
   }
 
   /* High contrast mode support for mobile */
   @media (prefers-contrast: high) {
-  .prediction-card,
-  .won-tip-card,
-  .betting-code-card {
-    border: 2px solid var(--text-color);
-  }
+    .prediction-card,
+    .won-tip-card,
+    .betting-code-card {
+      border: 2px solid var(--text-color);
+    }
 
-  .nav-menu li a {
-    border: 1px solid var(--text-color);
-  }
+    .nav-menu li a {
+      border: 1px solid var(--text-color);
+    }
   }
 
   /* Reduced motion for mobile users */
   @media (prefers-reduced-motion: reduce) {
-  .prediction-card,
-  .won-tip-card,
-  .betting-code-card,
-  .cta-button,
-  .telegram-button {
-    transition: none;
-    animation: none;
-  }
+    .prediction-card,
+    .won-tip-card,
+    .betting-code-card,
+    .cta-button,
+    .telegram-button {
+      transition: none;
+      animation: none;
+    }
   }
 }
 
@@ -4534,8 +4065,8 @@ body {
 /* Mobile viewport height fix for mobile browsers */
 @media (max-width: 768px) {
   .hero {
-  min-height: 40vh;
-  max-height: 60vh;
+    min-height: 40vh;
+    max-height: 60vh;
   }
 }
 
@@ -4924,7 +4455,7 @@ body {
 .social-links-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .social-link-item {
@@ -5234,7 +4765,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 .card-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   padding: 1.5rem 2rem;
   background: linear-gradient(135deg, rgba(0, 123, 255, 0.05), rgba(111, 66, 193, 0.05));
   border-bottom: 1px solid rgba(0, 123, 255, 0.1);
@@ -5299,7 +4830,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 
 .card-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
@@ -5340,7 +4871,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 .activity-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   padding: 1rem;
   background: rgba(0, 123, 255, 0.02);
   border-radius: 10px;
@@ -5448,7 +4979,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 
 .profile-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
@@ -5494,7 +5025,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 .action-card {
    display: flex;
    align-items: center;
-   gap: 0.75rem;
+   gap: 1rem;
    padding: 1.5rem;
    background: var(--white);
    border-radius: 12px;
@@ -5537,84 +5068,84 @@ body:has(.user-avatar) .nav-menu li a:hover {
 /* Responsive Design for Dashboard */
 @media (max-width: 1024px) {
   .hero-content {
-  flex-direction: column;
-  text-align: center;
-  gap: 2rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
   }
 
   .welcome-message h1 {
-  font-size: 2.2rem;
+    font-size: 2.2rem;
   }
 
   .overview-grid {
-  grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 
   .management-grid {
-  grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .actions-grid {
-  grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
   .dashboard-main {
-  padding: 0 1rem;
+    padding: 0 1rem;
   }
 
   .dashboard-hero {
-  padding: 2rem 1.5rem;
-  margin: 1rem 0;
+    padding: 2rem 1.5rem;
+    margin: 1rem 0;
   }
 
   .welcome-message h1 {
-  font-size: 1.8rem;
+    font-size: 1.8rem;
   }
 
   .user-meta {
-  justify-content: center;
+    justify-content: center;
   }
 
   .management-grid {
-  grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 
   .actions-grid {
-  grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 
   .card-actions {
-  flex-direction: column;
+    flex-direction: column;
   }
 
   .metrics-grid {
-  grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 480px) {
   .dashboard-hero {
-  padding: 1.5rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .welcome-message h1 {
-  font-size: 1.6rem;
+    font-size: 1.6rem;
   }
 
   .user-avatar-large {
-  width: 80px;
-  height: 80px;
-  font-size: 2rem;
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
   }
 
   .management-card {
-  padding: 2rem 1.5rem;
+    padding: 2rem 1.5rem;
   }
 
   .action-card {
-  padding: 1rem;
+    padding: 1rem;
   }
 }
 
@@ -5713,7 +5244,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 .code-display {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   background: rgba(0, 123, 255, 0.05);
   padding: 1rem;
   border-radius: 10px;
@@ -5757,7 +5288,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 
 .code-details {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
@@ -5826,66 +5357,66 @@ body:has(.user-avatar) .nav-menu li a:hover {
 /* Responsive Design for Betting Codes */
 @media (max-width: 1024px) {
   .betting-codes-grid {
-  grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
   .betting-codes-section {
-  padding: 2rem 1rem;
-  margin: 2rem 0;
+    padding: 2rem 1rem;
+    margin: 2rem 0;
   }
 
   .betting-codes-section .section-header h2 {
-  font-size: 2rem;
+    font-size: 2rem;
   }
 
   .betting-codes-grid {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .bookmaker-header {
-  padding: 1rem 1.5rem;
+    padding: 1rem 1.5rem;
   }
 
   .code-content {
-  padding: 1.5rem;
+    padding: 1.5rem;
   }
 
   .code-display {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 
   .code-details {
-  flex-direction: column;
-  gap: 0.5rem;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .detail-item {
-  text-align: center;
+    text-align: center;
   }
 }
 
 @media (max-width: 480px) {
   .betting-codes-section .section-header h2 {
-  font-size: 1.8rem;
+    font-size: 1.8rem;
   }
 
   .bookmaker-header {
-  flex-direction: column;
-  gap: 0.5rem;
-  text-align: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
   }
 
   .code-content h3 {
-  font-size: 1.2rem;
+    font-size: 1.2rem;
   }
 
   .code-value {
-  font-size: 1rem;
+    font-size: 1rem;
   }
 }
 
@@ -5901,13 +5432,13 @@ body:has(.user-avatar) .nav-menu li a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   margin: 2rem 0;
 }
 
 .bookmaker-buttons {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -5981,56 +5512,56 @@ body:has(.user-avatar) .nav-menu li a:hover {
 /* Responsive Footer */
 @media (max-width: 768px) {
   .footer-content {
-  padding: 2rem 1rem 1rem;
+    padding: 2rem 1rem 1rem;
   }
 
   .footer-actions {
-  gap: 0.75rem;
+    gap: 0.75rem;
   }
 
   .bookmaker-buttons {
-  gap: 0.75rem;
+    gap: 0.75rem;
   }
 
   .bookmaker-btn {
-  padding: 0.6rem 1.2rem;
-  font-size: 0.85rem;
-  min-width: 90px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+    min-width: 90px;
   }
 
   .telegram-button {
-  font-size: 0.9rem;
-  padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+    padding: 0.8rem 1.5rem;
   }
 }
 
 @media (max-width: 480px) {
   .footer-content {
-  padding: 1.5rem 1rem 1rem;
+    padding: 1.5rem 1rem 1rem;
   }
 
   .bookmaker-buttons {
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .bookmaker-btn {
-  width: 140px;
-  padding: 0.7rem 1rem;
-  font-size: 0.8rem;
+    width: 140px;
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
   }
 }
 
 /* High Contrast Mode Support - DISABLED */
 /* @media (prefers-contrast: high) {
   :root {
-  --primary-blue: #0000ff;
-  --accent-purple: #800080;
-  --white: #ffffff;
-  --light-gray: #e0e0e0;
-  --dark-gray: #000000;
-  --text-color: #000000;
+    --primary-blue: #0000ff;
+    --accent-purple: #800080;
+    --white: #ffffff;
+    --light-gray: #e0e0e0;
+    --dark-gray: #000000;
+    --text-color: #000000;
   }
 } */
 
@@ -6194,7 +5725,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 
 .telegram-modal-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
   padding: 0 2rem 2rem;
   flex-wrap: wrap;
@@ -6245,12 +5776,12 @@ body:has(.user-avatar) .nav-menu li a:hover {
 
 @keyframes slideIn {
   from {
-  opacity: 0;
-  transform: scale(0.9) translateY(-20px);
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
   }
   to {
-  opacity: 1;
-  transform: scale(1) translateY(0);
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
@@ -6365,7 +5896,7 @@ body:has(.user-avatar) .nav-menu li a:hover {
 
 .success-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 1rem;
@@ -6441,156 +5972,156 @@ body:has(.user-avatar) .nav-menu li a:hover {
 /* Responsive Design for Payment Success */
 @media (max-width: 768px) {
   .payment-success-container {
-  padding: 2rem 1.5rem;
+    padding: 2rem 1.5rem;
   }
 
   .payment-success-container h2 {
-  font-size: 2rem;
+    font-size: 2rem;
   }
 
   .success-content {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .success-card {
-  padding: 1.5rem;
+    padding: 1.5rem;
   }
 
   .access-code {
-  font-size: 1.4rem;
-  padding: 0.4rem 0.8rem;
+    font-size: 1.4rem;
+    padding: 0.4rem 0.8rem;
   }
 
   .success-actions {
-  flex-direction: column;
-  align-items: center;
+    flex-direction: column;
+    align-items: center;
   }
 
   .success-btn {
-  width: 100%;
-  max-width: 250px;
+    width: 100%;
+    max-width: 250px;
   }
 }
 
 @media (max-width: 480px) {
   .payment-success-container {
-  padding: 1.5rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .payment-success-container h2 {
-  font-size: 1.8rem;
+    font-size: 1.8rem;
   }
 
   .success-description {
-  font-size: 1rem;
+    font-size: 1rem;
   }
 
   .success-card {
-  padding: 1rem;
+    padding: 1rem;
   }
 
   .success-card h3 {
-  font-size: 1.1rem;
+    font-size: 1.1rem;
   }
 
   .access-code {
-  font-size: 1.2rem;
-  padding: 0.3rem 0.6rem;
+    font-size: 1.2rem;
+    padding: 0.3rem 0.6rem;
   }
 
   .success-btn {
-  padding: 0.7rem 1.2rem;
-  font-size: 0.9rem;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
   }
 }
 
 /* Responsive Design for Telegram Modal */
 @media (max-width: 768px) {
    .telegram-modal-content {
-   margin: 1rem;
-   width: calc(100% - 2rem);
+     margin: 1rem;
+     width: calc(100% - 2rem);
    }
 
    .telegram-modal-header {
-   padding: 1.5rem;
+     padding: 1.5rem;
    }
 
    .telegram-modal-header h2 {
-   font-size: 1.6rem;
+     font-size: 1.6rem;
    }
 
    .telegram-modal-header p {
-   font-size: 1rem;
+     font-size: 1rem;
    }
 
    .telegram-access-info {
-   padding: 1.5rem;
+     padding: 1.5rem;
    }
 
    .access-code {
-   font-size: 1.5rem;
-   padding: 0.8rem 1.5rem;
+     font-size: 1.5rem;
+     padding: 0.8rem 1.5rem;
    }
 
    .telegram-join-btn {
-   padding: 0.8rem 1.5rem;
-   font-size: 1rem;
+     padding: 0.8rem 1.5rem;
+     font-size: 1rem;
    }
 
    .telegram-instructions {
-   padding: 1rem;
+     padding: 1rem;
    }
 
    .telegram-modal-actions {
-   padding: 0 1.5rem 1.5rem;
-   flex-direction: column;
+     padding: 0 1.5rem 1.5rem;
+     flex-direction: column;
    }
 
    .continue-to-vvip-btn,
    .copy-code-btn {
-   width: 100%;
-   min-width: auto;
+     width: 100%;
+     min-width: auto;
    }
 }
 
 @media (max-width: 480px) {
   .telegram-modal-header {
-  padding: 1rem;
+    padding: 1rem;
   }
 
   .telegram-modal-header .telegram-icon {
-  font-size: 3rem;
+    font-size: 3rem;
   }
 
   .telegram-modal-header h2 {
-  font-size: 1.4rem;
+    font-size: 1.4rem;
   }
 
   .telegram-access-info {
-  padding: 1rem;
+    padding: 1rem;
   }
 
   .access-code-section h3,
   .telegram-link-section h3 {
-  font-size: 1.1rem;
+    font-size: 1.1rem;
   }
 
   .access-code {
-  font-size: 1.2rem;
-  padding: 0.6rem 1rem;
+    font-size: 1.2rem;
+    padding: 0.6rem 1rem;
   }
 
   .telegram-join-btn {
-  padding: 0.7rem 1.2rem;
-  font-size: 0.95rem;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.95rem;
   }
 
   .telegram-instructions h4 {
-  font-size: 1rem;
+    font-size: 1rem;
   }
 
   .telegram-instructions li {
-  font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 }

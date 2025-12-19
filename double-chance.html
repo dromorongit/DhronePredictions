@@ -161,11 +161,11 @@
                         } else {
                             container.innerHTML = predictions.map(pred => `
                                 <div class="prediction-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; border-radius: 15px; padding: 25px; margin: 15px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.15); position: relative; overflow: hidden;">
-                                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                        <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                                    <div class="card-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
+                                        <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-align: center;">
                                             ${pred.leagueType}
                                         </div>
-                                        <div class="status-badge" style="background: #ffc107; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase;">PENDING</div>
+                                        <div class="status-badge" style="background: #ffc107; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-top: 5px;">PENDING</div>
                                     </div>
 
                                     <div class="match-section" style="margin-bottom: 20px;">
@@ -184,13 +184,13 @@
                                         </div>
                                     </div>
 
-                                    <div class="stats-section" style="display: flex; justify-content: space-between; align-items: center;">
-                                        <div class="odds-info" style="display: flex; align-items: center;">
-                                            <span style="font-size: 14px; margin-right: 5px; font-weight: bold;">Odds: </span>
+                                    <div class="stats-section" style="display: flex; flex-direction: column; align-items: center;">
+                                        <div class="odds-info" style="text-align: center; margin-bottom: 5px;">
+                                            <span style="font-size: 14px; font-weight: bold;">Odds: </span>
                                             <span style="font-weight: bold;">${pred.odds || 'N/A'}</span>
                                         </div>
-                                        <div class="probability-info" style="display: flex; align-items: center;">
-                                            <span style="font-size: 14px; margin-right: 5px; font-weight: bold;">Win Probability: </span>
+                                        <div class="probability-info" style="text-align: center;">
+                                            <span style="font-size: 14px; font-weight: bold;">Win Probability: </span>
                                             <span style="font-weight: bold;">${pred.probability || 'N/A'}</span>
                                         </div>
                                     </div>
@@ -241,11 +241,11 @@
                                     const isWon = pred.status === 'Won';
                                     return `
                                         <div class="prediction-card" style="background: linear-gradient(135deg, ${isWon ? '#28a745 0%, #20c997 100%' : '#dc3545 0%, #c82333 100%'}); color: white; border-radius: 15px; padding: 25px; margin: 15px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.15); position: relative; overflow: hidden;">
-                                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                                <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                                            <div class="card-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
+                                                <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-align: center;">
                                                     ${pred.leagueType}
                                                 </div>
-                                                <div class="status-badge" style="background: ${isWon ? '#28a745' : '#dc3545'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase;">${isWon ? 'WON ✅' : 'LOST ❌'}</div>
+                                                <div class="status-badge" style="background: ${isWon ? '#28a745' : '#dc3545'}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-top: 5px;">${isWon ? 'WON ✅' : 'LOST ❌'}</div>
                                             </div>
 
                                             <div class="match-section" style="margin-bottom: 20px;">
@@ -264,13 +264,13 @@
                                                 </div>
                                             </div>
 
-                                            <div class="stats-section" style="display: flex; justify-content: space-between; align-items: center;">
-                                                <div class="odds-info" style="display: flex; align-items: center;">
-                                                    <span style="font-size: 14px; margin-right: 5px; font-weight: bold;">Odds: </span>
+                                            <div class="stats-section" style="display: flex; flex-direction: column; align-items: center;">
+                                                <div class="odds-info" style="text-align: center; margin-bottom: 5px;">
+                                                    <span style="font-size: 14px; font-weight: bold;">Odds: </span>
                                                     <span style="font-weight: bold;">${pred.odds || 'N/A'}</span>
                                                 </div>
-                                                <div class="probability-info" style="display: flex; align-items: center;">
-                                                    <span style="font-size: 14px; margin-right: 5px; font-weight: bold;">Win Probability: </span>
+                                                <div class="probability-info" style="text-align: center;">
+                                                    <span style="font-size: 14px; font-weight: bold;">Win Probability: </span>
                                                     <span style="font-weight: bold;">${pred.probability || 'N/A'}</span>
                                                 </div>
                                             </div>
