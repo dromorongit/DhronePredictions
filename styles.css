@@ -3256,6 +3256,37 @@ footer::after {
     display: block;
     margin: 0 auto 0.5rem auto;
   }
+
+  /* Mobile Left Alignment Override for League Type and Status */
+  /* Only left-align league type and status indicator, keep other elements centered */
+  .prediction-card .league-name,
+  .won-tip-card .league-name {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+  
+  .prediction-card .result-label,
+  .won-tip-card .result-label {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+  
+  /* Mobile Left Alignment for Odds and Win Probability */
+  .prediction-card .odds,
+  .won-tip-card .odds {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+  
+  .prediction-card .probability,
+  .won-tip-card .probability {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
   
   .prediction-card .fixture,
   .won-tip-card .fixture {
