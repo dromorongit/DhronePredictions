@@ -198,7 +198,7 @@
             const predictions = await response.json();
             console.log('Current predictions received:', predictions);
 
-            const container = document.querySelector('.predictions-section') || document.querySelector('#predictions');
+            const container = document.querySelector('#current-predictions');
             if (container) {
                 if (predictions.length === 0) {
                     container.innerHTML = '<div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;"><div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div><h3 style="color: #6c757d; margin: 0;">No Active Super Single Predictions Today!</h3><p style="color: #6c757d; margin: 10px 0 0 0;">Check back later for new Super Single predictions.</p></div>';
@@ -208,7 +208,7 @@
             }
           } catch (error) {
             console.error('Error loading current predictions:', error);
-            const container = document.querySelector('.predictions-section') || document.querySelector('#predictions');
+            const container = document.querySelector('#current-predictions');
             if (container) {
                 container.innerHTML = '<div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;"><div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">🚫</div><h3 style="color: #6c757d; margin: 0;">Error Loading Predictions</h3><p style="color: #6c757d; margin: 10px 0 0 0;">Please try again later.</p></div>';
             }
