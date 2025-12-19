@@ -9,6 +9,273 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Modern Terms Page Styling */
+        body {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #43e97b 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: backgroundFloat 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundFloat {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(-20px) scale(1.02); }
+        }
+
+        .terms-section {
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .terms-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            position: relative;
+            animation: slideInUp 0.6s ease-out;
+            overflow: hidden;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .terms-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe, #43e97b);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .terms-content {
+            padding: 3rem;
+            line-height: 1.8;
+            color: #555;
+            position: relative;
+            z-index: 2;
+        }
+
+        .terms-content h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .terms-content h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            border-radius: 2px;
+        }
+
+        .terms-content p {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            text-align: center;
+            color: #666;
+            background: rgba(79, 172, 254, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .terms-content h2 {
+            color: #333;
+            margin: 2.5rem 0 1rem 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .terms-content h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border-radius: 2px;
+        }
+
+        .terms-content ul {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .terms-content li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .terms-content li::before {
+            content: '✓';
+            position: absolute;
+            left: -1rem;
+            color: #4facfe;
+            font-weight: bold;
+        }
+
+        .terms-content strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Highlight important sections */
+        .terms-content h2:nth-child(odd) {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.05), rgba(0, 242, 254, 0.05));
+            padding: 1rem 1.5rem;
+            margin: 2rem -1.5rem 1rem -1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .terms-content h2:nth-child(odd)::before {
+            display: none;
+        }
+
+        /* Add some visual elements */
+        .terms-content::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            right: 10%;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(79, 172, 254, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .terms-content::after {
+            content: '';
+            position: absolute;
+            bottom: 20%;
+            left: 10%;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(67, 233, 123, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .terms-section {
+                padding: 2rem 1rem;
+            }
+
+            .terms-container {
+                margin: 0;
+            }
+
+            .terms-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .terms-content h1 {
+                font-size: 2rem;
+            }
+
+            .terms-content h2 {
+                font-size: 1.5rem;
+                margin: 2rem 0 1rem 0;
+            }
+
+            .terms-content h2:nth-child(odd) {
+                margin: 1.5rem -1rem 1rem -1rem;
+                padding: 0.75rem 1rem;
+            }
+
+            .terms-content p {
+                font-size: 1rem;
+                padding: 1rem;
+            }
+
+            .terms-content ul {
+                margin-left: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .terms-section {
+                padding: 1rem 0.5rem;
+            }
+
+            .terms-content {
+                padding: 1.5rem 1rem;
+            }
+
+            .terms-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .terms-content h2 {
+                font-size: 1.3rem;
+            }
+
+            .terms-content p {
+                font-size: 0.95rem;
+                padding: 0.75rem;
+            }
+
+            .terms-content::before,
+            .terms-content::after {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
