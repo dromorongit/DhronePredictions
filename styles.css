@@ -1575,6 +1575,169 @@ a:hover {
   transform: scale(1.05);
 }
 
+/* Enhanced Subscribe Buttons */
+.subscribe-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-2xl);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    text-decoration: none;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-bounce);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 200px;
+    box-shadow: var(--shadow-lg);
+}
+
+.subscribe-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.subscribe-btn:hover::before {
+    left: 100%;
+}
+
+.subscribe-btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: var(--shadow-2xl);
+}
+
+.subscribe-btn:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.btn-icon {
+    font-size: var(--text-xl);
+    transition: all var(--transition-normal);
+}
+
+.btn-text {
+    font-weight: 800;
+    color: var(--text-inverse);
+}
+
+.btn-arrow {
+    font-size: var(--text-lg);
+    transition: all var(--transition-normal);
+    opacity: 0.8;
+}
+
+.subscribe-btn:hover .btn-icon {
+    transform: scale(1.2) rotate(10deg);
+}
+
+.subscribe-btn:hover .btn-arrow {
+    transform: translateX(4px);
+    opacity: 1;
+}
+
+/* Daily Button - Gold Theme */
+.subscribe-btn-daily {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 50%, #ff8c00 100%);
+    color: var(--text-primary);
+    border-color: #ffd700;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.subscribe-btn-daily:hover {
+    background: linear-gradient(135deg, #ffb347 0%, #ff8c00 50%, #ff6b00 100%);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+}
+
+.subscribe-btn-daily .btn-text {
+    color: var(--text-primary);
+}
+
+/* Weekly Button - Silver Theme */
+.subscribe-btn-weekly {
+    background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 50%, #808080 100%);
+    color: var(--text-primary);
+    border-color: #c0c0c0;
+    box-shadow: 0 8px 25px rgba(192, 192, 192, 0.4);
+}
+
+.subscribe-btn-weekly:hover {
+    background: linear-gradient(135deg, #a8a8a8 0%, #808080 50%, #606060 100%);
+    box-shadow: 0 12px 35px rgba(192, 192, 192, 0.6);
+}
+
+.subscribe-btn-weekly .btn-text {
+    color: var(--text-primary);
+}
+
+/* Monthly Button - Popular Theme */
+.subscribe-btn-monthly {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff9f43 100%);
+    color: var(--text-inverse);
+    border-color: #ff6b6b;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+.subscribe-btn-monthly:hover {
+    background: linear-gradient(135deg, #ee5a24 0%, #ff9f43 50%, #ff6b00 100%);
+    box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6);
+}
+
+/* Yearly Button - Platinum Theme */
+.subscribe-btn-yearly {
+    background: linear-gradient(135deg, #e5e4e2 0%, #d4d4d4 50%, #b8b8b8 100%);
+    color: var(--text-primary);
+    border-color: #e5e4e2;
+    box-shadow: 0 8px 25px rgba(229, 228, 226, 0.4);
+}
+
+.subscribe-btn-yearly:hover {
+    background: linear-gradient(135deg, #d4d4d4 0%, #b8b8b8 50%, #9c9c9c 100%);
+    box-shadow: 0 12px 35px rgba(229, 228, 226, 0.6);
+}
+
+.subscribe-btn-yearly .btn-text {
+    color: var(--text-primary);
+}
+
+/* Popular Badge Enhancement */
+.popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+    color: var(--text-inverse);
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4);
+    z-index: 10;
+}
+
+.popular-btn {
+    position: relative;
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+}
+
+.popular-btn:hover {
+    transform: scale(1.1);
+}
+
 /* Modern Footer */
 footer {
   background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
