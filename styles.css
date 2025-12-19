@@ -2927,9 +2927,16 @@ footer::after {
 
 .pricing-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-bottom: 2rem;
+}
+
+/* Mobile: Single column layout for pricing cards */
+@media (max-width: 768px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pricing-card {
