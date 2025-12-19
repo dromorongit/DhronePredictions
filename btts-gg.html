@@ -246,7 +246,8 @@
             const statusConfig = {
                 pending: {
                     badgeText: 'PENDING',
-                    badgeClass: 'pending-badge',
+                    badgeColor: '#ffc107',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     timeText: pred.time || pred.date || 'TBD',
                     timeIcon: '🕒',
                     labelText: 'BTTS/GG Prediction',
@@ -254,7 +255,8 @@
                 },
                 won: {
                     badgeText: 'WON ✅',
-                    badgeClass: 'won-badge',
+                    badgeColor: '#28a745',
+                    background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
                     timeText: 'Completed',
                     timeIcon: '✅',
                     labelText: 'Winning BTTS/GG Prediction',
@@ -262,7 +264,8 @@
                 },
                 lost: {
                     badgeText: 'LOST ❌',
-                    badgeClass: 'lost-badge',
+                    badgeColor: '#dc3545',
+                    background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
                     timeText: 'Completed',
                     timeIcon: '❌',
                     labelText: 'Lost BTTS/GG Prediction',
@@ -273,7 +276,7 @@
             const config = statusConfig[status];
 
             return `
-                <div class="prediction-card ${status}">
+                <div class="prediction-card ${status}" style="background: ${config.background}; color: white; border-radius: 15px; padding: 25px; margin: 15px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.15); position: relative; overflow: hidden;">
                     <div class="card-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
                         <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-align: center;">
                             ${pred.leagueType}
