@@ -2940,7 +2940,15 @@ footer::after {
 
 .floating-telegram-btn.dragging {
   transition: none;
-  transform: translateY(-50%);
+  transform: none !important;
+}
+
+/* When button has custom position from JavaScript */
+.floating-telegram-btn[style*="left"],
+.floating-telegram-btn[style*="top"] {
+  top: auto !important;
+  right: auto !important;
+  transform: none !important;
 }
 
 @media (max-width: 768px) {
