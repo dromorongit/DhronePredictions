@@ -308,11 +308,11 @@
                 } else {
                     container.innerHTML = predictions.map(pred => `
                         <div class="prediction-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 25px; margin: 15px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.15); position: relative; overflow: hidden;">
-                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                            <div class="card-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
+                                <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-align: center;">
                                     ${pred.leagueType || pred.league || 'League'}
                                 </div>
-                                <div class="status-badge" style="background: #ffc107; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase;">PENDING</div>
+                                <div class="status-badge" style="background: #ffc107; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-top: 5px;">PENDING</div>
                             </div>
 
                             <div class="match-section" style="margin-bottom: 20px;">
@@ -401,11 +401,11 @@
                         const predictionLabel = isWon ? 'Winning Prediction' : 'Prediction';
                         return `
                         <div class="prediction-card" style="background: ${background}; color: white; border-radius: 15px; padding: 25px; margin: 15px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.15); position: relative; overflow: hidden;">
-                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                            <div class="card-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
+                                <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-align: center;">
                                     ${pred.leagueType || pred.league || 'League'}
                                 </div>
-                                <div class="status-badge" style="background: ${statusColor}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase;">${statusBadge}</div>
+                                <div class="status-badge" style="background: ${statusColor}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-top: 5px;">${statusBadge}</div>
                             </div>
 
                             <div class="match-section" style="margin-bottom: 20px;">
