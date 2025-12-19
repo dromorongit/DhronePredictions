@@ -909,14 +909,15 @@ a:hover {
   accent-color: var(--success);
 }
 
+/* Status Indicator - Centered under league type */
 .result-label {
   font-weight: 600;
   font-size: var(--text-sm);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
+  display: block;
+  text-align: center;
+  margin: 0 auto var(--space-4);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   font-size: var(--text-xs);
@@ -1147,18 +1148,19 @@ a:hover {
   opacity: 0.05;
 }
 
-/* Modern League Name Styling */
+/* Modern League Name Styling - Centered */
 .league-name {
   font-size: var(--text-xs);
   font-weight: 700;
   color: var(--accent-purple);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
   text-transform: uppercase;
   letter-spacing: 1px;
   background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(139, 92, 246, 0.05));
   padding: var(--space-1) var(--space-4);
   border-radius: var(--radius-xl);
-  display: inline-block;
+  display: block;
+  text-align: center;
   border: 1px solid rgba(124, 58, 237, 0.2);
   box-shadow: 0 2px 4px rgba(124, 58, 237, 0.1);
 }
@@ -1209,6 +1211,7 @@ a:hover {
 /* Modern Prediction Section */
 .prediction {
   margin-bottom: var(--space-6);
+  text-align: center;
 }
 
 .prediction-type {
@@ -1226,6 +1229,7 @@ a:hover {
   text-transform: uppercase;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
   transition: all var(--transition-normal);
+  margin: 0 auto var(--space-4);
 }
 
 .prediction-type:hover {
@@ -1233,16 +1237,17 @@ a:hover {
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
-/* Modern Odds Info Section */
+/* Modern Odds Info Section - Centered and stacked */
 .odds-info {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
   align-items: center;
   padding: var(--space-4);
   background: var(--bg-secondary);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-light);
+  text-align: center;
 }
 
 .odds {
@@ -1256,6 +1261,8 @@ a:hover {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  display: block;
+  text-align: center;
 }
 
 .probability {
@@ -1268,6 +1275,9 @@ a:hover {
   border-radius: var(--radius-lg);
   background: rgba(100, 116, 139, 0.1);
   border: 1px solid rgba(100, 116, 139, 0.2);
+  display: block;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .probability:hover {
@@ -3257,34 +3267,34 @@ footer::after {
     margin: 0 auto 0.5rem auto;
   }
 
-  /* Mobile Left Alignment Override for League Type and Status */
-  /* Only left-align league type and status indicator, keep other elements centered */
+  /* Mobile Center Alignment for League Type and Status */
+  /* Keep all elements centered for consistency */
   .prediction-card .league-name,
   .won-tip-card .league-name {
-    text-align: left !important;
-    margin-left: 0 !important;
+    text-align: center !important;
+    margin-left: auto !important;
     margin-right: auto !important;
   }
-  
+   
   .prediction-card .result-label,
   .won-tip-card .result-label {
-    text-align: left !important;
-    margin-left: 0 !important;
+    text-align: center !important;
+    margin-left: auto !important;
     margin-right: auto !important;
   }
   
-  /* Mobile Left Alignment for Odds and Win Probability */
+  /* Mobile Center Alignment for Odds and Win Probability */
   .prediction-card .odds,
   .won-tip-card .odds {
-    text-align: left !important;
-    margin-left: 0 !important;
+    text-align: center !important;
+    margin-left: auto !important;
     margin-right: auto !important;
   }
-  
+   
   .prediction-card .probability,
   .won-tip-card .probability {
-    text-align: left !important;
-    margin-left: 0 !important;
+    text-align: center !important;
+    margin-left: auto !important;
     margin-right: auto !important;
   }
   
@@ -3365,6 +3375,14 @@ footer::after {
     /* Tip section - Vertical layout */
     .prediction-card .tip,
     .won-tip-card .tip {
+      display: block !important;
+      margin: 0 auto 0.5rem auto !important;
+      text-align: center !important;
+    }
+    
+    /* Prediction type - Centered */
+    .prediction-card .prediction-type,
+    .won-tip-card .prediction-type {
       display: block !important;
       margin: 0 auto 0.5rem auto !important;
       text-align: center !important;
