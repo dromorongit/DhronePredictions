@@ -3102,6 +3102,18 @@ footer::after {
   }
 }
 
+/* Extra Small Mobile: Ensure single column on phones */
+@media (max-width: 480px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .pricing-card {
+    padding: 1.5rem;
+  }
+}
+
 .pricing-card {
    background: var(--white);
    border-radius: 16px;
