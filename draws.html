@@ -261,8 +261,7 @@
             const statusConfig = {
                 pending: {
                     badgeText: 'PENDING',
-                    badgeColor: '#ffc107',
-                    cardGradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                    badgeColor: 'var(--warning)',
                     timeText: pred.time || pred.date || 'TBD',
                     timeIcon: '🕒',
                     labelText: `${CATEGORY_CONFIG.displayName} Prediction`,
@@ -270,8 +269,7 @@
                 },
                 won: {
                     badgeText: 'WON ✅',
-                    badgeColor: '#28a745',
-                    cardGradient: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
+                    badgeColor: 'var(--success)',
                     timeText: 'Completed',
                     timeIcon: '✅',
                     labelText: `Winning ${CATEGORY_CONFIG.displayName} Prediction`,
@@ -279,8 +277,7 @@
                 },
                 lost: {
                     badgeText: 'LOST ❌',
-                    badgeColor: '#dc3545',
-                    cardGradient: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
+                    badgeColor: 'var(--error)',
                     timeText: 'Completed',
                     timeIcon: '❌',
                     labelText: `Lost ${CATEGORY_CONFIG.displayName} Prediction`,
@@ -291,50 +288,50 @@
             const config = statusConfig[status];
 
             return `
-                <div class="prediction-card" style="background: ${config.cardGradient}; color: white; border-radius: 15px; padding: 25px; margin: 15px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.15); position: relative; overflow: hidden;">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                <div class="prediction-card ${status}">
+                    <div class="card-header">
+                        <div class="league-badge">
                             ${pred.leagueType || 'League'}
                         </div>
-                        <div class="status-badge" style="background: ${config.badgeColor}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase;">${config.badgeText}</div>
+                        <div class="status-badge">${config.badgeText}</div>
                     </div>
 
-                    <div class="match-section" style="margin-bottom: 20px;">
-                        <div class="match-teams" style="font-size: 18px; font-weight: bold; margin-bottom: 5px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
+                    <div class="match-section">
+                        <div class="match-teams">
                             ${pred.match || 'Match TBD'}
                         </div>
-                        <div class="match-time" style="font-size: 14px; opacity: 0.9; display: flex; align-items: center;">
-                            <span style="margin-right: 5px;">${config.timeIcon}</span> ${config.timeText}
+                        <div class="match-time">
+                            <span>${config.timeIcon}</span> ${config.timeText}
                         </div>
                     </div>
 
-                    <div class="prediction-section" style="background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(10px);">
-                        <div class="prediction-label" style="font-size: 12px; opacity: 0.8; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">${config.labelText}</div>
-                        <div class="prediction-value" style="font-size: 16px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
+                    <div class="prediction-section">
+                        <div class="prediction-label">${config.labelText}</div>
+                        <div class="prediction-value">
                             ${pred.prediction || 'TBD'}
                         </div>
                     </div>
 
-                    <div class="stats-section" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="odds-info" style="display: flex; align-items: center;">
-                            <span style="font-size: 14px; margin-right: 5px; font-weight: bold;">Odds: </span>
-                            <span style="font-weight: bold;">${pred.odds || 'N/A'}</span>
+                    <div class="stats-section">
+                        <div class="odds-info">
+                            <span>Odds: </span>
+                            <span>${pred.odds || 'N/A'}</span>
                         </div>
-                        <div class="probability-info" style="display: flex; align-items: center;">
-                            <span style="font-size: 14px; margin-right: 5px; font-weight: bold;">${config.probabilityLabel}: </span>
-                            <span style="font-weight: bold;">${pred.probability || 'N/A'}</span>
+                        <div class="probability-info">
+                            <span>${config.probabilityLabel}: </span>
+                            <span>${pred.probability || 'N/A'}</span>
                         </div>
                     </div>
 
                     ${pred.additionalNotes ? `
-                        <div class="notes-section" style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 12px; line-height: 1.4;">
-                            <div style="font-weight: bold; margin-bottom: 5px;">📝 Notes:</div>
+                        <div class="notes-section">
+                            <div>📝 Notes:</div>
                             <div>${pred.additionalNotes}</div>
                         </div>
                     ` : ''}
 
-                    <div class="card-decoration" style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                    <div class="card-decoration" style="position: absolute; bottom: -30px; left: -30px; width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                    <div class="card-decoration top-right"></div>
+                    <div class="card-decoration bottom-left"></div>
                 </div>
             `;
         }
