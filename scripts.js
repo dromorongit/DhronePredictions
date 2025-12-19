@@ -826,5 +826,117 @@ document.addEventListener('DOMContentLoaded', function() {
     addSortButton();
   }
 
+  // Initialize draggable Telegram button
+  initDraggableTelegramButton();
+
   console.log('✅ Dhrone Predictions website loaded successfully');
 });
+
+// Initialize draggable Telegram button functionality
+function initDraggableTelegramButton() {
+  const telegramBtn = document.querySelector('.floating-telegram-btn');
+  if (!telegramBtn) return;
+
+  let isDragging = false;
+  let startX, startY, initialX, initialY;
+
+  // Mouse events
+  telegramBtn.addEventListener('mousedown', startDrag);
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('mouseup', stopDrag);
+
+  // Touch events for mobile
+  telegramBtn.addEventListener('touchstart', startDrag, { passive: false });
+  document.addEventListener('touchmove', drag, { passive: false });
+  document.addEventListener('touchend', stopDrag);
+
+  function startDrag(e) {
+    e.preventDefault();
+    isDragging = true;
+
+    const event = e.type === 'touchstart' ? e.touches[0] : e;
+    startX = event.clientX;
+    startY = event.clientY;
+
+    const rect = telegramBtn.getBoundingClientRect();
+    initialX = rect.left;
+    initialY = rect.top;
+
+    telegramBtn.classList.add('dragging');
+    telegramBtn.style.cursor = 'grabbing';
+  }
+
+  function drag(e) {
+    if (!isDragging) return;
+
+    e.preventDefault();
+    const event = e.type === 'touchmove' ? e.touches[0] : e;
+
+    const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
+
+    const newX = initialX + deltaX;
+    const newY = initialY + deltaY;
+
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const btnWidth = telegramBtn.offsetWidth;
+    const btnHeight = telegramBtn.offsetHeight;
+
+    // Constrain to viewport bounds
+    const constrainedX = Math.max(0, Math.min(newX, viewportWidth - btnWidth));
+    const constrainedY = Math.max(0, Math.min(newY, viewportHeight - btnHeight));
+
+    telegramBtn.style.left = constrainedX + 'px';
+    telegramBtn.style.top = constrainedY + 'px';
+    telegramBtn.style.right = 'auto';
+    telegramBtn.style.transform = 'none';
+  }
+
+  function stopDrag() {
+    if (!isDragging) return;
+
+    isDragging = false;
+    telegramBtn.classList.remove('dragging');
+    telegramBtn.style.cursor = 'move';
+
+    // Save position to localStorage
+    const rect = telegramBtn.getBoundingClientRect();
+    const position = {
+      left: rect.left,
+      top: rect.top
+    };
+    localStorage.setItem('telegramBtnPosition', JSON.stringify(position));
+  }
+
+  // Load saved position on page load
+  const savedPosition = localStorage.getItem('telegramBtnPosition');
+  if (savedPosition) {
+    try {
+      const position = JSON.parse(savedPosition);
+      telegramBtn.style.left = position.left + 'px';
+      telegramBtn.style.top = position.top + 'px';
+      telegramBtn.style.right = 'auto';
+      telegramBtn.style.transform = 'none';
+    } catch (e) {
+      console.warn('Failed to load saved Telegram button position');
+    }
+  }
+
+  // Reset position if button goes off-screen (e.g., window resize)
+  window.addEventListener('resize', () => {
+    const rect = telegramBtn.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    if (rect.right < 0 || rect.left > viewportWidth || rect.bottom < 0 || rect.top > viewportHeight) {
+      // Reset to middle right
+      telegramBtn.style.left = 'auto';
+      telegramBtn.style.top = '50%';
+      telegramBtn.style.right = '20px';
+      telegramBtn.style.transform = 'translateY(-50%)';
+      localStorage.removeItem('telegramBtnPosition');
+    }
+  });
+}
