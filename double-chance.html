@@ -326,12 +326,178 @@
     </script>
     <script src="scripts.js"></script>
 
-    <!-- Floating Telegram Button -->
+    <!-- Enhanced Floating Telegram Button -->
     <a href="https://t.me/+DXDGWvSWW4RkOGQ0" target="_blank" class="floating-telegram-btn" aria-label="Join our Telegram channel">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
             <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
         </svg>
     </a>
+
+    <script>
+    // Enhanced floating button styles and drag functionality
+    const floatingStyle = document.createElement('style');
+    floatingStyle.textContent = `
+        .floating-telegram-btn {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0088cc 0%, #229ed9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            cursor: move;
+            user-select: none;
+        }
+
+
+        .floating-telegram-btn:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 136, 204, 0.6);
+        }
+
+
+
+        .floating-telegram-btn:active {
+            transform: translate(-50%, -50%) scale(0.95);
+            cursor: grabbing;
+        }
+
+
+
+        .floating-telegram-btn.dragging {
+            transition: none;
+            transform: none !important;
+            cursor: grabbing;
+        }
+
+
+
+        @media (max-width: 768px) {
+            .floating-telegram-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 28px;
+            }
+        }
+
+
+
+        @media (max-width: 480px) {
+            .floating-telegram-btn {
+                width: 65px;
+                height: 65px;
+                font-size: 26px;
+            }
+        }
+    `;
+    document.head.appendChild(floatingStyle);
+
+    // Add drag functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const floatingBtn = document.querySelector('.floating-telegram-btn');
+        if (floatingBtn) {
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+            let currentX = 0, currentY = 0;
+
+            // Mouse events for desktop
+            floatingBtn.addEventListener('mousedown', startDrag);
+            floatingBtn.addEventListener('mousemove', drag);
+            floatingBtn.addEventListener('mouseup', endDrag);
+            floatingBtn.addEventListener('mouseleave', endDrag);
+
+            // Touch events for mobile
+            floatingBtn.addEventListener('touchstart', startDragTouch);
+            floatingBtn.addEventListener('touchmove', dragTouch);
+            floatingBtn.addEventListener('touchend', endDrag);
+
+            function startDrag(e) {
+                isDragging = true;
+                floatingBtn.classList.add('dragging');
+                startX = e.clientX;
+                startY = e.clientY;
+                
+                // Get current position
+                const rect = floatingBtn.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+                
+                e.preventDefault();
+            }
+
+
+
+            function startDragTouch(e) {
+                const touch = e.touches[0];
+                isDragging = true;
+                floatingBtn.classList.add('dragging');
+                startX = touch.clientX;
+                startY = touch.clientY;
+                
+                // Get current position
+                const rect = floatingBtn.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+                
+                e.preventDefault();
+            }
+
+
+            function drag(e) {
+                if (!isDragging) return;
+                
+                e.preventDefault();
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                
+                currentX = initialX + deltaX;
+                currentY = initialY + deltaY;
+                
+                floatingBtn.style.left = currentX + 'px';
+                floatingBtn.style.top = currentY + 'px';
+                floatingBtn.style.right = 'auto';
+                floatingBtn.style.bottom = 'auto';
+                floatingBtn.style.transform = 'none';
+            }
+
+
+            function dragTouch(e) {
+                if (!isDragging) return;
+                
+                const touch = e.touches[0];
+                e.preventDefault();
+                const deltaX = touch.clientX - startX;
+                const deltaY = touch.clientY - startY;
+                
+                currentX = initialX + deltaX;
+                currentY = initialY + deltaY;
+                
+                floatingBtn.style.left = currentX + 'px';
+                floatingBtn.style.top = currentY + 'px';
+                floatingBtn.style.right = 'auto';
+                floatingBtn.style.bottom = 'auto';
+                floatingBtn.style.transform = 'none';
+            }
+
+            function endDrag() {
+                if (isDragging) {
+                    isDragging = false;
+                    floatingBtn.classList.remove('dragging');
+                }
+            }
+        }
+    });
+    </script>
 </body>
 </html>
 
