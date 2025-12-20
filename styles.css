@@ -3112,11 +3112,27 @@ footer::after {
 @media (max-width: 768px) {
   .pricing-grid {
     grid-template-columns: 1fr !important;
-    gap: 1.5rem;
+    gap: 2.5rem !important;
+    margin-bottom: 3rem;
   }
 
   .pricing-card {
-    padding: 1.5rem;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border: 2px solid rgba(37, 99, 235, 0.1);
+  }
+
+  .pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-blue);
+  }
+
+  .pricing-card.popular {
+    border-color: var(--accent-purple);
+    border-width: 3px;
   }
 }
 
@@ -3124,47 +3140,82 @@ footer::after {
 @media (max-width: 480px) {
   .pricing-grid {
     grid-template-columns: 1fr !important;
-    gap: 1rem;
+    gap: 2rem !important;
+    margin-bottom: 2.5rem;
   }
 
   .pricing-card {
-    padding: 1.5rem;
+    padding: 1.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 16px;
+  }
+
+  .pricing-card.popular {
+    transform: scale(1.02);
   }
 }
 
 .pricing-card {
    background: var(--white);
-   border-radius: 16px;
-   padding: 2rem;
-   box-shadow: 0 8px 25px var(--shadow);
-   border: 2px solid transparent;
-   transition: all 0.3s ease;
+   border-radius: 20px;
+   padding: 2.5rem;
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+   border: 2px solid rgba(37, 99, 235, 0.05);
+   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
    position: relative;
    overflow: hidden;
+   margin-bottom: 1rem;
+}
+
+.pricing-card::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   height: 4px;
+   background: var(--gradient-primary);
+   opacity: 0;
+   transition: opacity 0.3s ease;
+}
+
+.pricing-card:hover::before {
+   opacity: 1;
 }
 
 .pricing-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px var(--shadow-deep);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(37, 99, 235, 0.15);
+  border-color: var(--primary-blue);
 }
 
 .pricing-card.popular {
   border-color: var(--accent-purple);
-  transform: scale(1.05);
+  border-width: 3px;
+  transform: scale(1.03);
+  box-shadow: 0 15px 40px rgba(124, 58, 237, 0.2);
+}
+
+.pricing-card.popular:hover {
+  transform: translateY(-10px) scale(1.05);
 }
 
 .popular-badge {
   position: absolute;
-  top: -10px;
+  top: -15px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--gradient-blue-purple);
+  background: linear-gradient(135deg, var(--accent-purple), var(--primary-blue));
   color: var(--white);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
   font-size: 0.9rem;
-  font-weight: 600;
-  box-shadow: 0 4px 10px var(--shadow);
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 2px solid var(--white);
+  z-index: 10;
 }
 
 .pricing-header {
@@ -3172,9 +3223,12 @@ footer::after {
 }
 
 .pricing-header h3 {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   color: var(--primary-blue);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
 }
 
 .price {
@@ -3185,46 +3239,85 @@ footer::after {
 }
 
 .amount {
-  font-size: 3rem;
-  font-weight: 800;
+  font-size: 3.5rem;
+  font-weight: 900;
   color: var(--accent-purple);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  display: block;
+  margin: 0.5rem 0;
 }
 
 .period {
-  font-size: 1.2rem;
-  color: var(--text-muted);
-  font-weight: 500;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  display: block;
+  margin-top: 0.25rem;
 }
 
 .features {
   list-style: none;
   text-align: left;
-  margin-bottom: 2rem;
+  margin: 2rem 0;
+  padding: 0;
 }
 
 .features li {
-  padding: 0.5rem 0;
-  color: var(--text-color);
-  border-bottom: 1px solid var(--border-color);
+  padding: 0.875rem 0;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-light);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .features li:last-child {
   border-bottom: none;
 }
 
+.features li::before {
+  content: '✓';
+  color: var(--success);
+  font-weight: bold;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+
+
 .subscribe-btn {
   width: 100%;
-  padding: 1rem 2rem;
-  background: var(--gradient-blue-purple);
+  padding: 1.25rem 2rem;
+  background: var(--gradient-primary);
   color: var(--white);
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  margin-top: 1rem;
+}
+
+.subscribe-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+  background: linear-gradient(135deg, var(--primary-blue-dark) 0%, var(--accent-purple-dark) 100%);
 }
 
 .subscribe-btn::before {
@@ -3234,22 +3327,27 @@ footer::after {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s ease;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
 }
 
 .subscribe-btn:hover::before {
   left: 100%;
 }
 
-.subscribe-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px var(--shadow-glow);
+.subscribe-btn:active {
+  transform: translateY(-1px);
 }
 
 .popular-btn {
-  background: var(--gradient-blue-purple);
-  box-shadow: 0 0 20px var(--shadow-glow);
+  background: var(--gradient-primary);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+  border: 2px solid var(--accent-purple);
+}
+
+.popular-btn:hover {
+  box-shadow: 0 12px 35px rgba(124, 58, 237, 0.5);
+  background: linear-gradient(135deg, var(--accent-purple) 0%, var(--primary-blue) 100%);
 }
 
 .payment-notice {
