@@ -2909,18 +2909,18 @@ footer::after {
 .floating-telegram-btn {
   position: fixed;
   top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  width: 60px;
-  height: 60px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
   background: linear-gradient(135deg, #0088cc 0%, #229ed9 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 24px;
-  box-shadow: 0 4px 12px rgba(0, 136, 204, 0.4);
+  font-size: 32px;
+  box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
   transition: all 0.3s ease;
   z-index: 1000;
   border: 3px solid rgba(255, 255, 255, 0.2);
@@ -2929,45 +2929,46 @@ footer::after {
 }
 
 .floating-telegram-btn:hover {
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 136, 204, 0.6);
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 8px 25px rgba(0, 136, 204, 0.6);
 }
 
 .floating-telegram-btn:active {
-  transform: translateY(-50%) scale(0.95);
+  transform: translate(-50%, -50%) scale(0.95);
   cursor: grabbing;
 }
 
 .floating-telegram-btn.dragging {
   transition: none;
   transform: none !important;
+  cursor: grabbing;
 }
 
 /* When button has custom position from JavaScript */
 .floating-telegram-btn[style*="left"],
 .floating-telegram-btn[style*="top"] {
   top: auto !important;
-  right: auto !important;
+  left: auto !important;
   transform: none !important;
 }
 
 @media (max-width: 768px) {
   .floating-telegram-btn {
-    top: 45%;
-    right: 15px;
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
+    top: 50%;
+    left: 50%;
+    width: 70px;
+    height: 70px;
+    font-size: 28px;
   }
 }
 
 @media (max-width: 480px) {
   .floating-telegram-btn {
-    top: 40%;
-    right: 10px;
-    width: 45px;
-    height: 45px;
-    font-size: 18px;
+    top: 50%;
+    left: 50%;
+    width: 65px;
+    height: 65px;
+    font-size: 26px;
   }
 }
 

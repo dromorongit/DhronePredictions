@@ -494,43 +494,153 @@
         style.textContent = `
             .floating-telegram-btn {
                 position: fixed;
-                bottom: 20px;
-                right: 20px;
-                width: 60px;
-                height: 60px;
+                bottom: auto;
+                right: auto;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 80px;
+                height: 80px;
                 background: linear-gradient(135deg, #0088cc 0%, #229ed9 100%);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: white;
-                font-size: 24px;
-                box-shadow: 0 4px 12px rgba(0, 136, 204, 0.4);
+                font-size: 32px;
+                box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
                 transition: all 0.3s ease;
                 z-index: 1000;
                 border: 3px solid rgba(255, 255, 255, 0.2);
+                cursor: move;
+                user-select: none;
             }
 
             .floating-telegram-btn:hover {
-                transform: scale(1.1);
-                box-shadow: 0 6px 20px rgba(0, 136, 204, 0.6);
+                transform: translate(-50%, -50%) scale(1.1);
+                box-shadow: 0 8px 25px rgba(0, 136, 204, 0.6);
             }
 
             .floating-telegram-btn:active {
-                transform: scale(0.95);
+                transform: translate(-50%, -50%) scale(0.95);
+                cursor: grabbing;
+            }
+
+            .floating-telegram-btn.dragging {
+                transition: none;
+                transform: none !important;
+                cursor: grabbing;
             }
 
             @media (max-width: 768px) {
                 .floating-telegram-btn {
-                    bottom: 15px;
-                    right: 15px;
-                    width: 50px;
-                    height: 50px;
-                    font-size: 20px;
+                    width: 70px;
+                    height: 70px;
+                    font-size: 28px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .floating-telegram-btn {
+                    width: 65px;
+                    height: 65px;
+                    font-size: 26px;
                 }
             }
         `;
         document.head.appendChild(style);
+
+        // Add drag functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const floatingBtn = document.querySelector('.floating-telegram-btn');
+            if (floatingBtn) {
+                let isDragging = false;
+                let startX, startY, initialX, initialY;
+                let currentX = 0, currentY = 0;
+
+                // Mouse events for desktop
+                floatingBtn.addEventListener('mousedown', startDrag);
+                floatingBtn.addEventListener('mousemove', drag);
+                floatingBtn.addEventListener('mouseup', endDrag);
+                floatingBtn.addEventListener('mouseleave', endDrag);
+
+                // Touch events for mobile
+                floatingBtn.addEventListener('touchstart', startDragTouch);
+                floatingBtn.addEventListener('touchmove', dragTouch);
+                floatingBtn.addEventListener('touchend', endDrag);
+
+                function startDrag(e) {
+                    isDragging = true;
+                    floatingBtn.classList.add('dragging');
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    
+                    // Get current position
+                    const rect = floatingBtn.getBoundingClientRect();
+                    initialX = rect.left;
+                    initialY = rect.top;
+                    
+                    e.preventDefault();
+                }
+
+                function startDragTouch(e) {
+                    const touch = e.touches[0];
+                    isDragging = true;
+                    floatingBtn.classList.add('dragging');
+                    startX = touch.clientX;
+                    startY = touch.clientY;
+                    
+                    // Get current position
+                    const rect = floatingBtn.getBoundingClientRect();
+                    initialX = rect.left;
+                    initialY = rect.top;
+                    
+                    e.preventDefault();
+                }
+
+                function drag(e) {
+                    if (!isDragging) return;
+                    
+                    e.preventDefault();
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
+                    
+                    currentX = initialX + deltaX;
+                    currentY = initialY + deltaY;
+                    
+                    floatingBtn.style.left = currentX + 'px';
+                    floatingBtn.style.top = currentY + 'px';
+                    floatingBtn.style.right = 'auto';
+                    floatingBtn.style.bottom = 'auto';
+                    floatingBtn.style.transform = 'none';
+                }
+
+                function dragTouch(e) {
+                    if (!isDragging) return;
+                    
+                    const touch = e.touches[0];
+                    e.preventDefault();
+                    const deltaX = touch.clientX - startX;
+                    const deltaY = touch.clientY - startY;
+                    
+                    currentX = initialX + deltaX;
+                    currentY = initialY + deltaY;
+                    
+                    floatingBtn.style.left = currentX + 'px';
+                    floatingBtn.style.top = currentY + 'px';
+                    floatingBtn.style.right = 'auto';
+                    floatingBtn.style.bottom = 'auto';
+                    floatingBtn.style.transform = 'none';
+                }
+
+                function endDrag() {
+                    if (isDragging) {
+                        isDragging = false;
+                        floatingBtn.classList.remove('dragging');
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
