@@ -605,6 +605,179 @@
     `;
     document.head.appendChild(floatingStyle);
 
+    // User Login API Integration
+    class UserAuth {
+        constructor() {
+            this.apiBase = 'https://dhronepredictions-production.up.railway.app/api'; // Production API URL
+            this.token = localStorage.getItem('authToken');
+            this.initEventListeners();
+        }
+
+        initEventListeners() {
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', this.handleLogin.bind(this));
+            }
+
+            const forgotPasswordLink = document.querySelector('.forgot-password');
+            if (forgotPasswordLink) {
+                forgotPasswordLink.addEventListener('click', this.handleForgotPassword.bind(this));
+            }
+        }
+
+        async handleLogin(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('.auth-submit-btn');
+            const originalText = submitBtn.textContent;
+
+            // Show loading state
+            submitBtn.textContent = 'Signing In...';
+            submitBtn.disabled = true;
+
+            try {
+                const loginData = {
+                    email: formData.get('email'),
+                    password: formData.get('password')
+                };
+
+                const response = await fetch(`${this.apiBase}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store token and user data
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userData', JSON.stringify(data.user));
+                    localStorage.setItem('userStats', JSON.stringify(data.statistics));
+                    
+                    this.showMessage('Login successful! Redirecting to dashboard...', 'success');
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    this.showMessage(data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                this.showMessage('Network error. Please try again.', 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        async handleForgotPassword(event) {
+            event.preventDefault();
+            
+            const email = prompt('Please enter your email address:');
+            if (!email) return;
+
+            try {
+                const response = await fetch(`${this.apiBase}/forgot-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    this.showMessage(data.message, 'success');
+                    
+                    // In development, show the reset token for testing
+                    if (data.resetToken) {
+                        console.log('Reset token for testing:', data.resetToken);
+                        alert(`Development mode: Reset token is ${data.resetToken}`);
+                    }
+                } else {
+                    this.showMessage(data.error || 'Password reset request failed', 'error');
+                }
+            } catch (error) {
+                console.error('Forgot password error:', error);
+                this.showMessage('Network error. Please try again.', 'error');
+            }
+        }
+
+        showMessage(message, type = 'info') {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.auth-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            // Create new message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `auth-message ${type}`;
+            messageDiv.style.cssText = `
+                padding: 1rem;
+                border-radius: 8px;
+                margin: 1rem 0;
+                text-align: center;
+                font-weight: 600;
+                animation: slideIn 0.3s ease;
+                background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1'};
+                color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460'};
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : '#bee5eb'};
+            `;
+            messageDiv.textContent = message;
+
+            // Insert message after the form
+            const form = document.getElementById('login-form');
+            form.parentNode.insertBefore(messageDiv, form.nextSibling);
+
+            // Auto-remove success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+    }
+
+    // Initialize user authentication when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user is already logged in
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            // Redirect to dashboard if already logged in
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
+        new UserAuth();
+    });
+
+    // Add slide-in animation for messages
+    const messageStyle = document.createElement('style');
+    messageStyle.textContent = `
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    `;
+    document.head.appendChild(messageStyle);
+
     // Add drag functionality
     document.addEventListener('DOMContentLoaded', function() {
         const floatingBtn = document.querySelector('.floating-telegram-btn');

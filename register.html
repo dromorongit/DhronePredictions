@@ -642,6 +642,156 @@
     `;
     document.head.appendChild(floatingStyle);
 
+    // User Registration API Integration
+    class UserAuth {
+        constructor() {
+            this.apiBase = 'https://dhronepredictions-production.up.railway.app/api'; // Production API URL
+            this.token = localStorage.getItem('authToken');
+            this.initEventListeners();
+        }
+
+        initEventListeners() {
+            const registerForm = document.getElementById('register-form');
+            if (registerForm) {
+                registerForm.addEventListener('submit', this.handleRegister.bind(this));
+            }
+        }
+
+        async handleRegister(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('.auth-submit-btn');
+            const originalText = submitBtn.textContent;
+
+            // Validate passwords match
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+            
+            if (password !== confirmPassword) {
+                this.showMessage('Passwords do not match!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                this.showMessage('Password must be at least 6 characters!', 'error');
+                return;
+            }
+
+            // Show loading state
+            submitBtn.textContent = 'Creating Account...';
+            submitBtn.disabled = true;
+
+            try {
+                const userData = {
+                    firstName: formData.get('name').split(' ')[0] || formData.get('name'),
+                    lastName: formData.get('name').split(' ').slice(1).join(' ') || '',
+                    email: formData.get('email'),
+                    phoneNumber: formData.get('phone') || '',
+                    password: formData.get('password')
+                };
+
+                const response = await fetch(`${this.apiBase}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store token and user data
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userData', JSON.stringify(data.user));
+                    
+                    this.showMessage('Account created successfully! Redirecting to dashboard...', 'success');
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    this.showMessage(data.error || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                this.showMessage('Network error. Please try again.', 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        showMessage(message, type = 'info') {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.auth-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            // Create new message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `auth-message ${type}`;
+            messageDiv.style.cssText = `
+                padding: 1rem;
+                border-radius: 8px;
+                margin: 1rem 0;
+                text-align: center;
+                font-weight: 600;
+                animation: slideIn 0.3s ease;
+                background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1'};
+                color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460'};
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : '#bee5eb'};
+            `;
+            messageDiv.textContent = message;
+
+            // Insert message after the form
+            const form = document.getElementById('register-form');
+            form.parentNode.insertBefore(messageDiv, form.nextSibling);
+
+            // Auto-remove success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+    }
+
+    // Initialize user authentication when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user is already logged in
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            // Redirect to dashboard if already logged in
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
+        new UserAuth();
+    });
+
+    // Add slide-in animation for messages
+    const messageStyle = document.createElement('style');
+    messageStyle.textContent = `
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    `;
+    document.head.appendChild(messageStyle);
+
     // Add drag functionality
     document.addEventListener('DOMContentLoaded', function() {
         const floatingBtn = document.querySelector('.floating-telegram-btn');

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Dashboard - Dhrone Predictions</title>
+    <!-- Google Fonts for Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Dashboard-specific styles */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .dashboard-section {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f093fb, #667eea);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            font-weight: bold;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dashboard-nav {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .nav-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .dashboard-content {
+            padding: 2rem;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .profile-section, .subscription-section, .access-codes-section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-section h3, .subscription-section h3, .access-codes-section h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .profile-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            padding: 1rem;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb, #764ba2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+
+        .subscription-status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-trial {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .access-codes-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .access-code-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-value {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .code-usage {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                margin: 1rem;
+                border-radius: 16px;
+            }
+
+            .dashboard-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .profile-form {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .logout-btn {
+                position: static;
+                margin-bottom: 1rem;
+                align-self: flex-start;
+            }
+
+            .dashboard-nav {
+                flex-direction: column;
+            }
+
+            .nav-tab {
+                text-align: left;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="logo">Dhrone Predictions</a>
+                <input type="checkbox" id="nav-toggle" class="nav-toggle">
+                <label for="nav-toggle" class="nav-toggle-label">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </label>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Free Tips</a></li>
+                    <li><a href="banker-tips.html">Banker Tips</a></li>
+                    <li><a href="free-2-odds.html">Free 2 Odds</a></li>
+                    <li><a href="super-single.html">Super Single</a></li>
+                    <li><a href="double-chance.html">Double Chance</a></li>
+                    <li><a href="over-1-5.html">Over 1.5</a></li>
+                    <li><a href="over-2-5.html">Over 2.5</a></li>
+                    <li><a href="over-under-3-5.html">Over/Under 3.5</a></li>
+                    <li><a href="btts-gg.html">BTTS/GG</a></li>
+                    <li><a href="over-corners.html">Over Corners</a></li>
+                    <li><a href="correct-scores.html">Correct Scores</a></li>
+                    <li><a href="draws.html">Draws</a></li>
+                    <li><a href="vvip.html">VVIP</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="dashboard-section">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <button class="logout-btn" onclick="userAuth.logout()">Logout</button>
+                    <div class="user-avatar" id="user-avatar">U</div>
+                    <h1 id="user-name">Welcome back!</h1>
+                    <p id="user-email">Loading...</p>
+                </div>
+
+                <div class="dashboard-nav">
+                    <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+                    <button class="nav-tab" onclick="showTab('profile')">Profile</button>
+                    <button class="nav-tab" onclick="showTab('subscription')">Subscription</button>
+                    <button class="nav-tab" onclick="showTab('access-codes')">Access Codes</button>
+                </div>
+
+                <div class="dashboard-content">
+                    <div id="overview" class="tab-content active">
+                        <div class="loading" id="overview-loading">
+                            <div class="spinner"></div>
+                            <span>Loading dashboard data...</span>
+                        </div>
+                        <div id="overview-content" style="display: none;">
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="total-predictions">0</div>
+                                    <div class="stat-label">Total Predictions</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="successful-predictions">0</div>
+                                    <div class="stat-label">Successful Predictions</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="success-rate">0%</div>
+                                    <div class="stat-label">Success Rate</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="days-active">0</div>
+                                    <div class="stat-label">Days Active</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="profile" class="tab-content">
+                        <div class="profile-section">
+                            <h3>Profile Information</h3>
+                            <form class="profile-form" id="profile-form">
+                                <div class="form-group">
+                                    <label for="profile-email">Email Address</label>
+                                    <input type="email" id="profile-email" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-fullname">Full Name</label>
+                                    <input type="text" id="profile-fullname" name="fullname">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-phone">Phone Number</label>
+                                    <input type="tel" id="profile-phone" name="phone">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-telegram">Telegram Username</label>
+                                    <input type="text" id="profile-telegram" name="telegramUsername">
+                                </div>
+                                <div style="grid-column: 1 / -1; display: flex; gap: 1rem;">
+                                    <button type="submit" class="btn">Update Profile</button>
+                                    <button type="button" class="btn btn-secondary" onclick="userAuth.changePassword()">Change Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="subscription" class="tab-content">
+                        <div class="subscription-section">
+                            <h3>Subscription Status</h3>
+                            <div id="subscription-content">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    <span>Loading subscription data...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="access-codes" class="tab-content">
+                        <div class="access-codes-section">
+                            <h3>Access Codes</h3>
+                            <div id="access-codes-content">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    <span>Loading access codes...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <!-- Statistics Section -->
+            <div class="footer-stats">
+                <div class="stat-card">
+                    <div class="stat-row">
+                        <span class="stat-label">Subscribed Clients:</span>
+                        <span class="stat-number" id="total-clients">35,000</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Predictions:</span>
+                        <span class="stat-number" id="total-predictions-footer">250,000</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Satisfied Clients:</span>
+                        <span class="stat-number" id="satisfied-clients-footer">32,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="social-links">
+                <a href="https://www.facebook.com/share/1C4WLpt3QA/?mibextid=wwXIfr" target="_blank" aria-label="Facebook">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                </a>
+                <a href="https://www.instagram.com/dhronegh/" target="_blank" aria-label="Instagram">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4 4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                </a>
+                <a href="https://www.x.com/dhronegh/" target="_blank" aria-label="X (Twitter)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    </svg>
+                </a>
+                <a href="https://www.tiktok.com/@dhronegh" target="_blank" aria-label="TikTok">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                    </svg>
+                </a>
+                <a href="https://www.youtube.com/@HenryPadiDromorNarh" target="_blank" aria-label="YouTube">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="footer-actions">
+                <a href="https://t.me/+DXDGWvSWW4RkOGQ0" target="_blank" class="telegram-channel-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #0088cc 0%, #229ed9 100%); color: white; padding: 12px 24px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 16px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3); transition: all 0.3s ease;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                    Join our Telegram Channel
+                </a>
+                <div class="bookmaker-buttons">
+                    <a href="https://paripesa.bet/dhrone" target="_blank" class="bookmaker-btn bookmaker-btn-paripesa">
+                        <span>Paripesa</span>
+                    </a>
+                    <a href="https://stake.com/?c=mFdeGojx" target="_blank" class="bookmaker-btn bookmaker-btn-stake">
+                        <span>Stake.com</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-disclaimer">
+                <div class="disclaimer-note">
+                    <strong>Responsible Gaming Notice:</strong> All predictions are for entertainment purposes only. Gambling involves risk - please gamble responsibly and only bet what you can afford to lose.
+                </div>
+                <span class="risk-warning">⚠️ 18+ | Play Responsibly</span>
+            </div>
+
+            <ul class="footer-links">
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="#privacy">Privacy Policy</a></li>
+                <li><a href="terms.html">Terms & Conditions</a></li>
+                <li><a href="#responsible">Responsible Gaming</a></li>
+            </ul>
+
+            <p>&copy; 2025 Dhrone Predictions. All rights reserved. Powered by Dhrone</p>
+        </div>
+    </footer>
+
+    <script>
+        // User Dashboard Management
+        class UserDashboard {
+            constructor() {
+                this.apiBase = 'https://dhronepredictions-production.up.railway.app/api'; // Production API URL
+                this.token = localStorage.getItem('authToken');
+                this.userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                this.userStats = JSON.parse(localStorage.getItem('userStats') || '{}');
+                this.init();
+            }
+
+            init() {
+                // Check authentication
+                if (!this.token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Load user data
+                this.loadUserProfile();
+                this.loadUserStats();
+                this.loadSubscriptionData();
+                this.loadAccessCodes();
+
+                // Set up event listeners
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                const profileForm = document.getElementById('profile-form');
+                if (profileForm) {
+                    profileForm.addEventListener('submit', this.updateProfile.bind(this));
+                }
+            }
+
+            async loadUserProfile() {
+                try {
+                    const response = await fetch(`${this.apiBase}/profile`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.userData = data.user;
+                        this.updateProfileDisplay();
+                    } else if (response.status === 401) {
+                        this.logout();
+                    }
+                } catch (error) {
+                    console.error('Error loading profile:', error);
+                    this.showMessage('Failed to load profile data', 'error');
+                }
+            }
+
+            async loadUserStats() {
+                try {
+                    const response = await fetch(`${this.apiBase}/user-stats`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.userStats = data;
+                        this.updateStatsDisplay();
+                        document.getElementById('overview-loading').style.display = 'none';
+                        document.getElementById('overview-content').style.display = 'block';
+                    } else if (response.status === 401) {
+                        this.logout();
+                    }
+                } catch (error) {
+                    console.error('Error loading stats:', error);
+                    this.showMessage('Failed to load user statistics', 'error');
+                    document.getElementById('overview-loading').style.display = 'none';
+                    document.getElementById('overview-content').style.display = 'block';
+                }
+            }
+
+            async loadSubscriptionData() {
+                try {
+                    const response = await fetch(`${this.apiBase}/subscription`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.updateSubscriptionDisplay(data);
+                    } else if (response.status === 401) {
+                        this.logout();
+                    }
+                } catch (error) {
+                    console.error('Error loading subscription:', error);
+                    document.getElementById('subscription-content').innerHTML = '<p>Error loading subscription data</p>';
+                }
+            }
+
+            async loadAccessCodes() {
+                try {
+                    const response = await fetch(`${this.apiBase}/access-codes`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.updateAccessCodesDisplay(data.codes);
+                    } else if (response.status === 401) {
+                        this.logout();
+                    }
+                } catch (error) {
+                    console.error('Error loading access codes:', error);
+                    document.getElementById('access-codes-content').innerHTML = '<p>Error loading access codes</p>';
+                }
+            }
+
+            updateProfileDisplay() {
+                // Update header
+                document.getElementById('user-avatar').textContent = this.userData.fullname ? this.userData.fullname.charAt(0).toUpperCase() : 'U';
+                document.getElementById('user-name').textContent = this.userData.fullname || 'User';
+                document.getElementById('user-email').textContent = this.userData.email || '';
+
+                // Update form fields
+                document.getElementById('profile-email').value = this.userData.email || '';
+                document.getElementById('profile-fullname').value = this.userData.fullname || '';
+                document.getElementById('profile-phone').value = this.userData.phone || '';
+                document.getElementById('profile-telegram').value = this.userData.telegramUsername || '';
+            }
+
+            updateStatsDisplay() {
+                const stats = this.userStats || {};
+                document.getElementById('total-predictions').textContent = stats.totalPredictions || '0';
+                document.getElementById('successful-predictions').textContent = stats.successfulPredictions || '0';
+                document.getElementById('success-rate').textContent = (stats.successRate || 0) + '%';
+                document.getElementById('days-active').textContent = stats.daysActive || '0';
+            }
+
+            updateSubscriptionDisplay(data) {
+                const container = document.getElementById('subscription-content');
+                const subscription = data.subscription;
+                const history = data.history || [];
+
+                if (!subscription) {
+                    container.innerHTML = `
+                        <p>No active subscription found.</p>
+                        <button class="btn" onclick="window.location.href='vvip.html'">Subscribe Now</button>
+                    `;
+                    return;
+                }
+
+                const statusClass = subscription.isActive ? 'status-active' : 'status-expired';
+                const statusText = subscription.isActive ? 'Active' : 'Expired';
+
+                container.innerHTML = `
+                    <div style="margin-bottom: 2rem;">
+                        <div class="subscription-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div>
+                            <strong>Plan:</strong> ${subscription.planType || 'VVIP'}
+                        </div>
+                        <div>
+                            <strong>Start Date:</strong> ${new Date(subscription.startDate).toLocaleDateString()}
+                        </div>
+                        <div>
+                            <strong>End Date:</strong> ${new Date(subscription.endDate).toLocaleDateString()}
+                        </div>
+                        <div>
+                            <strong>Days Remaining:</strong> ${subscription.daysRemaining || '0'}
+                        </div>
+                    </div>
+                    <button class="btn" onclick="window.location.href='vvip.html'">${subscription.isActive ? 'Renew Subscription' : 'Subscribe Now'}</button>
+                    
+                    <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Subscription History</h4>
+                    <div style="background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 8px;">
+                        ${history.length > 0 ? history.map(item => `
+                            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                                <span>${new Date(item.startDate).toLocaleDateString()}</span>
+                                <span>${item.planType}</span>
+                                <span>${item.days} days</span>
+                            </div>
+                        `).join('') : '<p>No subscription history found.</p>'}
+                    </div>
+                `;
+            }
+
+            updateAccessCodesDisplay(codes) {
+                const container = document.getElementById('access-codes-content');
+                
+                if (!codes || codes.length === 0) {
+                    container.innerHTML = '<p>No access codes found.</p>';
+                    return;
+                }
+
+                const codesHtml = codes.map(code => `
+                    <div class="access-code-item">
+                        <div>
+                            <div class="code-value">${code.code}</div>
+                            <div class="code-usage">Used: ${code.timesUsed} / ${code.maxUsage || 'Unlimited'}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div>Type: ${code.codeType || 'General'}</div>
+                            <div>Status: ${code.isActive ? 'Active' : 'Expired'}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="access-codes-list">
+                        ${codesHtml}
+                    </div>
+                `;
+            }
+
+            async updateProfile(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+
+                submitBtn.textContent = 'Updating...';
+                submitBtn.disabled = true;
+
+                try {
+                    const updateData = {
+                        fullname: formData.get('fullname'),
+                        phone: formData.get('phone'),
+                        telegramUsername: formData.get('telegramUsername')
+                    };
+
+                    const response = await fetch(`${this.apiBase}/update-profile`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updateData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        this.userData = { ...this.userData, ...updateData };
+                        localStorage.setItem('userData', JSON.stringify(this.userData));
+                        this.updateProfileDisplay();
+                        this.showMessage('Profile updated successfully!', 'success');
+                    } else {
+                        this.showMessage(data.error || 'Failed to update profile', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    this.showMessage('Network error. Please try again.', 'error');
+                } finally {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+
+            async changePassword() {
+                const currentPassword = prompt('Enter your current password:');
+                if (!currentPassword) return;
+
+                const newPassword = prompt('Enter your new password:');
+                if (!newPassword) return;
+
+                const confirmPassword = prompt('Confirm your new password:');
+                if (newPassword !== confirmPassword) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${this.apiBase}/change-password`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            currentPassword,
+                            newPassword
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        this.showMessage('Password changed successfully!', 'success');
+                    } else {
+                        this.showMessage(data.error || 'Failed to change password', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error changing password:', error);
+                    this.showMessage('Network error. Please try again.', 'error');
+                }
+            }
+
+            logout() {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userData');
+                localStorage.removeItem('userStats');
+                window.location.href = 'login.html';
+            }
+
+            showMessage(message, type = 'info') {
+                // Remove existing messages
+                const existingMessage = document.querySelector('.dashboard-message');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+
+                // Create new message
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `dashboard-message ${type}`;
+                messageDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem 2rem;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 600;
+                    z-index: 10000;
+                    animation: slideInRight 0.3s ease;
+                    background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+                `;
+                messageDiv.textContent = message;
+
+                document.body.appendChild(messageDiv);
+
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            window.userDashboard = new UserDashboard();
+        });
+
+        // Add slide-in animation for messages
+        const messageStyle = document.createElement('style');
+        messageStyle.textContent = `
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+        `;
+        document.head.appendChild(messageStyle);
+    </script>
+    <script src="scripts.js"></script>
+</body>
+</html>
