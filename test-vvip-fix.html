@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VVIP Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .prediction-card {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .league-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .status-badge {
+            background: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .teams {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .tip {
+            font-size: 16px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .stats-section {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <h1>VVIP Previously Won Predictions - Fix Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="test-status" class="loading">Testing API connection...</div>
+        <div id="predictions-container"></div>
+    </div>
+
+    <script>
+        // Create prediction card HTML - FIXED VERSION
+        function createPredictionCard(pred, status) {
+            const statusConfig = {
+                won: {
+                    badgeText: 'WON ✅',
+                    background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
+                    timeText: 'Completed',
+                    timeIcon: '✅',
+                    labelText: 'Winning VVIP Prediction',
+                    probabilityLabel: 'Win Probability'
+                },
+                lost: {
+                    badgeText: 'LOST ❌',
+                    background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)',
+                    timeText: 'Completed',
+                    timeIcon: '❌',
+                    labelText: 'Lost VVIP Prediction',
+                    probabilityLabel: 'Win Probability'
+                }
+            };
+
+            const config = statusConfig[status];
+
+            // Handle both API response format and expected format
+            const league = pred.leagueType || pred.league || 'Unknown League';
+            const match = pred.match || `${pred.homeTeam} vs ${pred.awayTeam}` || 'Unknown Match';
+            const prediction = pred.prediction || 'Unknown Prediction';
+            const odds = pred.odds || 'N/A';
+            const probability = pred.probability || 'N/A';
+            const time = pred.time || pred.date || 'TBD';
+            const notes = pred.note || pred.additionalNotes || '';
+
+            return `
+                <div class="prediction-card" style="background: ${config.background};">
+                    <div style="text-align: center;">
+                        <div class="league-badge">${league}</div>
+                        <div class="status-badge">${config.badgeText}</div>
+                    </div>
+                    
+                    <div class="teams">${match}</div>
+                    
+                    <div class="tip">
+                        <strong>Prediction:</strong> ${prediction}
+                    </div>
+                    
+                    <div class="stats-section">
+                        <div><strong>Odds:</strong> ${odds}</div>
+                        <div><strong>${config.probabilityLabel}:</strong> ${probability}</div>
+                        <div><strong>Date:</strong> ${time}</div>
+                    </div>
+                    
+                    ${notes ? `<div style="margin-top: 10px;"><strong>Notes:</strong> ${notes}</div>` : ''}
+                </div>
+            `;
+        }
+
+        // Test the API connection and display results
+        async function testVVIPAPI() {
+            const statusDiv = document.getElementById('test-status');
+            const container = document.getElementById('predictions-container');
+            
+            try {
+                console.log('Testing VVIP API connection...');
+                statusDiv.textContent = 'Fetching completed VVIP predictions...';
+                
+                // Fetch won predictions
+                const wonResponse = await fetch('https://dhronepredictionspms.up.railway.app/api/predictions?category=vvip&status=Won');
+                const lostResponse = await fetch('https://dhronepredictionspms.up.railway.app/api/predictions?category=vvip&status=Lost');
+                
+                console.log('Won response status:', wonResponse.status);
+                console.log('Lost response status:', lostResponse.status);
+                
+                if (!wonResponse.ok) {
+                    throw new Error(`Failed to fetch won predictions: ${wonResponse.status}`);
+                }
+                if (!lostResponse.ok) {
+                    throw new Error(`Failed to fetch lost predictions: ${lostResponse.status}`);
+                }
+                
+                const wonPredictions = await wonResponse.json();
+                const lostPredictions = await lostResponse.json();
+                
+                console.log('Won predictions:', wonPredictions.length, wonPredictions);
+                console.log('Lost predictions:', lostPredictions.length, lostPredictions);
+                
+                const allCompleted = [...wonPredictions, ...lostPredictions];
+                
+                if (allCompleted.length === 0) {
+                    statusDiv.innerHTML = '<div class="error">❌ No completed VVIP predictions found!</div>';
+                    return;
+                }
+                
+                statusDiv.innerHTML = `<div style="color: #28a745;">✅ Found ${allCompleted.length} completed VVIP predictions</div>`;
+                
+                const html = allCompleted.map(pred => {
+                    const status = wonPredictions.includes(pred) ? 'won' : 'lost';
+                    return createPredictionCard(pred, status);
+                }).join('');
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+                statusDiv.innerHTML = `<div class="error">❌ Test failed: ${error.message}</div>`;
+            }
+        }
+        
+        // Run the test when page loads
+        testVVIPAPI();
+    </script>
+</body>
+</html>

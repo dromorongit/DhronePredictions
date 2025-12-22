@@ -375,28 +375,46 @@
             console.log('Won response status:', wonResponse.status);
             console.log('Lost response status:', lostResponse.status);
             
+            if (!wonResponse.ok) {
+                throw new Error(`Failed to fetch won predictions: ${wonResponse.status}`);
+            }
+            if (!lostResponse.ok) {
+                throw new Error(`Failed to fetch lost predictions: ${lostResponse.status}`);
+            }
+            
             const wonPredictions = await wonResponse.json();
             const lostPredictions = await lostResponse.json();
             
-            console.log('Won predictions received:', wonPredictions);
-            console.log('Lost predictions received:', lostPredictions);
+            console.log('Won predictions received:', wonPredictions.length, wonPredictions);
+            console.log('Lost predictions received:', lostPredictions.length, lostPredictions);
 
             // Combine both won and lost predictions
             const allCompleted = [...wonPredictions, ...lostPredictions];
+            console.log('Total completed predictions:', allCompleted.length);
 
             const wonContainer = document.querySelector('#won-tips-section .won-tips-grid') || document.querySelector('#won-tips-section');
             if (wonContainer && wonContainer.classList.contains('won-tips-grid')) {
                 if (allCompleted.length === 0) {
                     wonContainer.innerHTML = '<div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 10px; margin: 20px 0;"><div style="font-size: 24px; color: #6c757d; margin-bottom: 10px;">📭</div><h3 style="color: #6c757d; margin: 0;">No Completed VVIP Predictions Yet!</h3><p style="color: #6c757d; margin: 10px 0 0 0;">Check back after games are completed.</p></div>';
                 } else {
-                    wonContainer.innerHTML = allCompleted.map(pred => {
+                    console.log('Rendering completed predictions...');
+                    const html = allCompleted.map(pred => {
                         const status = wonPredictions.includes(pred) ? 'won' : 'lost';
+                        console.log('Creating card for prediction:', pred.match, 'with status:', status);
                         return createPredictionCard(pred, status);
                     }).join('');
+                    console.log('Generated HTML:', html);
+                    wonContainer.innerHTML = html;
                 }
+            } else {
+                console.error('Could not find won-tips-grid container');
             }
           } catch (error) {
             console.error('Error loading completed predictions:', error);
+            const wonContainer = document.querySelector('#won-tips-section .won-tips-grid') || document.querySelector('#won-tips-section');
+            if (wonContainer) {
+                wonContainer.innerHTML = '<div style="text-align: center; padding: 40px; background: #f8d7da; border-radius: 10px; margin: 20px 0;"><div style="font-size: 24px; color: #721c24; margin-bottom: 10px;">🚫</div><h3 style="color: #721c24; margin: 0;">Error Loading Completed Predictions</h3><p style="color: #721c24; margin: 10px 0 0 0;">Please try again later.</p></div>';
+            }
           }
         }
 
@@ -435,18 +453,27 @@
 
             const config = statusConfig[status];
 
+            // Handle both API response format and expected format
+            const league = pred.leagueType || pred.league || 'Unknown League';
+            const match = pred.match || `${pred.homeTeam} vs ${pred.awayTeam}` || 'Unknown Match';
+            const prediction = pred.prediction || 'Unknown Prediction';
+            const odds = pred.odds || 'N/A';
+            const probability = pred.probability || 'N/A';
+            const time = pred.time || pred.date || 'TBD';
+            const notes = pred.note || pred.additionalNotes || '';
+
             return `
                 <div class="prediction-card ${status}" style="background: ${config.background}; color: white; border-radius: 15px; padding: 25px; margin: 15px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.15); position: relative; overflow: hidden;">
                     <div class="card-header" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
                         <div class="league-badge" style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-align: center;">
-                            ${pred.leagueType}
+                            ${league}
                         </div>
                         <div class="status-badge" style="background: ${config.badgeColor}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-top: 5px;">${config.badgeText}</div>
                     </div>
                     
                     <div class="match-info">
                         <div class="teams">
-                            ${pred.match}
+                            ${match}
                         </div>
                         <div class="time">
                             <span class="time-icon">${config.timeIcon}</span> ${config.timeText}
@@ -458,25 +485,25 @@
                             ${config.labelText}
                         </div>
                         <div class="tip">
-                            ${pred.prediction}
+                            ${prediction}
                         </div>
                     </div>
                     
                     <div class="stats-section" style="display: flex; flex-direction: column; align-items: center;">
                         <div class="odds-info" style="text-align: center; margin-bottom: 5px;">
                             <span style="font-size: 14px; font-weight: bold;">Odds: </span>
-                            <span style="font-weight: bold;">${pred.odds || 'N/A'}</span>
+                            <span style="font-weight: bold;">${odds}</span>
                         </div>
                         <div class="probability-info" style="text-align: center;">
                             <span style="font-size: 14px; font-weight: bold;">${config.probabilityLabel}: </span>
-                            <span style="font-weight: bold;">${pred.probability || 'N/A'}</span>
+                            <span style="font-weight: bold;">${probability}</span>
                         </div>
                     </div>
                     
-                    ${pred.additionalNotes ? `
+                    ${notes ? `
                     <div class="notes-section">
                         <div class="notes-label">📝 Notes:</div>
-                        <div class="notes-content">${pred.additionalNotes}</div>
+                        <div class="notes-content">${notes}</div>
                     </div>` : ''}
                 </div>
             `;
